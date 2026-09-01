@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
   <title>Pomodoro</title>
   <style>
     * {
@@ -584,7 +584,11 @@
       var current = document.body.className.indexOf('portrait-mode') !== -1 ? 'portrait' : 'landscape';
       var next = current === 'portrait' ? 'landscape' : 'portrait';
       try { localStorage.setItem('kindle_pomodoro_orient', next); } catch(e) {}
-      window.location.reload(); 
+
+      // 不再reload整个页面：直接切换className + 重算容器尺寸，
+      // 切换瞬间完成，也避开了刷新时浏览器重新加载/排版的抖动
+      document.body.className = (next === 'portrait') ? 'portrait-mode' : '';
+      updateLayoutDimensions();
     }
 
     function initSavedSettings() {
