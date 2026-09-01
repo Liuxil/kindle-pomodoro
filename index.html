@@ -60,10 +60,10 @@
       padding: 12px 16px 24px 16px;
     }
 
-    /* 顶部天象部件（点击切换横/竖屏） */
+    /* 顶部天象部件（放大 1.5 倍：40px -> 60px） */
     .sky-badge {
-      width: 40px;
-      height: 40px;
+      width: 60px;
+      height: 60px;
       position: relative;
       cursor: pointer;
       -webkit-flex-shrink: 0;
@@ -88,12 +88,12 @@
       position: absolute;
       top: 50%;
       left: 50%;
-      width: 20px;
-      height: 20px;
-      margin-top: -10px;
-      margin-left: -10px;
+      width: 30px;
+      height: 30px;
+      margin-top: -15px;
+      margin-left: -15px;
       background: #ffffff;
-      border: 2px solid #000000;
+      border: 2.5px solid #000000;
       border-radius: 50%;
       box-sizing: border-box;
       display: -webkit-box;
@@ -114,10 +114,10 @@
     }
     .moon-star {
       position: absolute;
-      top: 4px;
-      right: 4px;
-      width: 12px;
-      height: 12px;
+      top: 6px;
+      right: 6px;
+      width: 18px;
+      height: 18px;
       -webkit-transition: none;
       transition: none;
     }
@@ -159,7 +159,7 @@
     }
 
     .timer-text {
-      font-size: 200px;
+      font-size: 195px;
       line-height: 0.88;
       text-align: center;
       width: 100%;
@@ -413,7 +413,7 @@
     var SKY_INTERVAL = 2;
 
     var currentFontIndex = 0;
-    var TOTAL_FONTS = 3; // 仅保留 3 种精选细体：0:物理描边, 1:胶囊细圆, 2:Baskerville
+    var TOTAL_FONTS = 3;
 
     var containerEl = document.getElementById('main-container');
     var timerTextEl = document.getElementById('timer-text');
@@ -424,7 +424,6 @@
     var moonStarEl = document.getElementById('moon-star');
     var trackSlots = document.querySelectorAll('.track-slot');
 
-    // 精确视口尺寸计算，彻底消除滚动条
     function updateLayoutDimensions() {
       var isPortrait = document.body.classList.contains('portrait-mode');
       if (isPortrait) {
