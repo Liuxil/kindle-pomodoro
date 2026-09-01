@@ -26,7 +26,7 @@
       height: 0 !important;
     }
 
-    /* 默认横屏模式：极限贴边排版 */
+    /* 默认横屏模式 */
     .container {
       position: absolute;
       top: 50%;
@@ -46,7 +46,7 @@
       -webkit-box-align: center;
       -webkit-align-items: center;
       align-items: center;
-      padding: 4px 2px 8px 2px;
+      padding: 6px 4px 10px 4px;
       overflow: hidden !important;
     }
 
@@ -60,7 +60,7 @@
       padding: 16px 4px 28px 4px;
     }
 
-    /* 顶部天象部件（60px） */
+    /* 顶部天象部件 */
     .sky-badge {
       width: 60px;
       height: 60px;
@@ -158,48 +158,48 @@
       cursor: pointer;
     }
 
-    /* 横屏模式：超大字号 285px，左右满幅贴边 */
+    /* 横屏大字 */
     .timer-text {
-      font-size: 285px;
-      line-height: 0.82;
+      font-size: 240px;
+      line-height: 0.85;
       text-align: center;
       width: 100%;
       display: block;
       letter-spacing: -6px;
     }
 
-    /* 竖屏模式 */
+    /* 竖屏大字 */
     body.portrait-mode .timer-text {
       font-size: 215px;
       line-height: 0.82;
       letter-spacing: -6px;
     }
 
-    /* 方案 0: 极细物理描边字 */
+    /* 方案 0: 极细物理描边字（镂空透明版） */
     .font-style-0 {
       font-family: "Helvetica Neue Light", "Helvetica Neue", "Arial Narrow", sans-serif;
       font-weight: 200;
-      letter-spacing: -4px;
+      letter-spacing: -3px;
       color: transparent !important;
       -webkit-text-fill-color: transparent !important;
       -webkit-text-stroke: 1.5px #000000;
     }
 
-    /* 方案 1: 胶囊几何细圆 */
+    /* 方案 1: 极细物理描边字（纯实心黑色版） */
     .font-style-1 {
-      font-family: "Century Gothic", "Apple Gothic", "Arial Rounded MT Bold", sans-serif;
+      font-family: "Helvetica Neue Light", "Helvetica Neue", "Arial Narrow", sans-serif;
       font-weight: 200;
-      letter-spacing: -6px;
-      color: #000000;
-      -webkit-text-fill-color: #000000;
-      -webkit-text-stroke: 0;
+      letter-spacing: -3px;
+      color: #000000 !important;
+      -webkit-text-fill-color: #000000 !important;
+      -webkit-text-stroke: 0 !important;
     }
 
-    /* 方案 2: Kindle 官方古典雅致细体（Baskerville） */
+    /* 方案 2: 古典雅致细体 */
     .font-style-2 {
       font-family: "Baskerville", "Bookerly Light", "Georgia", serif;
       font-weight: 200;
-      letter-spacing: -2px;
+      letter-spacing: -1px;
       color: #000000;
       -webkit-text-fill-color: #000000;
       -webkit-text-stroke: 0;
@@ -218,7 +218,7 @@
       -webkit-box-align: center;
       -webkit-align-items: center;
       align-items: center;
-      margin-top: 4px;
+      margin-top: 6px;
     }
     body.portrait-mode .tracks-container {
       margin-top: 14px;
@@ -256,9 +256,9 @@
       display: block;
     }
 
-    /* 底部按钮栏：流式分离贴底 */
+    /* 底部按钮栏 */
     .footer {
-      width: 96%;
+      width: 94%;
       display: -webkit-box;
       display: -webkit-flex;
       display: flex;
@@ -270,9 +270,6 @@
       align-items: center;
       -webkit-flex-shrink: 0;
       flex-shrink: 0;
-    }
-    body.portrait-mode .footer {
-      width: 94%;
     }
     .btn-adjust-group {
       display: -webkit-box;
@@ -384,6 +381,29 @@
   </div>
 
   <script>
+    /* ================= 移动端陀螺仪与重力感应屏蔽锁 ================= */
+    (function blockOrientationAndSensors() {
+      if (screen && screen.orientation && typeof screen.orientation.lock === 'function') {
+        try {
+          var saved = localStorage.getItem('kindle_pomodoro_orient');
+          var targetMode = (saved === 'portrait') ? 'portrait-primary' : 'landscape-primary';
+          screen.orientation.lock(targetMode).catch(function() {});
+        } catch (e) {}
+      }
+
+      var nullHandler = function(e) {
+        if (e.stopPropagation) e.stopPropagation();
+        if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+        if (e.preventDefault) e.preventDefault();
+        return false;
+      };
+
+      window.addEventListener('deviceorientation', nullHandler, true);
+      window.addEventListener('devicemotion', nullHandler, true);
+      window.addEventListener('MozOrientation', nullHandler, true);
+    })();
+    /* ============================================================== */
+
     var ANIMALS = [
       {
         name: 'cat',
@@ -426,7 +446,7 @@
     var SKY_INTERVAL = 2;
 
     var currentFontIndex = 0;
-    var TOTAL_FONTS = 3;
+    var TOTAL_FONTS = 3; // 0: 镂空描边, 1: 实心版本, 2: Baskerville
 
     var containerEl = document.getElementById('main-container');
     var timerTextEl = document.getElementById('timer-text');
