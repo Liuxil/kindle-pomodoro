@@ -14,7 +14,6 @@
       touch-action: manipulation;
     }
     
-    /* 第一层：死锁视口，禁绝一切原生滚动 */
     html, body {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -26,14 +25,12 @@
     }
     ::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
 
-    /* 第二层：物理屏幕隔离层 */
     #screen-bounds {
       position: absolute;
       top: 0; left: 0; width: 100%; height: 100%;
       overflow: hidden !important;
     }
 
-    /* 第三层：应用主容器（无论怎么转都在正中间） */
     #app-container {
       position: absolute;
       top: 50%; left: 50%;
@@ -44,7 +41,6 @@
       padding: 12px 8px;
     }
 
-    /* 顶部区域 */
     .sky-badge { width: 60px; height: 60px; position: relative; cursor: pointer; flex-shrink: 0; }
     .sun-box, .moon-box { width: 100%; height: 100%; position: relative; display: none; }
     .sun-rays { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
@@ -55,7 +51,6 @@
     }
     .moon-star { position: absolute; top: 6px; right: 6px; width: 18px; height: 18px; }
 
-    /* 中间大字区域 */
     .main-section {
       width: 100%; -webkit-box-flex: 1; flex: 1;
       display: -webkit-box; display: flex;
@@ -85,7 +80,6 @@
     .font-style-1 { font-family: "Helvetica Neue Light", "Helvetica Neue", "Arial Narrow", sans-serif; font-weight: 200; color: #000000 !important; -webkit-text-fill-color: #000000 !important; -webkit-text-stroke: 0 !important; }
     .font-style-2 { font-family: "Baskerville", "Bookerly Light", "Georgia", serif; font-weight: 200; letter-spacing: -1px; color: #000000; -webkit-text-fill-color: #000000; -webkit-text-stroke: 0; }
 
-    /* 动物脚印槽 */
     .tracks-container {
       width: 96%; height: 26px; margin-top: 10px;
       display: -webkit-box; display: flex;
@@ -98,7 +92,6 @@
     .track-slot:nth-child(odd) svg { margin-top: -4px; -webkit-transform: rotate(-6deg); transform: rotate(-6deg); }
     .track-slot.active svg { display: block; }
 
-    /* 底部按钮 */
     .footer {
       width: 94%; flex-shrink: 0;
       display: -webkit-box; display: flex;
@@ -110,7 +103,6 @@
     button:active { background: #000000; color: #ffffff; }
     .btn-adjust { font-size: 18px; padding: 5px 14px; }
     
-    /* 播放/暂停按钮专属重置：去除方框 */
     .btn-start {
       background: transparent !important; border: none !important; padding: 5px; width: 48px; height: 48px;
       display: -webkit-box; display: flex; -webkit-box-pack: center; justify-content: center; -webkit-box-align: center; align-items: center;
@@ -118,7 +110,6 @@
     .btn-start:active { background: transparent !important; color: #000000 !important; opacity: 0.4; }
     .btn-start svg { width: 28px; height: 28px; }
 
-    /* 休息层全屏覆盖 */
     .rest-screen {
       display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #ffffff; z-index: 100; cursor: pointer;
       -webkit-box-pack: center; justify-content: center; -webkit-box-align: center; align-items: center;
@@ -176,25 +167,25 @@
           <button id="btn-toggle" class="btn-start"></button>
         </div>
       </div>
-    </div>
 
-    <!-- 休息面板层 -->
-    <div class="rest-screen" id="rest-screen">
-      <div class="rest-panel" id="rest-panel-0">
-        <div class="coffee-icon">
-          <svg viewBox="0 0 100 100" style="width:100%;height:100%;">
-            <path id="steam-1" d="M36 22 Q 32 14 36 6" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round"/><path id="steam-2" d="M48 22 Q 44 14 48 6" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round"/><path id="steam-3" d="M60 22 Q 56 14 60 6" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round"/>
-            <path d="M22 30 L74 30 L68 76 C68 82 62 86 54 86 L42 86 C34 86 28 82 28 76 Z" fill="none" stroke="#000" stroke-width="3.5" stroke-linejoin="round"/><path d="M72 38 C84 38 88 46 88 56 C88 66 82 70 70 70" fill="none" stroke="#000" stroke-width="3.5" stroke-linecap="round"/><path d="M16 92 L80 92" stroke="#000" stroke-width="3.5" stroke-linecap="round"/>
-          </svg>
+      <div class="rest-screen" id="rest-screen">
+        <div class="rest-panel" id="rest-panel-0">
+          <div class="coffee-icon">
+            <svg viewBox="0 0 100 100" style="width:100%;height:100%;">
+              <path id="steam-1" d="M36 22 Q 32 14 36 6" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round"/><path id="steam-2" d="M48 22 Q 44 14 48 6" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round"/><path id="steam-3" d="M60 22 Q 56 14 60 6" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round"/>
+              <path d="M22 30 L74 30 L68 76 C68 82 62 86 54 86 L42 86 C34 86 28 82 28 76 Z" fill="none" stroke="#000" stroke-width="3.5" stroke-linejoin="round"/><path d="M72 38 C84 38 88 46 88 56 C88 66 82 70 70 70" fill="none" stroke="#000" stroke-width="3.5" stroke-linecap="round"/><path d="M16 92 L80 92" stroke="#000" stroke-width="3.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+        <div class="rest-panel" id="rest-panel-1"><div class="firework-stage" id="fw-stage"></div></div>
+        <div class="rest-panel" id="rest-panel-2">
+          <div class="pixel-cat-stage">
+            <div class="cat-frame active" id="cat-p0"><svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="145" y="65" width="6" height="2"/><rect x="149" y="67" width="2" height="2"/><rect x="147" y="69" width="2" height="2"/><rect x="143" y="71" width="6" height="2"/><rect x="160" y="48" width="8" height="2"/><rect x="164" y="50" width="2" height="2"/><rect x="162" y="52" width="2" height="2"/><rect x="158" y="54" width="8" height="2"/><rect x="70" y="100" width="70" height="30"/><rect x="60" y="110" width="80" height="20"/><rect x="80" y="90" width="50" height="10"/><rect x="80" y="80" width="10" height="10"/><rect x="110" y="80" width="10" height="10"/><rect x="92" y="108" width="8" height="3" fill="#fff"/><rect x="116" y="108" width="8" height="3" fill="#fff"/><rect x="50" y="120" width="10" height="10"/><rect x="40" y="125" width="10" height="10"/><rect x="35" y="135" width="10" height="10"/><rect x="35" y="145" width="10" height="10"/></svg></div>
+            <div class="cat-frame" id="cat-p1"><svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="152" y="52" width="8" height="2"/><rect x="156" y="54" width="2" height="2"/><rect x="154" y="56" width="2" height="2"/><rect x="150" y="58" width="8" height="2"/><rect x="170" y="32" width="10" height="2"/><rect x="176" y="34" width="2" height="2"/><rect x="173" y="36" width="2" height="2"/><rect x="168" y="38" width="10" height="2"/><rect x="70" y="100" width="70" height="30"/><rect x="60" y="110" width="80" height="20"/><rect x="80" y="90" width="50" height="10"/><rect x="80" y="80" width="10" height="10"/><rect x="110" y="80" width="10" height="10"/><rect x="92" y="108" width="8" height="3" fill="#fff"/><rect x="116" y="108" width="8" height="3" fill="#fff"/><rect x="50" y="120" width="10" height="10"/><rect x="42" y="130" width="10" height="10"/><rect x="42" y="140" width="10" height="10"/><rect x="45" y="150" width="10" height="10"/></svg></div>
+          </div>
         </div>
       </div>
-      <div class="rest-panel" id="rest-panel-1"><div class="firework-stage" id="fw-stage"></div></div>
-      <div class="rest-panel" id="rest-panel-2">
-        <div class="pixel-cat-stage">
-          <div class="cat-frame active" id="cat-p0"><svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="145" y="65" width="6" height="2"/><rect x="149" y="67" width="2" height="2"/><rect x="147" y="69" width="2" height="2"/><rect x="143" y="71" width="6" height="2"/><rect x="160" y="48" width="8" height="2"/><rect x="164" y="50" width="2" height="2"/><rect x="162" y="52" width="2" height="2"/><rect x="158" y="54" width="8" height="2"/><rect x="70" y="100" width="70" height="30"/><rect x="60" y="110" width="80" height="20"/><rect x="80" y="90" width="50" height="10"/><rect x="80" y="80" width="10" height="10"/><rect x="110" y="80" width="10" height="10"/><rect x="92" y="108" width="8" height="3" fill="#fff"/><rect x="116" y="108" width="8" height="3" fill="#fff"/><rect x="50" y="120" width="10" height="10"/><rect x="40" y="125" width="10" height="10"/><rect x="35" y="135" width="10" height="10"/><rect x="35" y="145" width="10" height="10"/></svg></div>
-          <div class="cat-frame" id="cat-p1"><svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="152" y="52" width="8" height="2"/><rect x="156" y="54" width="2" height="2"/><rect x="154" y="56" width="2" height="2"/><rect x="150" y="58" width="8" height="2"/><rect x="170" y="32" width="10" height="2"/><rect x="176" y="34" width="2" height="2"/><rect x="173" y="36" width="2" height="2"/><rect x="168" y="38" width="10" height="2"/><rect x="70" y="100" width="70" height="30"/><rect x="60" y="110" width="80" height="20"/><rect x="80" y="90" width="50" height="10"/><rect x="80" y="80" width="10" height="10"/><rect x="110" y="80" width="10" height="10"/><rect x="92" y="108" width="8" height="3" fill="#fff"/><rect x="116" y="108" width="8" height="3" fill="#fff"/><rect x="50" y="120" width="10" height="10"/><rect x="42" y="130" width="10" height="10"/><rect x="42" y="140" width="10" height="10"/><rect x="45" y="150" width="10" height="10"/></svg></div>
-        </div>
-      </div>
+
     </div>
   </div>
 
@@ -240,7 +231,7 @@
     var currentFontIndex = 1; 
     var isPortraitMode = false;
 
-    // 新的彩蛋状态机变量
+    // 彩蛋状态机步数追踪
     var easterEggStep = 0;
 
     var SCREEN_LONG = 0;
@@ -319,20 +310,33 @@
       }
     }
 
-    // 新的彩蛋验证逻辑 (目标序列: 5, -5, 5, -5, 5, -5)
-    function checkEasterEgg(mins) {
-      if (easterEggStep === 0 && mins === 5) { easterEggStep = 1; }
-      else if (easterEggStep === 1 && mins === -5) { easterEggStep = 2; }
-      else if (easterEggStep === 2 && mins === 5) { easterEggStep = 3; }
-      else if (easterEggStep === 3 && mins === -5) { easterEggStep = 4; }
-      else if (easterEggStep === 4 && mins === 5) { easterEggStep = 5; }
-      else if (easterEggStep === 5 && mins === -5) { 
-        easterEggStep = 0; 
-        return true; 
-      }
-      else { 
-        // 允许误触或者重新开始
-        easterEggStep = (mins === 5) ? 1 : 0; 
+    // 全局彩蛋控制逻辑 
+    // 目标序列：FONT, FONT, +10, +10, +5, -5, +5, -5
+    function handleEasterEgg(action) {
+      if (action === 'FONT') {
+        if (easterEggStep === 0 || easterEggStep === 1) {
+          easterEggStep++;
+        } else {
+          // 容错处理：如果狂点字体，状态保持在就绪状态(第2步完成)
+          easterEggStep = 2;
+        }
+      } else if (action === '+10') {
+        if (easterEggStep === 2) { easterEggStep = 3; }
+        else if (easterEggStep === 3) { easterEggStep = 4; }
+        else { easterEggStep = 0; }
+      } else if (action === '+5') {
+        if (easterEggStep === 4) { easterEggStep = 5; }
+        else if (easterEggStep === 6) { easterEggStep = 7; }
+        else { easterEggStep = 0; }
+      } else if (action === '-5') {
+        if (easterEggStep === 5) { easterEggStep = 6; }
+        else if (easterEggStep === 7) { 
+          easterEggStep = 0; 
+          return true; // 成功触发！
+        }
+        else { easterEggStep = 0; }
+      } else {
+        easterEggStep = 0;
       }
       return false;
     }
@@ -384,6 +388,9 @@
       currentFontIndex = (currentFontIndex + 1) % TOTAL_FONTS;
       try { localStorage.setItem('kindle_pomodoro_font', currentFontIndex); } catch(e) {}
       applyFont();
+      
+      // 触发彩蛋序列第一环
+      handleEasterEgg('FONT');
     }
 
     function applyFont() {
@@ -437,8 +444,8 @@
     }
 
     function addMinutes(mins) {
-      // 验证最新的彩蛋逻辑
-      var isEggTriggered = checkEasterEgg(mins);
+      var actionStr = (mins > 0 ? '+' : '') + mins;
+      var isEggTriggered = handleEasterEgg(actionStr);
 
       if (timerId) {
         clearInterval(timerId);
@@ -456,7 +463,6 @@
       updateDayNightMode();
       updateDisplay();
 
-      // 如果正好触发了彩蛋，则展示休息页
       if (isEggTriggered) {
         showRestScreen();
       }
