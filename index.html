@@ -12,10 +12,72 @@
       -webkit-user-select: none;
       user-select: none;
     }
-    body {
+    html, body {
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
       background-color: #ffffff;
       color: #000000;
       font-family: sans-serif;
+    }
+    .container {
+      height: 100%;
+      width: 100%;
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: flex;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+      -webkit-flex-direction: column;
+      flex-direction: column;
+      -webkit-box-pack: justify;
+      -webkit-justify-content: space-between;
+      justify-content: space-between;
+      -webkit-box-align: center;
+      -webkit-align-items: center;
+      align-items: center;
+      padding: 35px 20px 45px 20px;
+    }
+    .header {
+      font-size: 32px;
+      font-weight: bold;
+      letter-spacing: 4px;
+    }
+    .timer-wrapper {
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: flex;
+      -webkit-box-align: center;
+      -webkit-align-items: center;
+      align-items: center;
+      -webkit-box-pack: center;
+      -webkit-justify-content: center;
+      justify-content: center;
+      -webkit-box-flex: 1;
+      -webkit-flex: 1;
+      flex: 1;
+    }
+    .timer {
+      font-size: 110px;
+      font-weight: 900;
+      font-family: monospace, sans-serif;
+      line-height: 1;
+      text-align: center;
+    }
+    .progress-bar-container {
+      width: 82%;
+      height: 16px;
+      border: 3px solid #000000;
+      padding: 2px;
+      margin-bottom: 30px;
+    }
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background-color: #000000;
+    }
+    .footer {
+      width: 100%;
       display: -webkit-box;
       display: -webkit-flex;
       display: flex;
@@ -26,51 +88,24 @@
       -webkit-box-align: center;
       -webkit-align-items: center;
       align-items: center;
-      -webkit-box-pack: center;
-      -webkit-justify-content: center;
-      justify-content: center;
-      height: 100vh;
-      width: 100vw;
-      overflow: hidden;
+      gap: 16px;
     }
-    .status {
-      font-size: 32px;
-      font-weight: bold;
-      letter-spacing: 4px;
-      margin-bottom: 20px;
-    }
-    .timer {
-      font-size: 110px;
-      font-weight: 900;
-      font-family: monospace;
-      line-height: 1;
-      margin-bottom: 30px;
-    }
-    .progress-bar-container {
-      width: 80%;
-      height: 16px;
-      border: 3px solid #000000;
-      padding: 2px;
-      margin-bottom: 40px;
-    }
-    .progress-bar {
-      height: 100%;
-      width: 0%;
-      background-color: #000000;
-    }
-    .controls {
+    .btn-row {
       display: -webkit-box;
       display: -webkit-flex;
       display: flex;
-      gap: 15px;
+      gap: 16px;
+      -webkit-box-pack: center;
+      -webkit-justify-content: center;
+      justify-content: center;
     }
     button {
       background: #ffffff;
       color: #000000;
       border: 3px solid #000000;
-      font-size: 24px;
+      font-size: 26px;
       font-weight: bold;
-      padding: 12px 24px;
+      padding: 12px 28px;
       border-radius: 8px;
       cursor: pointer;
     }
@@ -78,44 +113,68 @@
       background: #000000;
       color: #ffffff;
     }
+    .btn-adjust {
+      font-size: 22px;
+      padding: 8px 20px;
+      border: 2px solid #000000;
+    }
   </style>
 </head>
 <body>
 
-  <div class="status" id="mode-text">专注中</div>
-  <div class="timer" id="timer-display">25:00</div>
-  
-  <div class="progress-bar-container">
-    <div class="progress-bar" id="progress-bar"></div>
-  </div>
+  <div class="container">
+    <div class="header">专注中</div>
 
-  <div class="controls">
-    <button id="btn-toggle" onclick="toggleTimer()">开始</button>
-    <button id="btn-reset" onclick="resetTimer()">重置</button>
-    <button id="btn-switch" onclick="switchMode()">切换</button>
+    <div class="timer-wrapper">
+      <div class="timer" id="timer-display">25m</div>
+    </div>
+
+    <!-- 进度条 -->
+    <div class="progress-bar-container">
+      <div class="progress-bar" id="progress-bar"></div>
+    </div>
+
+    <div class="footer">
+      <!-- 调整时长按钮行 -->
+      <div class="btn-row">
+        <button class="btn-adjust" onclick="addMinutes(5)">+5m</button>
+        <button class="btn-adjust" onclick="addMinutes(10)">+10m</button>
+      </div>
+      <!-- 操作按钮行 -->
+      <div class="btn-row">
+        <button id="btn-toggle" onclick="toggleTimer()">开始</button>
+        <button id="btn-reset" onclick="resetTimer()">重置</button>
+      </div>
+    </div>
   </div>
 
   <script>
-    var WORK_TIME = 25 * 60;
-    var BREAK_TIME = 5 * 60;
-
-    var isWorkMode = true;
-    var totalTime = WORK_TIME;
-    var timeLeft = WORK_TIME;
+    var totalTime = 25 * 60;  // 默认25分钟
+    var timeLeft = totalTime;
     var timerId = null;
 
-    var modeEl = document.getElementById('mode-text');
     var timerEl = document.getElementById('timer-display');
     var progressEl = document.getElementById('progress-bar');
     var toggleBtn = document.getElementById('btn-toggle');
 
-    function updateDisplay() {
-      var minutes = Math.floor(timeLeft / 60);
-      var seconds = timeLeft % 60;
-      var strM = (minutes < 10 ? '0' : '') + minutes;
-      var strS = (seconds < 10 ? '0' : '') + seconds;
-      timerEl.innerText = strM + ':' + strS;
+    function formatTime(seconds) {
+      var totalMinutes = Math.ceil(seconds / 60);
+      if (totalMinutes <= 0) return '00:00';
 
+      var hours = Math.floor(totalMinutes / 60);
+      var mins = totalMinutes % 60;
+
+      if (hours >= 1) {
+        var strH = (hours < 10 ? '0' : '') + hours;
+        var strM = (mins < 10 ? '0' : '') + mins;
+        return strH + ':' + strM;
+      } else {
+        return totalMinutes + 'm';
+      }
+    }
+
+    function updateDisplay() {
+      timerEl.innerText = formatTime(timeLeft);
       var progressPercent = ((totalTime - timeLeft) / totalTime) * 100;
       progressEl.style.width = progressPercent + '%';
     }
@@ -126,6 +185,9 @@
         timerId = null;
         toggleBtn.innerText = '开始';
       } else {
+        if (timeLeft <= 0) {
+          timeLeft = totalTime;
+        }
         timerId = setInterval(tick, 1000);
         toggleBtn.innerText = '暂停';
       }
@@ -134,16 +196,14 @@
     function tick() {
       if (timeLeft > 0) {
         timeLeft--;
-        updateDisplay();
+        if (timeLeft % 60 === 0 || timeLeft === 0) {
+          updateDisplay();
+        }
       } else {
         clearInterval(timerId);
         timerId = null;
         toggleBtn.innerText = '开始';
-        // 模式自动切换
-        isWorkMode = !isWorkMode;
-        totalTime = isWorkMode ? WORK_TIME : BREAK_TIME;
         timeLeft = totalTime;
-        modeEl.innerText = isWorkMode ? '专注中' : '休息中';
         updateDisplay();
       }
     }
@@ -158,17 +218,16 @@
       updateDisplay();
     }
 
-    function switchMode() {
-      if (timerId) {
-        clearInterval(timerId);
-        timerId = null;
-        toggleBtn.innerText = '开始';
+    function addMinutes(mins) {
+      var currentMins = Math.round(totalTime / 60);
+      currentMins += mins;
+
+      if (currentMins > 120) {
+        currentMins = 5;
       }
-      isWorkMode = !isWorkMode;
-      totalTime = isWorkMode ? WORK_TIME : BREAK_TIME;
-      timeLeft = totalTime;
-      modeEl.innerText = isWorkMode ? '专注中' : '休息中';
-      updateDisplay();
+
+      totalTime = currentMins * 60;
+      resetTimer();
     }
 
     updateDisplay();
