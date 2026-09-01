@@ -57,31 +57,145 @@
       -webkit-flex: 1;
       flex: 1;
     }
+
+    /* 顶部昼夜天象容器 */
+    .sky-badge {
+      width: 68px;
+      height: 68px;
+      position: relative;
+      margin-bottom: 8px;
+    }
+
+    /* 1. 太阳部件 */
+    .sun-box {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      display: none;
+    }
+    .sun-rays {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      -webkit-transition: none;
+      transition: none;
+    }
+    .sun-face {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 34px;
+      height: 34px;
+      margin-top: -17px;
+      margin-left: -17px;
+      background: #ffffff;
+      border: 2.5px solid #000000;
+      border-radius: 50%;
+      box-sizing: border-box;
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: flex;
+      -webkit-box-align: center;
+      -webkit-align-items: center;
+      align-items: center;
+      -webkit-box-pack: center;
+      -webkit-justify-content: center;
+      justify-content: center;
+    }
+
+    /* 2. 月亮部件 */
+    .moon-box {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      display: none;
+    }
+    .moon-star {
+      position: absolute;
+      top: 14px;
+      right: 10px;
+      width: 18px;
+      height: 18px;
+      -webkit-transition: none;
+      transition: none;
+    }
+
     .timer {
       font-size: 110px;
       font-weight: 900;
       font-family: monospace, sans-serif;
       line-height: 1;
       text-align: center;
-      margin-bottom: 30px;
+      margin-bottom: 25px;
     }
     .progress-bar-container {
       width: 84%;
       height: 16px;
       border: 3px solid #000000;
       padding: 2px;
+      margin-bottom: 15px;
     }
     .progress-bar {
       height: 100%;
       width: 0%;
       background-color: #000000;
     }
+
+    /* 底部脚印行 */
+    .tracks-container {
+      width: 84%;
+      height: 36px;
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: flex;
+      -webkit-box-pack: justify;
+      -webkit-justify-content: space-between;
+      justify-content: space-between;
+      -webkit-box-align: center;
+      -webkit-align-items: center;
+      align-items: center;
+    }
+    .track-slot {
+      width: 26px;
+      height: 26px;
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: flex;
+      -webkit-box-pack: center;
+      -webkit-justify-content: center;
+      justify-content: center;
+      -webkit-box-align: center;
+      -webkit-align-items: center;
+      align-items: center;
+    }
+    .track-slot svg {
+      width: 22px;
+      height: 22px;
+      fill: #000000;
+      display: none;
+    }
+    .track-slot:nth-child(even) svg {
+      margin-top: 6px;
+      -webkit-transform: rotate(6deg);
+      transform: rotate(6deg);
+    }
+    .track-slot:nth-child(odd) svg {
+      margin-top: -6px;
+      -webkit-transform: rotate(-6deg);
+      transform: rotate(-6deg);
+    }
+    .track-slot.active svg {
+      display: block;
+    }
+
     .footer {
       width: 100%;
       text-align: center;
     }
     .btn-row {
-      margin-bottom: 28px; /* 彻底拉开上方调整按钮与下方开始按钮的垂直距离 */
+      margin-bottom: 28px;
     }
     button {
       background: #ffffff;
@@ -98,7 +212,7 @@
     .btn-adjust {
       font-size: 24px;
       padding: 8px 24px;
-      margin: 0 10px; /* 拉开 +5m 和 +10m 左右之间的水平间距 */
+      margin: 0 10px;
     }
     .btn-start {
       font-size: 34px;
@@ -111,9 +225,63 @@
 
   <div class="container">
     <div class="main-section">
+      
+      <!-- 顶部根据时间自动展示太阳或月亮 -->
+      <div class="sky-badge">
+        <!-- 白天：太阳 -->
+        <div class="sun-box" id="sun-box">
+          <div class="sun-rays" id="sun-rays">
+            <svg viewBox="0 0 100 100" stroke="#000" stroke-linecap="round">
+              <path d="M50 4 L50 16" stroke-width="4.5"/>
+              <path d="M50 84 L50 96" stroke-width="4.5"/>
+              <path d="M4 50 L16 50" stroke-width="4.5"/>
+              <path d="M84 50 L96 50" stroke-width="4.5"/>
+              <path d="M17 17 L26 26" stroke-width="4"/>
+              <path d="M74 74 L83 83" stroke-width="4"/>
+              <path d="M17 83 L26 74" stroke-width="4"/>
+              <path d="M74 26 L83 17" stroke-width="4"/>
+            </svg>
+          </div>
+          <div class="sun-face">
+            <svg viewBox="0 0 34 34">
+              <circle cx="12" cy="14" r="1.8" fill="#000"/>
+              <circle cx="22" cy="14" r="1.8" fill="#000"/>
+              <path d="M12 19 Q 17 24 22 19" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- 夜晚：月亮与伴星 -->
+        <div class="moon-box" id="moon-box">
+          <svg viewBox="0 0 68 68" style="width:100%;height:100%;">
+            <path d="M38 12 C24 12 12 24 12 38 C12 48 18 56 26 59 C23 54 22 48 22 42 C22 28 32 17 46 16 C43 13 40 12 38 12 Z" fill="#000"/>
+          </svg>
+          <div class="moon-star" id="moon-star">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 2 Q 12 12 2 12 Q 12 12 12 22 Q 12 12 22 12 Q 12 12 12 2 Z" fill="#000"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- 倒计时时间 -->
       <div class="timer" id="timer-display">00:25</div>
+      
+      <!-- 进度条 -->
       <div class="progress-bar-container">
         <div class="progress-bar" id="progress-bar"></div>
+      </div>
+      
+      <!-- 底部脚印行 -->
+      <div class="tracks-container" id="tracks-bottom">
+        <div class="track-slot"></div>
+        <div class="track-slot"></div>
+        <div class="track-slot"></div>
+        <div class="track-slot"></div>
+        <div class="track-slot"></div>
+        <div class="track-slot"></div>
+        <div class="track-slot"></div>
+        <div class="track-slot"></div>
       </div>
     </div>
 
@@ -129,13 +297,111 @@
   </div>
 
   <script>
+    // 精选 5 种足迹池
+    var ANIMALS = [
+      // 1. 猫科 4 趾
+      {
+        name: 'cat',
+        feetCount: 4,
+        svg: '<svg viewBox="0 0 24 24"><ellipse cx="9" cy="12" rx="4.5" ry="5.5"/><circle cx="16" cy="7" r="2"/><circle cx="19" cy="12" r="2.2"/><circle cx="16" cy="17" r="2"/></svg>'
+      },
+      // 2. 胖偶蹄（小猪/小牛）
+      {
+        name: 'pig_hoof',
+        feetCount: 4,
+        svg: '<svg viewBox="0 0 24 24"><ellipse cx="12" cy="7.5" rx="6" ry="3.2" transform="rotate(10 12 7.5)" fill="#000"/><ellipse cx="12" cy="16.5" rx="6" ry="3.2" transform="rotate(-10 12 16.5)" fill="#000"/></svg>'
+      },
+      // 3. 奇蹄（马蹄铁）
+      {
+        name: 'horse_hoof',
+        feetCount: 4,
+        svg: '<svg viewBox="0 0 24 24"><path d="M5 6 C15 5 19 9 19 12 C19 15 15 19 5 18 L5 14.5 C12 15 14 13.5 14 12 C14 10.5 12 9 5 9.5 Z" fill="#000"/></svg>'
+      },
+      // 4. 细鸟爪（小鸡/麻雀）
+      {
+        name: 'bird',
+        feetCount: 2,
+        svg: '<svg viewBox="0 0 24 24"><path d="M5 12 L19 12 M13 12 L19 6 M13 12 L19 18" stroke="#000" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+      },
+      // 5. 鸭鹅蹼
+      {
+        name: 'duck',
+        feetCount: 2,
+        svg: '<svg viewBox="0 0 24 24"><path d="M4 12 L9 12 M9 12 L17 4 C14 8 13 10 9 12 C13 14 14 16 17 20 Z" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="#000"/></svg>'
+      }
+    ];
+
     var totalTime = 25 * 60;
     var timeLeft = totalTime;
     var timerId = null;
 
+    var isDayTime = true;
+    var sunAngle = 0;
+    var starToggled = false;
+
+    var currentAnimal = ANIMALS[0];
+    var activeQueue = [];
+    var currentStepPos = 0;
+    var STEP_INTERVAL = 3;
+    var TOTAL_SLOTS = 8;
+
     var timerEl = document.getElementById('timer-display');
     var progressEl = document.getElementById('progress-bar');
     var toggleBtn = document.getElementById('btn-toggle');
+    var sunBoxEl = document.getElementById('sun-box');
+    var moonBoxEl = document.getElementById('moon-box');
+    var sunRaysEl = document.getElementById('sun-rays');
+    var moonStarEl = document.getElementById('moon-star');
+    var trackSlots = document.querySelectorAll('.track-slot');
+
+    // 检测时间并更新天象图标 (6:00 ~ 18:00 白天太阳，其余时间为夜晚月亮)
+    function updateDayNightMode() {
+      var hour = new Date().getHours();
+      isDayTime = (hour >= 6 && hour < 18);
+
+      if (isDayTime) {
+        sunBoxEl.style.display = 'block';
+        moonBoxEl.style.display = 'none';
+      } else {
+        sunBoxEl.style.display = 'none';
+        moonBoxEl.style.display = 'block';
+      }
+    }
+
+    // 随机选择 5 类足迹之一
+    function initAnimalTracks() {
+      var randIndex = Math.floor(Math.random() * ANIMALS.length);
+      currentAnimal = ANIMALS[randIndex];
+      for (var i = 0; i < trackSlots.length; i++) {
+        trackSlots[i].innerHTML = currentAnimal.svg;
+        trackSlots[i].className = 'track-slot';
+      }
+      activeQueue = [];
+      currentStepPos = 0;
+    }
+
+    function stepForward() {
+      if (activeQueue.length >= currentAnimal.feetCount) {
+        var oldestIndex = activeQueue.shift();
+        trackSlots[oldestIndex].className = 'track-slot';
+      }
+      trackSlots[currentStepPos].className = 'track-slot active';
+      activeQueue.push(currentStepPos);
+      currentStepPos = (currentStepPos + 1) % TOTAL_SLOTS;
+    }
+
+    function tickSkyBadge() {
+      if (isDayTime) {
+        sunAngle = (sunAngle + 15) % 360;
+        sunRaysEl.style.webkitTransform = 'rotate(' + sunAngle + 'deg)';
+        sunRaysEl.style.transform = 'rotate(' + sunAngle + 'deg)';
+      } else {
+        starToggled = !starToggled;
+        var starAngle = starToggled ? 20 : 0;
+        moonStarEl.style.webkitTransform = 'rotate(' + starAngle + 'deg)';
+        moonStarEl.style.transform = 'rotate(' + starAngle + 'deg)';
+      }
+    }
 
     function formatTime(seconds) {
       var totalMinutes = Math.ceil(seconds / 60);
@@ -164,6 +430,8 @@
         if (timeLeft <= 0) {
           timeLeft = totalTime;
         }
+        updateDayNightMode();
+        initAnimalTracks();
         timerId = setInterval(tick, 1000);
         toggleBtn.innerText = '暂停';
       }
@@ -172,6 +440,14 @@
     function tick() {
       if (timeLeft > 0) {
         timeLeft--;
+
+        tickSkyBadge();
+
+        var elapsed = totalTime - timeLeft;
+        if (elapsed % STEP_INTERVAL === 0) {
+          stepForward();
+        }
+
         if (timeLeft % 60 === 0 || timeLeft === 0) {
           updateDisplay();
         }
@@ -200,9 +476,13 @@
 
       totalTime = currentMins * 60;
       timeLeft = totalTime;
+      updateDayNightMode();
+      initAnimalTracks();
       updateDisplay();
     }
 
+    updateDayNightMode();
+    initAnimalTracks();
     updateDisplay();
   </script>
 </body>
