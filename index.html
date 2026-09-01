@@ -229,7 +229,9 @@
     var starToggled = false;
     var currentAnimal = null;
     var currentFontIndex = 1; 
-    var isPortraitMode = false; // 默认横屏
+    
+    // 强制默认横屏，不读取记忆状态
+    var isPortraitMode = false;
 
     var easterEggStep = 0;
     var SCREEN_LONG = 0;
@@ -360,23 +362,13 @@
 
     function toggleOrientation() {
       isPortraitMode = !isPortraitMode;
-      try { localStorage.setItem('kindle_pomodoro_orient', isPortraitMode ? 'portrait' : 'landscape'); } catch(e) {}
+      // 移除 localStorage 状态保存，不记忆状态
       applyOrientationLogic();
     }
 
     function initSavedSettings() {
-      try {
-        var savedOrient = localStorage.getItem('kindle_pomodoro_orient');
-        // 默认若无记录，则初始强制横屏 (landscape)
-        if (savedOrient === null) {
-          savedOrient = 'landscape';
-          localStorage.setItem('kindle_pomodoro_orient', 'landscape');
-        }
-        isPortraitMode = (savedOrient === 'portrait');
-      } catch (e) {
-        isPortraitMode = false; // 异常兜底默认横屏
-      }
-      
+      // 强制初始化为横屏，清理历史状态读取
+      isPortraitMode = false;
       applyOrientationLogic();
 
       try {
