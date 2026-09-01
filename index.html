@@ -3,630 +3,197 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Pomodoro</title>
+  <title>Kindle 纤细字体实机测试</title>
   <style>
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      -webkit-user-select: none;
-      user-select: none;
     }
-    html, body {
-      height: 100%;
-      width: 100%;
-      overflow: hidden;
+    body {
       background-color: #ffffff;
       color: #000000;
+      padding: 16px 12px 40px 12px;
       font-family: sans-serif;
     }
-
-    /* 默认横屏模式：由 JS 赋予准确宽高并旋转居中 */
-    .container {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      -webkit-transform: translate(-50%, -50%) rotate(90deg);
-      transform: translate(-50%, -50%) rotate(90deg);
-      display: -webkit-box;
-      display: -webkit-flex;
-      display: flex;
-      -webkit-box-orient: vertical;
-      -webkit-box-direction: normal;
-      -webkit-flex-direction: column;
-      flex-direction: column;
-      -webkit-box-pack: justify;
-      -webkit-justify-content: space-between;
-      justify-content: space-between;
-      -webkit-box-align: center;
-      -webkit-align-items: center;
-      align-items: center;
-      padding: 10px 24px 20px 24px;
-    }
-
-    /* 竖屏模式 */
-    body.portrait-mode .container {
-      position: static;
-      width: 100% !important;
-      height: 100% !important;
-      -webkit-transform: none !important;
-      transform: none !important;
-      padding: 12px 16px 28px 16px;
-    }
-
-    /* 顶部天象部件 */
-    .sky-badge {
-      width: 44px;
-      height: 44px;
-      position: relative;
-      cursor: pointer;
-      -webkit-flex-shrink: 0;
-      flex-shrink: 0;
-    }
-    .sun-box {
-      width: 100%;
-      height: 100%;
-      position: relative;
-      display: none;
-    }
-    .sun-rays {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      -webkit-transition: none;
-      transition: none;
-    }
-    .sun-face {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 22px;
-      height: 22px;
-      margin-top: -11px;
-      margin-left: -11px;
-      background: #ffffff;
-      border: 2px solid #000000;
-      border-radius: 50%;
-      box-sizing: border-box;
-      display: -webkit-box;
-      display: -webkit-flex;
-      display: flex;
-      -webkit-box-align: center;
-      -webkit-align-items: center;
-      align-items: center;
-      -webkit-box-pack: center;
-      -webkit-justify-content: center;
-      justify-content: center;
-    }
-    .moon-box {
-      width: 100%;
-      height: 100%;
-      position: relative;
-      display: none;
-    }
-    .moon-star {
-      position: absolute;
-      top: 5px;
-      right: 4px;
-      width: 13px;
-      height: 13px;
-      -webkit-transition: none;
-      transition: none;
-    }
-
-    /* 中间主体区 */
-    .main-section {
-      width: 100%;
-      -webkit-box-flex: 1;
-      -webkit-flex: 1;
-      flex: 1;
-      display: -webkit-box;
-      display: -webkit-flex;
-      display: flex;
-      -webkit-box-orient: vertical;
-      -webkit-box-direction: normal;
-      -webkit-flex-direction: column;
-      flex-direction: column;
-      -webkit-box-align: center;
-      -webkit-align-items: center;
-      align-items: center;
-      -webkit-box-pack: center;
-      -webkit-justify-content: center;
-      justify-content: center;
-    }
-
-    /* 倒计时数字主容器 */
-    .timer-container {
-      width: 100%;
-      display: -webkit-box;
-      display: -webkit-flex;
-      display: flex;
-      -webkit-box-pack: center;
-      -webkit-justify-content: center;
-      justify-content: center;
-      -webkit-box-align: center;
-      -webkit-align-items: center;
-      align-items: center;
-      cursor: pointer;
-    }
-    .timer-text {
-      font-size: 210px;
-      line-height: 0.88;
+    h1 {
+      font-size: 20px;
       text-align: center;
-      width: 100%;
+      margin-bottom: 4px;
     }
-    body.portrait-mode .timer-text {
-      font-size: 150px;
+    p.intro {
+      font-size: 12px;
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
     }
-
-    /* 3 种精选细体 */
-    .font-style-0 {
-      /* 极简超细极幼体 */
-      font-family: "Futura Light", "Futura", "Helvetica Neue Light", "Helvetica Neue-UltraLight", sans-serif;
-      font-weight: 100;
-      letter-spacing: -4px;
+    .test-item {
+      border-bottom: 2px solid #000000;
+      padding: 14px 0 10px 0;
+      text-align: center;
     }
-    .font-style-1 {
-      /* 几何圆角细体 */
-      font-family: "Century Gothic", "Gill Sans Light", "Gill Sans", "Apple Gothic", sans-serif;
-      font-weight: 200;
-      letter-spacing: -2px;
+    .label {
+      font-size: 13px;
+      font-weight: bold;
+      margin-bottom: 4px;
+      display: block;
+      color: #000;
     }
-    .font-style-2 {
-      /* 古典书卷细体 */
-      font-family: "Baskerville", "Bookerly Light", "Georgia", serif;
-      font-weight: 200;
-      letter-spacing: 0px;
+    .desc {
+      font-size: 11px;
+      color: #555;
+      margin-bottom: 6px;
     }
-
-    /* 脚印宽幅长轨道 (16 档卡槽) */
-    .tracks-container {
-      width: 92%;
-      height: 28px;
-      display: -webkit-box;
-      display: -webkit-flex;
-      display: flex;
-      -webkit-box-pack: justify;
-      -webkit-justify-content: space-between;
-      justify-content: space-between;
-      -webkit-box-align: center;
-      -webkit-align-items: center;
-      align-items: center;
-      margin-top: 10px;
-    }
-    .track-slot {
-      width: 20px;
-      height: 20px;
-      display: -webkit-box;
-      display: -webkit-flex;
-      display: flex;
-      -webkit-box-pack: center;
-      -webkit-justify-content: center;
-      justify-content: center;
-      -webkit-box-align: center;
-      -webkit-align-items: center;
-      align-items: center;
-    }
-    .track-slot svg {
-      width: 18px;
-      height: 18px;
-      fill: #000000;
-      display: none;
-    }
-    .track-slot:nth-child(even) svg {
-      margin-top: 4px;
-      -webkit-transform: rotate(6deg);
-      transform: rotate(6deg);
-    }
-    .track-slot:nth-child(odd) svg {
-      margin-top: -4px;
-      -webkit-transform: rotate(-6deg);
-      transform: rotate(-6deg);
-    }
-    .track-slot.active svg {
+    .sample {
+      font-size: 96px;
+      line-height: 1;
+      margin: 6px 0;
       display: block;
     }
 
-    /* 底部按钮栏：真实贴底 */
-    .footer {
-      width: 96%;
-      display: -webkit-box;
-      display: -webkit-flex;
+    /* 1. Futura 极细 */
+    .f1 {
+      font-family: "Futura Light", "Futura", sans-serif;
+      font-weight: 100;
+    }
+
+    /* 2. Helvetica Neue 极细 */
+    .f2 {
+      font-family: "Helvetica Neue Light", "Helvetica Neue", "HelveticaNeue-UltraLight", sans-serif;
+      font-weight: 100;
+    }
+
+    /* 3. Bookerly (Kindle 独占衬线) 细体 */
+    .f3 {
+      font-family: "Bookerly", "Bookerly Light", serif;
+      font-weight: 200;
+    }
+
+    /* 4. Baskerville 经典衬线细体 */
+    .f4 {
+      font-family: "Baskerville", serif;
+      font-weight: 200;
+    }
+
+    /* 5. Caecilia (Kindle 预装厚衬线) 细体 */
+    .f5 {
+      font-family: "Caecilia", "PMN Caecilia", serif;
+      font-weight: 200;
+    }
+
+    /* 6. Century Gothic 几何细体 */
+    .f6 {
+      font-family: "Century Gothic", "Apple Gothic", sans-serif;
+      font-weight: 200;
+    }
+
+    /* 7. Gill Sans 优雅人文细体 */
+    .f7 {
+      font-family: "Gill Sans Light", "Gill Sans", sans-serif;
+      font-weight: 200;
+    }
+
+    /* 8. Courier / 等宽细体 */
+    .f8 {
+      font-family: "Courier New", "Courier", monospace;
+      font-weight: 200;
+    }
+
+    /* 9. 无衬线通用 -apple-system 细体 */
+    .f9 {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-weight: 100;
+    }
+
+    /* 10. SVG 矢量极细镂空空心体 (必定生效，不受字体库限制) */
+    .svg-thin-sample {
+      height: 90px;
+      width: 100%;
       display: flex;
-      -webkit-box-pack: justify;
-      -webkit-justify-content: space-between;
-      justify-content: space-between;
-      -webkit-box-align: center;
-      -webkit-align-items: center;
+      justify-content: center;
       align-items: center;
-      -webkit-flex-shrink: 0;
-      flex-shrink: 0;
-    }
-    .btn-adjust-group {
-      display: -webkit-box;
-      display: -webkit-flex;
-      display: flex;
-      gap: 12px;
-    }
-    button {
-      background: #ffffff;
-      color: #000000;
-      border: 3px solid #000000;
-      font-weight: bold;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    button:active {
-      background: #000000;
-      color: #ffffff;
-    }
-    .btn-adjust {
-      font-size: 20px;
-      padding: 6px 18px;
-    }
-    .btn-start {
-      font-size: 26px;
-      padding: 6px 44px;
+      margin: 6px 0;
     }
   </style>
 </head>
 <body>
 
-  <div class="container" id="main-container">
-    
-    <!-- 顶部天象图标（点击切换横/竖屏并自动刷新） -->
-    <div class="sky-badge" onclick="toggleScreenOrientation()" title="点击切换横/竖屏">
-      <div class="sun-box" id="sun-box">
-        <div class="sun-rays" id="sun-rays">
-          <svg viewBox="0 0 100 100" stroke="#000" stroke-linecap="round">
-            <path d="M50 4 L50 16" stroke-width="4.5"/>
-            <path d="M50 84 L50 96" stroke-width="4.5"/>
-            <path d="M4 50 L16 50" stroke-width="4.5"/>
-            <path d="M84 50 L96 50" stroke-width="4.5"/>
-            <path d="M17 17 L26 26" stroke-width="4"/>
-            <path d="M74 74 L83 83" stroke-width="4"/>
-            <path d="M17 83 L26 74" stroke-width="4"/>
-            <path d="M74 26 L83 17" stroke-width="4"/>
-          </svg>
-        </div>
-        <div class="sun-face">
-          <svg viewBox="0 0 34 34">
-            <circle cx="12" cy="14" r="1.8" fill="#000"/>
-            <circle cx="22" cy="14" r="1.8" fill="#000"/>
-            <path d="M12 19 Q 17 24 22 19" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round"/>
-          </svg>
-        </div>
-      </div>
+  <h1>Kindle 实机字体与粗细测试表</h1>
+  <p class="intro">请在 Kindle 上查看以下各行哪一种字形生效且线条最纤细清晰：</p>
 
-      <div class="moon-box" id="moon-box">
-        <svg viewBox="0 0 68 68" style="width:100%;height:100%;">
-          <path d="M38 12 C24 12 12 24 12 38 C12 48 18 56 26 59 C23 54 22 48 22 42 C22 28 32 17 46 16 C43 13 40 12 38 12 Z" fill="#000"/>
-        </svg>
-        <div class="moon-star" id="moon-star">
-          <svg viewBox="0 0 24 24">
-            <path d="M12 2 Q 12 12 2 12 Q 12 12 12 22 Q 12 12 22 12 Q 12 12 12 2 Z" fill="#000"/>
-          </svg>
-        </div>
-      </div>
-    </div>
+  <!-- 1 -->
+  <div class="test-item">
+    <span class="label">【编号 1】Futura Light (100)</span>
+    <div class="desc">font-family: "Futura Light", "Futura"; weight: 100</div>
+    <span class="sample f1">00:25</span>
+  </div>
 
-    <!-- 中间主体区 -->
-    <div class="main-section">
-      <!-- 倒计时数字（点击在 3 种细体间循环切换） -->
-      <div class="timer-container" onclick="switchFont()">
-        <div class="timer-text font-style-0" id="timer-text">00:25</div>
-      </div>
-      
-      <!-- 脚印进度滑槽（16 档宽轨，未开始前保持隐藏） -->
-      <div class="tracks-container" id="tracks-bottom">
-        <div class="track-slot"></div>
-        <div class="track-slot"></div>
-        <div class="track-slot"></div>
-        <div class="track-slot"></div>
-        <div class="track-slot"></div>
-        <div class="track-slot"></div>
-        <div class="track-slot"></div>
-        <div class="track-slot"></div>
-        <div class="track-slot"></div>
-        <div class="track-slot"></div>
-        <div class="track-slot"></div>
-        <div class="track-slot"></div>
-        <div class="track-slot"></div>
-        <div class="track-slot"></div>
-        <div class="track-slot"></div>
-        <div class="track-slot"></div>
-      </div>
-    </div>
+  <!-- 2 -->
+  <div class="test-item">
+    <span class="label">【编号 2】Helvetica Neue UltraLight (100)</span>
+    <div class="desc">font-family: "Helvetica Neue Light", "Helvetica Neue"; weight: 100</div>
+    <span class="sample f2">00:25</span>
+  </div>
 
-    <!-- 底部按钮栏 -->
-    <div class="footer">
-      <div class="btn-adjust-group">
-        <button class="btn-adjust" onclick="addMinutes(5)">+5m</button>
-        <button class="btn-adjust" onclick="addMinutes(10)">+10m</button>
-      </div>
-      <div>
-        <button id="btn-toggle" class="btn-start" onclick="toggleTimer()">开始</button>
-      </div>
+  <!-- 3 -->
+  <div class="test-item">
+    <span class="label">【编号 3】Bookerly Light (200)</span>
+    <div class="desc">Kindle 独家正文字体 | font-family: "Bookerly"; weight: 200</div>
+    <span class="sample f3">00:25</span>
+  </div>
+
+  <!-- 4 -->
+  <div class="test-item">
+    <span class="label">【编号 4】Baskerville Light (200)</span>
+    <div class="desc">Kindle 预装衬线体 | font-family: "Baskerville"; weight: 200</div>
+    <span class="sample f4">00:25</span>
+  </div>
+
+  <!-- 5 -->
+  <div class="test-item">
+    <span class="label">【编号 5】Caecilia (200)</span>
+    <div class="desc">Kindle 原装经典平板衬线 | font-family: "Caecilia"; weight: 200</div>
+    <span class="sample f5">00:25</span>
+  </div>
+
+  <!-- 6 -->
+  <div class="test-item">
+    <span class="label">【编号 6】Century Gothic (200)</span>
+    <div class="desc">正圆几何线条 | font-family: "Century Gothic"; weight: 200</div>
+    <span class="sample f6">00:25</span>
+  </div>
+
+  <!-- 7 -->
+  <div class="test-item">
+    <span class="label">【编号 7】Gill Sans Light (200)</span>
+    <div class="desc">font-family: "Gill Sans Light", "Gill Sans"; weight: 200</div>
+    <span class="sample f7">00:25</span>
+  </div>
+
+  <!-- 8 -->
+  <div class="test-item">
+    <span class="label">【编号 8】Courier New (200)</span>
+    <div class="desc">等宽机械体 | font-family: "Courier New", "Courier"; weight: 200</div>
+    <span class="sample f8">00:25</span>
+  </div>
+
+  <!-- 9 -->
+  <div class="test-item">
+    <span class="label">【编号 9】System-UI Light (100)</span>
+    <div class="desc">系统默认轻量栈 | font-family: -apple-system, sans-serif; weight: 100</div>
+    <span class="sample f9">00:25</span>
+  </div>
+
+  <!-- 10 -->
+  <div class="test-item">
+    <span class="label">【编号 10】SVG 极细物理描边字（1.5px 描边）</span>
+    <div class="desc">不受系统字库限制，通过矢量描边强制呈现极细骨架</div>
+    <div class="svg-thin-sample">
+      <svg viewBox="0 0 320 85" style="height: 100%; width: 300px;">
+        <text x="160" y="70" font-size="80" text-anchor="middle" font-family="sans-serif" fill="none" stroke="#000" stroke-width="2" letter-spacing="2">00:25</text>
+      </svg>
     </div>
   </div>
 
-  <script>
-    var ANIMALS = [
-      {
-        name: 'cat',
-        feetCount: 4,
-        svg: '<svg viewBox="0 0 24 24"><ellipse cx="9" cy="12" rx="4.5" ry="5.5"/><circle cx="16" cy="7" r="2"/><circle cx="19" cy="12" r="2.2"/><circle cx="16" cy="17" r="2"/></svg>'
-      },
-      {
-        name: 'pig_hoof',
-        feetCount: 4,
-        svg: '<svg viewBox="0 0 24 24"><ellipse cx="12" cy="7.5" rx="6" ry="3.2" transform="rotate(10 12 7.5)" fill="#000"/><ellipse cx="12" cy="16.5" rx="6" ry="3.2" transform="rotate(-10 12 16.5)" fill="#000"/></svg>'
-      },
-      {
-        name: 'horse_hoof',
-        feetCount: 4,
-        svg: '<svg viewBox="0 0 24 24"><path d="M5 6 C15 5 19 9 19 12 C19 15 15 19 5 18 L5 14.5 C12 15 14 13.5 14 12 C14 10.5 12 9 5 9.5 Z" fill="#000"/></svg>'
-      },
-      {
-        name: 'bird',
-        feetCount: 2,
-        svg: '<svg viewBox="0 0 24 24"><path d="M5 12 L19 12 M13 12 L19 6 M13 12 L19 18" stroke="#000" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>'
-      },
-      {
-        name: 'duck',
-        feetCount: 2,
-        svg: '<svg viewBox="0 0 24 24"><path d="M4 12 L9 12 M9 12 L17 4 C14 8 13 10 9 12 C13 14 14 16 17 20 Z" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="#000"/></svg>'
-      }
-    ];
-
-    var totalTime = 25 * 60;
-    var timeLeft = totalTime;
-    var timerId = null;
-    var hasStarted = false;
-
-    var isDayTime = true;
-    var sunAngle = 0;
-    var starToggled = false;
-
-    var currentAnimal = null;
-    var TOTAL_SLOTS = 16;
-    var SKY_INTERVAL = 2;
-
-    var currentFontIndex = 0;
-    var TOTAL_FONTS = 3;
-
-    var containerEl = document.getElementById('main-container');
-    var timerTextEl = document.getElementById('timer-text');
-    var toggleBtn = document.getElementById('btn-toggle');
-    var sunBoxEl = document.getElementById('sun-box');
-    var moonBoxEl = document.getElementById('moon-box');
-    var sunRaysEl = document.getElementById('sun-rays');
-    var moonStarEl = document.getElementById('moon-star');
-    var trackSlots = document.querySelectorAll('.track-slot');
-
-    // 动态校准横屏尺寸：彻底修复 Kindle 旋转后高度计算不准的问题
-    function updateLayoutDimensions() {
-      var isPortrait = document.body.classList.contains('portrait-mode');
-      if (isPortrait) {
-        containerEl.style.width = '100%';
-        containerEl.style.height = '100%';
-      } else {
-        var w = window.innerWidth || document.documentElement.clientWidth || 600;
-        var h = window.innerHeight || document.documentElement.clientHeight || 800;
-        var screenLong = Math.max(w, h);
-        var screenShort = Math.min(w, h);
-        containerEl.style.width = screenLong + 'px';
-        containerEl.style.height = screenShort + 'px';
-      }
-    }
-
-    function toggleScreenOrientation() {
-      var current = localStorage.getItem('kindle_pomodoro_orient');
-      var next = (current === 'portrait') ? 'landscape' : 'portrait';
-      try {
-        localStorage.setItem('kindle_pomodoro_orient', next);
-      } catch(e) {}
-      window.location.reload();
-    }
-
-    function initSavedOrientation() {
-      var saved = localStorage.getItem('kindle_pomodoro_orient');
-      if (saved === 'portrait') {
-        document.body.classList.add('portrait-mode');
-      }
-      updateLayoutDimensions();
-    }
-
-    function initSavedFont() {
-      var saved = localStorage.getItem('kindle_pomodoro_font');
-      if (saved !== null) {
-        currentFontIndex = parseInt(saved, 10) || 0;
-        if (currentFontIndex >= TOTAL_FONTS) {
-          currentFontIndex = 0;
-        }
-      }
-      applyFont();
-    }
-
-    function switchFont() {
-      currentFontIndex = (currentFontIndex + 1) % TOTAL_FONTS;
-      try {
-        localStorage.setItem('kindle_pomodoro_font', currentFontIndex);
-      } catch(e) {}
-      applyFont();
-    }
-
-    function applyFont() {
-      timerTextEl.className = 'timer-text font-style-' + currentFontIndex;
-    }
-
-    function getLocalHour() {
-      var d = new Date();
-      var tzOffset = d.getTimezoneOffset();
-      if (tzOffset === 0) {
-        return (d.getUTCHours() + 8) % 24;
-      }
-      return d.getHours();
-    }
-
-    function updateDayNightMode() {
-      var hour = getLocalHour();
-      isDayTime = (hour >= 6 && hour < 18);
-      renderSkyIcon();
-    }
-
-    function renderSkyIcon() {
-      if (isDayTime) {
-        sunBoxEl.style.display = 'block';
-        moonBoxEl.style.display = 'none';
-      } else {
-        sunBoxEl.style.display = 'none';
-        moonBoxEl.style.display = 'block';
-      }
-    }
-
-    function clearTracks() {
-      for (var i = 0; i < TOTAL_SLOTS; i++) {
-        trackSlots[i].innerHTML = '';
-        trackSlots[i].className = 'track-slot';
-      }
-      hasStarted = false;
-    }
-
-    function startAnimalTracks() {
-      var randIndex = Math.floor(Math.random() * ANIMALS.length);
-      currentAnimal = ANIMALS[randIndex];
-      for (var i = 0; i < TOTAL_SLOTS; i++) {
-        trackSlots[i].innerHTML = currentAnimal.svg;
-        trackSlots[i].className = 'track-slot';
-      }
-      hasStarted = true;
-      updateProgressTracks();
-    }
-
-    function updateProgressTracks() {
-      if (!hasStarted || !currentAnimal) {
-        return;
-      }
-
-      var progressRatio = (totalTime - timeLeft) / totalTime;
-      var leadIndex = Math.min(TOTAL_SLOTS - 1, Math.floor(progressRatio * TOTAL_SLOTS));
-      var count = currentAnimal.feetCount;
-
-      for (var i = 0; i < TOTAL_SLOTS; i++) {
-        trackSlots[i].className = 'track-slot';
-      }
-
-      for (var k = 0; k < count; k++) {
-        var pos = leadIndex - k;
-        if (pos >= 0 && pos < TOTAL_SLOTS) {
-          trackSlots[pos].className = 'track-slot active';
-        }
-      }
-    }
-
-    function tickSkyBadge() {
-      if (isDayTime) {
-        sunAngle = (sunAngle + 15) % 360;
-        sunRaysEl.style.webkitTransform = 'rotate(' + sunAngle + 'deg)';
-        sunRaysEl.style.transform = 'rotate(' + sunAngle + 'deg)';
-      } else {
-        starToggled = !starToggled;
-        var starAngle = starToggled ? 20 : 0;
-        moonStarEl.style.webkitTransform = 'rotate(' + starAngle + 'deg)';
-        moonStarEl.style.transform = 'rotate(' + starAngle + 'deg)';
-      }
-    }
-
-    function formatTime(seconds) {
-      var totalMinutes = Math.ceil(seconds / 60);
-      if (totalMinutes <= 0) return '00:00';
-
-      var hours = Math.floor(totalMinutes / 60);
-      var mins = totalMinutes % 60;
-
-      var strH = (hours < 10 ? '0' : '') + hours;
-      var strM = (mins < 10 ? '0' : '') + mins;
-      return strH + ':' + strM;
-    }
-
-    function updateDisplay() {
-      timerTextEl.innerText = formatTime(timeLeft);
-      updateProgressTracks();
-    }
-
-    function toggleTimer() {
-      if (timerId) {
-        clearInterval(timerId);
-        timerId = null;
-        toggleBtn.innerText = '开始';
-      } else {
-        if (timeLeft <= 0 || !hasStarted) {
-          timeLeft = totalTime;
-          startAnimalTracks();
-        }
-        updateDayNightMode();
-        timerId = setInterval(tick, 1000);
-        toggleBtn.innerText = '暂停';
-      }
-    }
-
-    function tick() {
-      if (timeLeft > 0) {
-        timeLeft--;
-
-        var elapsed = totalTime - timeLeft;
-
-        if (elapsed % SKY_INTERVAL === 0) {
-          tickSkyBadge();
-        }
-
-        updateProgressTracks();
-
-        if (timeLeft % 60 === 0 || timeLeft === 0) {
-          updateDisplay();
-        }
-      } else {
-        clearInterval(timerId);
-        timerId = null;
-        toggleBtn.innerText = '开始';
-        timeLeft = totalTime;
-        clearTracks();
-        updateDisplay();
-      }
-    }
-
-    function addMinutes(mins) {
-      if (timerId) {
-        clearInterval(timerId);
-        timerId = null;
-        toggleBtn.innerText = '开始';
-      }
-
-      var currentMins = Math.round(totalTime / 60);
-      currentMins += mins;
-
-      if (currentMins > 120) {
-        currentMins = 5;
-      }
-
-      totalTime = currentMins * 60;
-      timeLeft = totalTime;
-      clearTracks();
-      updateDayNightMode();
-      updateDisplay();
-    }
-
-    // 页面大小变动时同步校准
-    window.onresize = updateLayoutDimensions;
-
-    initSavedOrientation();
-    initSavedFont();
-    updateDayNightMode();
-    clearTracks();
-    updateDisplay();
-  </script>
 </body>
 </html>
