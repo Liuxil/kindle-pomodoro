@@ -21,7 +21,7 @@
       font-family: sans-serif;
     }
 
-    /* 默认横屏模式 (强制 90 度铺满) */
+    /* 默认横屏模式 (90度全屏铺满) */
     .container {
       position: absolute;
       top: 50%;
@@ -43,7 +43,7 @@
       -webkit-box-align: center;
       -webkit-align-items: center;
       align-items: center;
-      padding: 10px 28px 18px 28px;
+      padding: 6px 24px 14px 24px;
     }
 
     /* 竖屏模式 */
@@ -56,10 +56,10 @@
       padding: 10px 16px 36px 16px;
     }
 
-    /* 顶部昼夜天象部件（点击切换横竖屏并刷新） */
+    /* 顶部天象部件 */
     .sky-badge {
-      width: 48px;
-      height: 48px;
+      width: 44px;
+      height: 44px;
       position: relative;
       cursor: pointer;
     }
@@ -82,10 +82,10 @@
       position: absolute;
       top: 50%;
       left: 50%;
-      width: 24px;
-      height: 24px;
-      margin-top: -12px;
-      margin-left: -12px;
+      width: 22px;
+      height: 22px;
+      margin-top: -11px;
+      margin-left: -11px;
       background: #ffffff;
       border: 2px solid #000000;
       border-radius: 50%;
@@ -108,10 +108,10 @@
     }
     .moon-star {
       position: absolute;
-      top: 6px;
-      right: 5px;
-      width: 14px;
-      height: 14px;
+      top: 5px;
+      right: 4px;
+      width: 13px;
+      height: 13px;
       -webkit-transition: none;
       transition: none;
     }
@@ -136,10 +136,10 @@
       flex: 1;
     }
 
-    /* 倒计时主容器（等比超大放大） */
+    /* 倒计时主容器 */
     .timer-container {
       width: 100%;
-      height: 160px;
+      height: 190px;
       display: -webkit-box;
       display: -webkit-flex;
       display: flex;
@@ -149,47 +149,45 @@
       -webkit-box-align: center;
       -webkit-align-items: center;
       align-items: center;
-      margin-bottom: 8px;
+      margin-bottom: 2px;
       cursor: pointer;
     }
 
-    /* 横屏下时间拉大至 190px */
+    /* 进一步等比放大时间 */
     .timer-text {
-      font-size: 190px;
-      line-height: 1;
+      font-size: 235px;
+      line-height: 0.95;
       text-align: center;
       width: 100%;
     }
     body.portrait-mode .timer-text {
-      font-size: 145px;
+      font-size: 160px;
     }
 
-    /* 4 种精选字体样式 */
+    /* 仅保留 3 种精选字体 */
     .font-style-0 {
+      /* 柔和胶囊圆角体 */
       font-family: "Avenir Next Rounded Pro", "Varela Round", "Nunito", "Arial Rounded MT Bold", sans-serif;
       font-weight: 300;
-      letter-spacing: 2px;
-    }
-    .font-style-1 {
-      font-family: "Helvetica Neue Light", "Helvetica Neue", "Arial Narrow", sans-serif;
-      font-weight: 200;
       letter-spacing: -2px;
     }
+    .font-style-1 {
+      /* 极简超细极幼体 */
+      font-family: "Helvetica Neue Light", "Helvetica Neue", "Arial Narrow", sans-serif;
+      font-weight: 200;
+      letter-spacing: -4px;
+    }
     .font-style-2 {
+      /* 优雅古典细体 */
       font-family: "Baskerville", "Garamond", "Georgia", serif;
       font-weight: 300;
-      letter-spacing: 4px;
-    }
-    .font-style-3 {
-      font-family: "Courier New", "Menlo", "Lucida Console", monospace;
-      font-weight: 900;
-      letter-spacing: 6px;
+      letter-spacing: 0px;
     }
 
     /* 脚印宽幅长轨道 (16 档卡槽) */
     .tracks-container {
       width: 94%;
-      height: 32px;
+      height: 30px;
       display: -webkit-box;
       display: -webkit-flex;
       display: flex;
@@ -199,7 +197,7 @@
       -webkit-box-align: center;
       -webkit-align-items: center;
       align-items: center;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
     .track-slot {
       width: 22px;
@@ -234,7 +232,7 @@
       display: block;
     }
 
-    /* 底部按钮排版：左右分立式布局 */
+    /* 底部按钮排版：左右分立 */
     .footer {
       width: 96%;
       display: -webkit-box;
@@ -267,11 +265,11 @@
     }
     .btn-adjust {
       font-size: 22px;
-      padding: 8px 20px;
+      padding: 6px 20px;
     }
     .btn-start {
       font-size: 28px;
-      padding: 8px 48px;
+      padding: 6px 48px;
     }
   </style>
 </head>
@@ -279,7 +277,7 @@
 
   <div class="container">
     
-    <!-- 顶部天象图标（点击切换横/竖屏并自动强制刷新） -->
+    <!-- 顶部天象图标（点击切换横/竖屏并自动刷新） -->
     <div class="sky-badge" onclick="toggleScreenOrientation()" title="点击切换横/竖屏">
       <div class="sun-box" id="sun-box">
         <div class="sun-rays" id="sun-rays">
@@ -317,7 +315,7 @@
 
     <!-- 主体区域 -->
     <div class="main-section">
-      <!-- 倒计时数字（点击循环切换 4 套字体） -->
+      <!-- 倒计时数字（点击在 3 种字体间循环切换） -->
       <div class="timer-container" onclick="switchFont()">
         <div class="timer-text font-style-0" id="timer-text">00:25</div>
       </div>
@@ -343,7 +341,7 @@
       </div>
     </div>
 
-    <!-- 底部按键（左：+5m/+10m，右：开始/暂停） -->
+    <!-- 底部按键 -->
     <div class="footer">
       <div class="btn-adjust-group">
         <button class="btn-adjust" onclick="addMinutes(5)">+5m</button>
@@ -398,7 +396,7 @@
     var SKY_INTERVAL = 2;
 
     var currentFontIndex = 0;
-    var TOTAL_FONTS = 4; // 0:圆角, 1:极细, 2:古典, 3:复古等宽
+    var TOTAL_FONTS = 3; // 仅保留 3 种精选字体
 
     var timerTextEl = document.getElementById('timer-text');
     var toggleBtn = document.getElementById('btn-toggle');
@@ -408,14 +406,12 @@
     var moonStarEl = document.getElementById('moon-star');
     var trackSlots = document.querySelectorAll('.track-slot');
 
-    // 切换横/竖屏模式并立刻强制刷新页面
     function toggleScreenOrientation() {
       var current = localStorage.getItem('kindle_pomodoro_orient');
       var next = (current === 'portrait') ? 'landscape' : 'portrait';
       try {
         localStorage.setItem('kindle_pomodoro_orient', next);
       } catch(e) {}
-      // 强制整页重新载入，触发 WebKit 重新计算全屏真实视口
       window.location.reload();
     }
 
@@ -606,7 +602,6 @@
       updateDisplay();
     }
 
-    // 初始化运行
     initSavedOrientation();
     initSavedFont();
     updateDayNightMode();
