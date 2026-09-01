@@ -21,7 +21,7 @@
       font-family: sans-serif;
     }
 
-    /* 默认横屏模式 (90度旋转全屏流式排版) */
+    /* 默认横屏模式：90度旋转自适应流式排版 */
     .container {
       position: absolute;
       top: 50%;
@@ -43,7 +43,7 @@
       -webkit-box-align: center;
       -webkit-align-items: center;
       align-items: center;
-      padding: 6px 20px 10px 20px;
+      padding: 8px 24px 12px 24px;
     }
 
     /* 竖屏模式 */
@@ -53,13 +53,13 @@
       height: 100%;
       -webkit-transform: none !important;
       transform: none !important;
-      padding: 10px 16px 24px 16px;
+      padding: 12px 16px 28px 16px;
     }
 
-    /* 顶部天象部件 */
+    /* 顶部昼夜天象部件（兼横竖屏切换入口） */
     .sky-badge {
-      width: 40px;
-      height: 40px;
+      width: 42px;
+      height: 42px;
       position: relative;
       cursor: pointer;
       -webkit-flex-shrink: 0;
@@ -84,10 +84,10 @@
       position: absolute;
       top: 50%;
       left: 50%;
-      width: 20px;
-      height: 20px;
-      margin-top: -10px;
-      margin-left: -10px;
+      width: 22px;
+      height: 22px;
+      margin-top: -11px;
+      margin-left: -11px;
       background: #ffffff;
       border: 2px solid #000000;
       border-radius: 50%;
@@ -110,15 +110,15 @@
     }
     .moon-star {
       position: absolute;
-      top: 4px;
+      top: 5px;
       right: 4px;
-      width: 12px;
-      height: 12px;
+      width: 13px;
+      height: 13px;
       -webkit-transition: none;
       transition: none;
     }
 
-    /* 中间主体区：自动填满中间剩余空间 */
+    /* 中间主体区：吸收垂直剩余空间 */
     .main-section {
       width: 100%;
       -webkit-box-flex: 1;
@@ -139,7 +139,7 @@
       justify-content: center;
     }
 
-    /* 倒计时主容器 */
+    /* 倒计时数字容器（点击切换字体） */
     .timer-container {
       width: 100%;
       display: -webkit-box;
@@ -153,38 +153,40 @@
       align-items: center;
       cursor: pointer;
     }
-
     .timer-text {
-      font-size: 200px;
+      font-size: 205px;
       line-height: 0.88;
       text-align: center;
       width: 100%;
     }
     body.portrait-mode .timer-text {
-      font-size: 145px;
+      font-size: 150px;
     }
 
-    /* 3 种精选细体 */
+    /* 3 种精选细体栈 */
     .font-style-0 {
+      /* 方案 1: 超细极幼体 */
       font-family: "Futura Light", "Futura", "Helvetica Neue Light", "Helvetica Neue-UltraLight", sans-serif;
       font-weight: 100;
       letter-spacing: -4px;
     }
     .font-style-1 {
+      /* 方案 2: 几何圆角细体 */
       font-family: "Century Gothic", "Gill Sans Light", "Gill Sans", "Apple Gothic", sans-serif;
       font-weight: 200;
       letter-spacing: -2px;
     }
     .font-style-2 {
+      /* 方案 3: 古典书卷细体 */
       font-family: "Baskerville", "Bookerly Light", "Georgia", serif;
       font-weight: 200;
       letter-spacing: 0px;
     }
 
-    /* 脚印宽幅长轨道 (16 档卡槽) */
+    /* 脚印宽幅进度轨道 (16 档卡槽) */
     .tracks-container {
       width: 92%;
-      height: 26px;
+      height: 28px;
       display: -webkit-box;
       display: -webkit-flex;
       display: flex;
@@ -194,7 +196,7 @@
       -webkit-box-align: center;
       -webkit-align-items: center;
       align-items: center;
-      margin-top: 6px;
+      margin-top: 8px;
     }
     .track-slot {
       width: 20px;
@@ -229,7 +231,7 @@
       display: block;
     }
 
-    /* 底部按钮栏：流式置底 */
+    /* 底部按钮栏：流式分离置底 */
     .footer {
       width: 96%;
       display: -webkit-box;
@@ -264,11 +266,11 @@
     }
     .btn-adjust {
       font-size: 20px;
-      padding: 5px 18px;
+      padding: 6px 18px;
     }
     .btn-start {
       font-size: 26px;
-      padding: 5px 44px;
+      padding: 6px 44px;
     }
   </style>
 </head>
@@ -312,14 +314,14 @@
       </div>
     </div>
 
-    <!-- 主体区域 -->
+    <!-- 中间主体区 -->
     <div class="main-section">
-      <!-- 倒计时数字（点击在 3 种字体间循环切换） -->
+      <!-- 倒计时数字（点击在 3 种细体间循环切换） -->
       <div class="timer-container" onclick="switchFont()">
         <div class="timer-text font-style-0" id="timer-text">00:25</div>
       </div>
       
-      <!-- 脚印全幅进度滑槽（16 档宽屏点位，未开始前保持隐藏） -->
+      <!-- 脚印进度滑槽（16 档宽轨，未开始前保持隐藏） -->
       <div class="tracks-container" id="tracks-bottom">
         <div class="track-slot"></div>
         <div class="track-slot"></div>
@@ -354,26 +356,31 @@
 
   <script>
     var ANIMALS = [
+      // 1. 猫科 4 趾 (4 步)
       {
         name: 'cat',
         feetCount: 4,
         svg: '<svg viewBox="0 0 24 24"><ellipse cx="9" cy="12" rx="4.5" ry="5.5"/><circle cx="16" cy="7" r="2"/><circle cx="19" cy="12" r="2.2"/><circle cx="16" cy="17" r="2"/></svg>'
       },
+      // 2. 偶蹄 (4 步)
       {
         name: 'pig_hoof',
         feetCount: 4,
         svg: '<svg viewBox="0 0 24 24"><ellipse cx="12" cy="7.5" rx="6" ry="3.2" transform="rotate(10 12 7.5)" fill="#000"/><ellipse cx="12" cy="16.5" rx="6" ry="3.2" transform="rotate(-10 12 16.5)" fill="#000"/></svg>'
       },
+      // 3. 奇蹄 (4 步)
       {
         name: 'horse_hoof',
         feetCount: 4,
         svg: '<svg viewBox="0 0 24 24"><path d="M5 6 C15 5 19 9 19 12 C19 15 15 19 5 18 L5 14.5 C12 15 14 13.5 14 12 C14 10.5 12 9 5 9.5 Z" fill="#000"/></svg>'
       },
+      // 4. 鸟爪 (2 步)
       {
         name: 'bird',
         feetCount: 2,
         svg: '<svg viewBox="0 0 24 24"><path d="M5 12 L19 12 M13 12 L19 6 M13 12 L19 18" stroke="#000" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>'
       },
+      // 5. 鸭蹼 (2 步)
       {
         name: 'duck',
         feetCount: 2,
@@ -392,10 +399,10 @@
 
     var currentAnimal = null;
     var TOTAL_SLOTS = 16;
-    var SKY_INTERVAL = 2;
+    var SKY_INTERVAL = 2; // 2 秒跳动一次
 
     var currentFontIndex = 0;
-    var TOTAL_FONTS = 3;
+    var TOTAL_FONTS = 3; // 仅保留 3 种精选细体
 
     var timerTextEl = document.getElementById('timer-text');
     var toggleBtn = document.getElementById('btn-toggle');
@@ -405,6 +412,7 @@
     var moonStarEl = document.getElementById('moon-star');
     var trackSlots = document.querySelectorAll('.track-slot');
 
+    // 横竖屏切换控制（保存配置并强制重载页面以重新计算真实视口）
     function toggleScreenOrientation() {
       var current = localStorage.getItem('kindle_pomodoro_orient');
       var next = (current === 'portrait') ? 'landscape' : 'portrait';
@@ -421,6 +429,7 @@
       }
     }
 
+    // 字体切换控制与本地存储
     function initSavedFont() {
       var saved = localStorage.getItem('kindle_pomodoro_font');
       if (saved !== null) {
@@ -444,6 +453,7 @@
       timerTextEl.className = 'timer-text font-style-' + currentFontIndex;
     }
 
+    // 时区偏移纠正（解决 Kindle UTC 偏差）
     function getLocalHour() {
       var d = new Date();
       var tzOffset = d.getTimezoneOffset();
@@ -469,6 +479,7 @@
       }
     }
 
+    // 脚印滑块逻辑
     function clearTracks() {
       for (var i = 0; i < TOTAL_SLOTS; i++) {
         trackSlots[i].innerHTML = '';
@@ -509,6 +520,7 @@
       }
     }
 
+    // 天象节拍跳动
     function tickSkyBadge() {
       if (isDayTime) {
         sunAngle = (sunAngle + 15) % 360;
@@ -539,6 +551,7 @@
       updateProgressTracks();
     }
 
+    // 番茄钟核心状态控制
     function toggleTimer() {
       if (timerId) {
         clearInterval(timerId);
@@ -601,6 +614,7 @@
       updateDisplay();
     }
 
+    // 初始化运行入口
     initSavedOrientation();
     initSavedFont();
     updateDayNightMode();
