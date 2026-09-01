@@ -14,322 +14,118 @@
       touch-action: manipulation;
     }
     
-    /* 彻底杜绝滑动与滚动条出现 */
-    html {
-      height: 100%;
-      width: 100%;
-      overflow: hidden !important;
-    }
-    body {
+    /* 第一层：死锁视口，禁绝一切原生滚动 */
+    html, body {
       position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      height: 100%;
-      width: 100%;
+      top: 0; left: 0; right: 0; bottom: 0;
+      width: 100%; height: 100%;
       overflow: hidden !important;
       background-color: #ffffff;
       color: #000000;
       font-family: sans-serif;
-      margin: 0;
-      padding: 0;
     }
-    ::-webkit-scrollbar {
-      display: none !important;
-      width: 0 !important;
-      height: 0 !important;
-      background: transparent !important;
-    }
+    ::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
 
-    /* 物理隔离层：绝对锁死，杜绝任何内部元素撑出滚动条 */
-    #viewport-wrapper {
+    /* 第二层：物理屏幕隔离层 */
+    #screen-bounds {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 0; left: 0; width: 100%; height: 100%;
       overflow: hidden !important;
-      background-color: #ffffff;
     }
 
-    /* 容器统一使用绝对中心锚点，由 JS 注入精确像素宽高 */
-    .container {
+    /* 第三层：应用主容器（无论怎么转都在正中间） */
+    #app-container {
       position: absolute;
-      top: 50%;
-      left: 50%;
-      -webkit-transform: translate(-50%, -50%) rotate(90deg);
-      transform: translate(-50%, -50%) rotate(90deg);
-      
-      display: -webkit-box;
-      display: flex;
-      
-      -webkit-box-orient: vertical;
-      flex-direction: column;
-      
-      -webkit-box-pack: justify;
-      justify-content: space-between;
-      
-      -webkit-box-align: center;
-      align-items: center;
-      
-      padding: 6px 4px 10px 4px;
+      top: 50%; left: 50%;
+      /* 宽高和 Transform 完全由 JS 根据横竖屏状态实时注入 */
+      display: -webkit-box; display: flex;
+      -webkit-box-orient: vertical; flex-direction: column;
+      -webkit-box-pack: justify; justify-content: space-between;
+      -webkit-box-align: center; align-items: center;
+      padding: 12px 8px;
     }
 
-    /* 竖屏模式：仅取消旋转，保持绝对居中 */
-    body.portrait-mode .container {
-      -webkit-transform: translate(-50%, -50%) !important;
-      transform: translate(-50%, -50%) !important;
-      padding: 16px 4px 28px 4px !important;
-    }
-
-    .sky-badge {
-      width: 60px;
-      height: 60px;
-      position: relative;
-      cursor: pointer;
-      flex-shrink: 0;
-    }
-    .sun-box, .moon-box {
-      width: 100%;
-      height: 100%;
-      position: relative;
-      display: none;
-    }
-    .sun-rays {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      -webkit-transition: none;
-      transition: none;
-    }
+    /* 顶部区域 */
+    .sky-badge { width: 60px; height: 60px; position: relative; cursor: pointer; flex-shrink: 0; }
+    .sun-box, .moon-box { width: 100%; height: 100%; position: relative; display: none; }
+    .sun-rays { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
     .sun-face {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 30px;
-      height: 30px;
-      margin-top: -15px;
-      margin-left: -15px;
-      background: #ffffff;
-      border: 2.5px solid #000000;
-      border-radius: 50%;
-      
-      display: -webkit-box;
-      display: flex;
-      -webkit-box-align: center;
-      align-items: center;
-      -webkit-box-pack: center;
-      justify-content: center;
+      position: absolute; top: 50%; left: 50%; width: 30px; height: 30px; margin: -15px 0 0 -15px;
+      background: #ffffff; border: 2.5px solid #000000; border-radius: 50%;
+      display: -webkit-box; display: flex; -webkit-box-align: center; align-items: center; -webkit-box-pack: center; justify-content: center;
     }
-    .moon-star {
-      position: absolute;
-      top: 6px;
-      right: 6px;
-      width: 18px;
-      height: 18px;
-      -webkit-transition: none;
-      transition: none;
-    }
+    .moon-star { position: absolute; top: 6px; right: 6px; width: 18px; height: 18px; }
 
+    /* 中间大字区域 */
     .main-section {
-      width: 100%;
-      -webkit-box-flex: 1;
-      flex: 1;
-      display: -webkit-box;
-      display: flex;
-      -webkit-box-orient: vertical;
-      flex-direction: column;
-      -webkit-box-align: center;
-      align-items: center;
-      -webkit-box-pack: center;
-      justify-content: center;
-      /* 修复：移除 overflow: hidden 解决字体削顶问题 */
+      width: 100%; -webkit-box-flex: 1; flex: 1;
+      display: -webkit-box; display: flex;
+      -webkit-box-orient: vertical; flex-direction: column;
+      -webkit-box-align: center; align-items: center;
+      -webkit-box-pack: center; justify-content: center;
     }
-
     .timer-container {
-      width: 100%;
-      display: -webkit-box;
-      display: flex;
-      -webkit-box-pack: center;
-      justify-content: center;
-      -webkit-box-align: center;
-      align-items: center;
-      cursor: pointer;
-      /* 修复：移除 overflow: hidden 解决字体削顶问题 */
+      width: 100%; cursor: pointer;
+      display: -webkit-box; display: flex;
+      -webkit-box-pack: center; justify-content: center;
+      -webkit-box-align: center; align-items: center;
     }
-
-    /* 稍微放宽 line-height 防止极端字体渲染溢出 */
+    
+    /* 修复字体削顶：使用安全的 line-height: 1，用负 margin 缩减垂直空间 */
     .timer-text {
-      font-size: 240px;
-      line-height: 0.9;
+      font-size: 210px;
+      line-height: 1;
+      margin: -10px 0; 
       text-align: center;
       width: 100%;
       display: block;
       letter-spacing: -6px;
       white-space: nowrap;
     }
-    body.portrait-mode .timer-text {
-      font-size: 215px;
-      line-height: 0.88;
-    }
 
-    .font-style-0 {
-      font-family: "Helvetica Neue Light", "Helvetica Neue", "Arial Narrow", sans-serif;
-      font-weight: 200;
-      color: transparent !important;
-      -webkit-text-fill-color: transparent !important;
-      -webkit-text-stroke: 1.5px #000000;
-    }
-    .font-style-1 {
-      font-family: "Helvetica Neue Light", "Helvetica Neue", "Arial Narrow", sans-serif;
-      font-weight: 200;
-      color: #000000 !important;
-      -webkit-text-fill-color: #000000 !important;
-      -webkit-text-stroke: 0 !important;
-    }
-    .font-style-2 {
-      font-family: "Baskerville", "Bookerly Light", "Georgia", serif;
-      font-weight: 200;
-      letter-spacing: -1px;
-      color: #000000;
-      -webkit-text-fill-color: #000000;
-      -webkit-text-stroke: 0;
-    }
+    .font-style-0 { font-family: "Helvetica Neue Light", "Helvetica Neue", "Arial Narrow", sans-serif; font-weight: 200; color: transparent !important; -webkit-text-fill-color: transparent !important; -webkit-text-stroke: 1.5px #000000; }
+    .font-style-1 { font-family: "Helvetica Neue Light", "Helvetica Neue", "Arial Narrow", sans-serif; font-weight: 200; color: #000000 !important; -webkit-text-fill-color: #000000 !important; -webkit-text-stroke: 0 !important; }
+    .font-style-2 { font-family: "Baskerville", "Bookerly Light", "Georgia", serif; font-weight: 200; letter-spacing: -1px; color: #000000; -webkit-text-fill-color: #000000; -webkit-text-stroke: 0; }
 
+    /* 动物脚印槽 */
     .tracks-container {
-      width: 96%;
-      height: 26px;
-      display: -webkit-box;
-      display: flex;
-      -webkit-box-pack: justify;
-      justify-content: space-between;
-      -webkit-box-align: center;
-      align-items: center;
-      margin-top: 6px;
+      width: 96%; height: 26px; margin-top: 10px;
+      display: -webkit-box; display: flex;
+      -webkit-box-pack: justify; justify-content: space-between;
+      -webkit-box-align: center; align-items: center;
     }
-    body.portrait-mode .tracks-container {
-      margin-top: 14px;
-    }
-    .track-slot {
-      width: 20px;
-      height: 20px;
-      display: -webkit-box;
-      display: flex;
-      -webkit-box-pack: center;
-      justify-content: center;
-      -webkit-box-align: center;
-      align-items: center;
-    }
-    .track-slot svg {
-      width: 18px;
-      height: 18px;
-      fill: #000000;
-      display: none;
-    }
-    .track-slot:nth-child(even) svg {
-      margin-top: 4px;
-      -webkit-transform: rotate(6deg);
-      transform: rotate(6deg);
-    }
-    .track-slot:nth-child(odd) svg {
-      margin-top: -4px;
-      -webkit-transform: rotate(-6deg);
-      transform: rotate(-6deg);
-    }
-    .track-slot.active svg {
-      display: block;
-    }
+    .track-slot { width: 20px; height: 20px; display: -webkit-box; display: flex; -webkit-box-pack: center; justify-content: center; -webkit-box-align: center; align-items: center; }
+    .track-slot svg { width: 18px; height: 18px; fill: #000000; display: none; }
+    .track-slot:nth-child(even) svg { margin-top: 4px; -webkit-transform: rotate(6deg); transform: rotate(6deg); }
+    .track-slot:nth-child(odd) svg { margin-top: -4px; -webkit-transform: rotate(-6deg); transform: rotate(-6deg); }
+    .track-slot.active svg { display: block; }
 
+    /* 底部按钮 */
     .footer {
-      width: 94%;
-      display: -webkit-box;
-      display: flex;
-      -webkit-box-pack: justify;
-      justify-content: space-between;
-      -webkit-box-align: center;
-      align-items: center;
-      flex-shrink: 0;
+      width: 94%; flex-shrink: 0;
+      display: -webkit-box; display: flex;
+      -webkit-box-pack: justify; justify-content: space-between;
+      -webkit-box-align: center; align-items: center;
     }
-    .btn-adjust-group {
-      display: -webkit-box;
-      display: flex;
-      gap: 10px;
-    }
-    button {
-      background: #ffffff;
-      color: #000000;
-      border: 3px solid #000000;
-      font-weight: bold;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    button:active {
-      background: #000000;
-      color: #ffffff;
-    }
-    .btn-adjust {
-      font-size: 18px;
-      padding: 5px 14px;
-    }
-
+    .btn-adjust-group { display: -webkit-box; display: flex; gap: 10px; }
+    button { background: #ffffff; color: #000000; border: 3px solid #000000; font-weight: bold; border-radius: 8px; cursor: pointer; }
+    button:active { background: #000000; color: #ffffff; }
+    .btn-adjust { font-size: 18px; padding: 5px 14px; }
     .btn-start {
-      background: transparent !important;
-      border: none !important;
-      padding: 5px;
-      width: 48px;
-      height: 48px;
-      display: -webkit-box;
-      display: flex;
-      -webkit-box-pack: center;
-      justify-content: center;
-      -webkit-box-align: center;
-      align-items: center;
+      background: transparent !important; border: none !important; padding: 5px; width: 48px; height: 48px;
+      display: -webkit-box; display: flex; -webkit-box-pack: center; justify-content: center; -webkit-box-align: center; align-items: center;
     }
-    .btn-start:active {
-      background: transparent !important;
-      color: #000000 !important;
-      opacity: 0.4;
-    }
-    .btn-start svg {
-      width: 28px;
-      height: 28px;
-    }
+    .btn-start:active { background: transparent !important; color: #000000 !important; opacity: 0.4; }
+    .btn-start svg { width: 28px; height: 28px; }
 
+    /* 休息层全屏覆盖 */
     .rest-screen {
-      display: none;
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: #ffffff;
-      -webkit-box-pack: center;
-      justify-content: center;
-      -webkit-box-align: center;
-      align-items: center;
-      cursor: pointer;
-      z-index: 100;
+      display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #ffffff; z-index: 100; cursor: pointer;
+      -webkit-box-pack: center; justify-content: center; -webkit-box-align: center; align-items: center;
     }
-    .rest-screen.active {
-      display: -webkit-box;
-      display: flex;
-    }
-    .rest-panel {
-      display: none;
-      width: 100%;
-      height: 100%;
-      -webkit-box-pack: center;
-      justify-content: center;
-      -webkit-box-align: center;
-      align-items: center;
-    }
-    .rest-panel.active {
-      display: -webkit-box;
-      display: flex;
-    }
+    .rest-screen.active { display: -webkit-box; display: flex; }
+    .rest-panel { display: none; width: 100%; height: 100%; -webkit-box-pack: center; justify-content: center; -webkit-box-align: center; align-items: center; }
+    .rest-panel.active { display: -webkit-box; display: flex; }
     .coffee-icon { width: 160px; height: 160px; }
     .firework-stage { width: 320px; height: 420px; position: relative; }
     .fw-frame { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; }
@@ -341,38 +137,24 @@
 </head>
 <body>
   
-  <div id="viewport-wrapper">
-    <div class="container" id="main-container">
+  <div id="screen-bounds">
+    <div id="app-container">
       <div class="sky-badge" id="btn-orientation" title="点击切换横/竖屏">
         <div class="sun-box" id="sun-box">
           <div class="sun-rays" id="sun-rays">
             <svg viewBox="0 0 100 100" stroke="#000" stroke-linecap="round">
-              <path d="M50 4 L50 16" stroke-width="4.5"/>
-              <path d="M50 84 L50 96" stroke-width="4.5"/>
-              <path d="M4 50 L16 50" stroke-width="4.5"/>
-              <path d="M84 50 L96 50" stroke-width="4.5"/>
-              <path d="M17 17 L26 26" stroke-width="4"/>
-              <path d="M74 74 L83 83" stroke-width="4"/>
-              <path d="M17 83 L26 74" stroke-width="4"/>
-              <path d="M74 26 L83 17" stroke-width="4"/>
+              <path d="M50 4 L50 16" stroke-width="4.5"/><path d="M50 84 L50 96" stroke-width="4.5"/><path d="M4 50 L16 50" stroke-width="4.5"/><path d="M84 50 L96 50" stroke-width="4.5"/>
+              <path d="M17 17 L26 26" stroke-width="4"/><path d="M74 74 L83 83" stroke-width="4"/><path d="M17 83 L26 74" stroke-width="4"/><path d="M74 26 L83 17" stroke-width="4"/>
             </svg>
           </div>
           <div class="sun-face">
-            <svg viewBox="0 0 34 34">
-              <circle cx="12" cy="14" r="1.8" fill="#000"/>
-              <circle cx="22" cy="14" r="1.8" fill="#000"/>
-              <path d="M12 19 Q 17 24 22 19" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round"/>
-            </svg>
+            <svg viewBox="0 0 34 34"><circle cx="12" cy="14" r="1.8" fill="#000"/><circle cx="22" cy="14" r="1.8" fill="#000"/><path d="M12 19 Q 17 24 22 19" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round"/></svg>
           </div>
         </div>
         <div class="moon-box" id="moon-box">
-          <svg viewBox="0 0 68 68" style="width:100%;height:100%;">
-            <path d="M38 12 C24 12 12 24 12 38 C12 48 18 56 26 59 C23 54 22 48 22 42 C22 28 32 17 46 16 C43 13 40 12 38 12 Z" fill="#000"/>
-          </svg>
+          <svg viewBox="0 0 68 68" style="width:100%;height:100%;"><path d="M38 12 C24 12 12 24 12 38 C12 48 18 56 26 59 C23 54 22 48 22 42 C22 28 32 17 46 16 C43 13 40 12 38 12 Z" fill="#000"/></svg>
           <div class="moon-star" id="moon-star">
-            <svg viewBox="0 0 24 24">
-              <path d="M12 2 Q 12 12 2 12 Q 12 12 12 22 Q 12 12 22 12 Q 12 12 12 2 Z" fill="#000"/>
-            </svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2 Q 12 12 2 12 Q 12 12 12 22 Q 12 12 22 12 Q 12 12 12 2 Z" fill="#000"/></svg>
           </div>
         </div>
       </div>
@@ -396,46 +178,21 @@
       </div>
     </div>
 
+    <!-- 休息面板层 -->
     <div class="rest-screen" id="rest-screen">
       <div class="rest-panel" id="rest-panel-0">
         <div class="coffee-icon">
           <svg viewBox="0 0 100 100" style="width:100%;height:100%;">
-            <path id="steam-1" d="M36 22 Q 32 14 36 6" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round"/>
-            <path id="steam-2" d="M48 22 Q 44 14 48 6" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round"/>
-            <path id="steam-3" d="M60 22 Q 56 14 60 6" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round"/>
-            <path d="M22 30 L74 30 L68 76 C68 82 62 86 54 86 L42 86 C34 86 28 82 28 76 Z" fill="none" stroke="#000" stroke-width="3.5" stroke-linejoin="round"/>
-            <path d="M72 38 C84 38 88 46 88 56 C88 66 82 70 70 70" fill="none" stroke="#000" stroke-width="3.5" stroke-linecap="round"/>
-            <path d="M16 92 L80 92" stroke="#000" stroke-width="3.5" stroke-linecap="round"/>
+            <path id="steam-1" d="M36 22 Q 32 14 36 6" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round"/><path id="steam-2" d="M48 22 Q 44 14 48 6" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round"/><path id="steam-3" d="M60 22 Q 56 14 60 6" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round"/>
+            <path d="M22 30 L74 30 L68 76 C68 82 62 86 54 86 L42 86 C34 86 28 82 28 76 Z" fill="none" stroke="#000" stroke-width="3.5" stroke-linejoin="round"/><path d="M72 38 C84 38 88 46 88 56 C88 66 82 70 70 70" fill="none" stroke="#000" stroke-width="3.5" stroke-linecap="round"/><path d="M16 92 L80 92" stroke="#000" stroke-width="3.5" stroke-linecap="round"/>
           </svg>
         </div>
       </div>
-
-      <div class="rest-panel" id="rest-panel-1">
-        <div class="firework-stage" id="fw-stage"></div>
-      </div>
-
+      <div class="rest-panel" id="rest-panel-1"><div class="firework-stage" id="fw-stage"></div></div>
       <div class="rest-panel" id="rest-panel-2">
         <div class="pixel-cat-stage">
-          <div class="cat-frame active" id="cat-p0">
-            <svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000">
-              <rect x="145" y="65" width="6" height="2"/><rect x="149" y="67" width="2" height="2"/><rect x="147" y="69" width="2" height="2"/><rect x="143" y="71" width="6" height="2"/>
-              <rect x="160" y="48" width="8" height="2"/><rect x="164" y="50" width="2" height="2"/><rect x="162" y="52" width="2" height="2"/><rect x="158" y="54" width="8" height="2"/>
-              <rect x="70" y="100" width="70" height="30"/><rect x="60" y="110" width="80" height="20"/><rect x="80" y="90" width="50" height="10"/>
-              <rect x="80" y="80" width="10" height="10"/><rect x="110" y="80" width="10" height="10"/>
-              <rect x="92" y="108" width="8" height="3" fill="#fff"/><rect x="116" y="108" width="8" height="3" fill="#fff"/>
-              <rect x="50" y="120" width="10" height="10"/><rect x="40" y="125" width="10" height="10"/><rect x="35" y="135" width="10" height="10"/><rect x="35" y="145" width="10" height="10"/>
-            </svg>
-          </div>
-          <div class="cat-frame" id="cat-p1">
-            <svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000">
-              <rect x="152" y="52" width="8" height="2"/><rect x="156" y="54" width="2" height="2"/><rect x="154" y="56" width="2" height="2"/><rect x="150" y="58" width="8" height="2"/>
-              <rect x="170" y="32" width="10" height="2"/><rect x="176" y="34" width="2" height="2"/><rect x="173" y="36" width="2" height="2"/><rect x="168" y="38" width="10" height="2"/>
-              <rect x="70" y="100" width="70" height="30"/><rect x="60" y="110" width="80" height="20"/><rect x="80" y="90" width="50" height="10"/>
-              <rect x="80" y="80" width="10" height="10"/><rect x="110" y="80" width="10" height="10"/>
-              <rect x="92" y="108" width="8" height="3" fill="#fff"/><rect x="116" y="108" width="8" height="3" fill="#fff"/>
-              <rect x="50" y="120" width="10" height="10"/><rect x="42" y="130" width="10" height="10"/><rect x="42" y="140" width="10" height="10"/><rect x="45" y="150" width="10" height="10"/>
-            </svg>
-          </div>
+          <div class="cat-frame active" id="cat-p0"><svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="145" y="65" width="6" height="2"/><rect x="149" y="67" width="2" height="2"/><rect x="147" y="69" width="2" height="2"/><rect x="143" y="71" width="6" height="2"/><rect x="160" y="48" width="8" height="2"/><rect x="164" y="50" width="2" height="2"/><rect x="162" y="52" width="2" height="2"/><rect x="158" y="54" width="8" height="2"/><rect x="70" y="100" width="70" height="30"/><rect x="60" y="110" width="80" height="20"/><rect x="80" y="90" width="50" height="10"/><rect x="80" y="80" width="10" height="10"/><rect x="110" y="80" width="10" height="10"/><rect x="92" y="108" width="8" height="3" fill="#fff"/><rect x="116" y="108" width="8" height="3" fill="#fff"/><rect x="50" y="120" width="10" height="10"/><rect x="40" y="125" width="10" height="10"/><rect x="35" y="135" width="10" height="10"/><rect x="35" y="145" width="10" height="10"/></svg></div>
+          <div class="cat-frame" id="cat-p1"><svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="152" y="52" width="8" height="2"/><rect x="156" y="54" width="2" height="2"/><rect x="154" y="56" width="2" height="2"/><rect x="150" y="58" width="8" height="2"/><rect x="170" y="32" width="10" height="2"/><rect x="176" y="34" width="2" height="2"/><rect x="173" y="36" width="2" height="2"/><rect x="168" y="38" width="10" height="2"/><rect x="70" y="100" width="70" height="30"/><rect x="60" y="110" width="80" height="20"/><rect x="80" y="90" width="50" height="10"/><rect x="80" y="80" width="10" height="10"/><rect x="110" y="80" width="10" height="10"/><rect x="92" y="108" width="8" height="3" fill="#fff"/><rect x="116" y="108" width="8" height="3" fill="#fff"/><rect x="50" y="120" width="10" height="10"/><rect x="42" y="130" width="10" height="10"/><rect x="42" y="140" width="10" height="10"/><rect x="45" y="150" width="10" height="10"/></svg></div>
         </div>
       </div>
     </div>
@@ -446,11 +203,11 @@
     var ICON_PAUSE = '<svg viewBox="0 0 16 16" style="shape-rendering: crispEdges;"><rect x="3" y="2" width="4" height="12" fill="#000"/><rect x="9" y="2" width="4" height="12" fill="#000"/></svg>';
 
     var ANIMALS = [
-      { name: 'cat', feetCount: 4, svg: '<svg viewBox="0 0 24 24"><ellipse cx="9" cy="12" rx="4.5" ry="5.5"/><circle cx="16" cy="7" r="2"/><circle cx="19" cy="12" r="2.2"/><circle cx="16" cy="17" r="2"/></svg>' },
-      { name: 'pig_hoof', feetCount: 4, svg: '<svg viewBox="0 0 24 24"><ellipse cx="12" cy="7.5" rx="6" ry="3.2" transform="rotate(10 12 7.5)" fill="#000"/><ellipse cx="12" cy="16.5" rx="6" ry="3.2" transform="rotate(-10 12 16.5)" fill="#000"/></svg>' },
-      { name: 'horse_hoof', feetCount: 4, svg: '<svg viewBox="0 0 24 24"><path d="M5 6 C15 5 19 9 19 12 C19 15 15 19 5 18 L5 14.5 C12 15 14 13.5 14 12 C14 10.5 12 9 5 9.5 Z" fill="#000"/></svg>' },
-      { name: 'bird', feetCount: 2, svg: '<svg viewBox="0 0 24 24"><path d="M5 12 L19 12 M13 12 L19 6 M13 12 L19 18" stroke="#000" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>' },
-      { name: 'duck', feetCount: 2, svg: '<svg viewBox="0 0 24 24"><path d="M4 12 L9 12 M9 12 L17 4 C14 8 13 10 9 12 C13 14 14 16 17 20 Z" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="#000"/></svg>' }
+      { feetCount: 4, svg: '<svg viewBox="0 0 24 24"><ellipse cx="9" cy="12" rx="4.5" ry="5.5"/><circle cx="16" cy="7" r="2"/><circle cx="19" cy="12" r="2.2"/><circle cx="16" cy="17" r="2"/></svg>' },
+      { feetCount: 4, svg: '<svg viewBox="0 0 24 24"><ellipse cx="12" cy="7.5" rx="6" ry="3.2" transform="rotate(10 12 7.5)" fill="#000"/><ellipse cx="12" cy="16.5" rx="6" ry="3.2" transform="rotate(-10 12 16.5)" fill="#000"/></svg>' },
+      { feetCount: 4, svg: '<svg viewBox="0 0 24 24"><path d="M5 6 C15 5 19 9 19 12 C19 15 15 19 5 18 L5 14.5 C12 15 14 13.5 14 12 C14 10.5 12 9 5 9.5 Z" fill="#000"/></svg>' },
+      { feetCount: 2, svg: '<svg viewBox="0 0 24 24"><path d="M5 12 L19 12 M13 12 L19 6 M13 12 L19 18" stroke="#000" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>' },
+      { feetCount: 2, svg: '<svg viewBox="0 0 24 24"><path d="M4 12 L9 12 M9 12 L17 4 C14 8 13 10 9 12 C13 14 14 16 17 20 Z" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="#000"/></svg>' }
     ];
     
     var TOTAL_SLOTS = 16;
@@ -461,7 +218,6 @@
       { s1: 'M36 22 Q 40 14 36 6', s2: 'M48 22 Q 52 14 48 6', s3: 'M60 22 Q 64 14 60 6' },
       { s1: 'M36 22 Q 34 14 38 5', s2: 'M48 22 Q 46 14 50 5', s3: 'M60 22 Q 58 14 62 5' }
     ];
-    
     var FW_SVGS = [
       '<circle cx="90" cy="200" r="3" fill="#000"/><line x1="90" y1="205" x2="90" y2="235" stroke="#000" stroke-width="2" stroke-dasharray="3 4" stroke-linecap="round"/><rect x="60" y="60" width="8" height="3.5" rx="1" fill="#000" transform="rotate(25 60 60)"/><rect x="180" y="45" width="7" height="3.5" rx="1" fill="none" stroke="#000" stroke-width="1.2" transform="rotate(-30 180 45)"/><circle cx="270" cy="80" r="1.8" fill="#000"/>',
       '<g fill="none" stroke="#000" stroke-linecap="round"><line x1="90" y1="115" x2="90" y2="100" stroke-width="2.4"/><line x1="90" y1="145" x2="90" y2="160" stroke-width="2.4"/><line x1="75" y1="130" x2="60" y2="130" stroke-width="2.4"/><line x1="105" y1="130" x2="120" y2="130" stroke-width="2.4"/><circle cx="90" cy="130" r="2.5" fill="#000" stroke="none"/><rect x="62" y="140" width="8" height="3.5" rx="1" fill="#000" transform="rotate(15 62 140)" stroke="none"/><rect x="178" y="125" width="7" height="3.5" rx="1" fill="none" stroke="#000" stroke-width="1.2" transform="rotate(-15 178 125)"/><circle cx="268" cy="160" r="1.8" fill="#000" stroke="none"/></g>',
@@ -482,16 +238,17 @@
     var starToggled = false;
     var currentAnimal = null;
     var currentFontIndex = 0;
+    var isPortraitMode = false;
 
     var toggleClickCount = 0;
     var lastToggleClickTime = 0;
 
-    // 核心缓存：用来记录设备的物理分辨率，坚决不用实时获取的、波动的 innerWidth
-    var screenMax = 0;
-    var screenMin = 0;
+    // 核心重构：彻底抛弃 resize 事件中的动态长宽计算，只在网页加载时记录一次最大/小值
+    var SCREEN_LONG = 0;
+    var SCREEN_SHORT = 0;
 
     var els = {
-      container: document.getElementById('main-container'),
+      appContainer: document.getElementById('app-container'),
       timerText: document.getElementById('timer-text'),
       btnToggle: document.getElementById('btn-toggle'),
       restScreen: document.getElementById('rest-screen'),
@@ -511,8 +268,13 @@
     var restAnimState = { timer: null, index: 0, steamStep: 0, fwStep: 0, catStep: 0 };
 
     function init() {
+      // 在应用启动第一秒，死锁设备物理分辨率
+      var w = document.documentElement.clientWidth || window.innerWidth;
+      var h = document.documentElement.clientHeight || window.innerHeight;
+      SCREEN_LONG = Math.max(w, h);
+      SCREEN_SHORT = Math.min(w, h);
+
       initDOM();
-      cacheDimensions();
       initSavedSettings();
       updateDayNightMode();
       clearTracks();
@@ -520,34 +282,18 @@
       bindEvents();
     }
 
-    // 只读取屏幕的最大值和最小值缓存起来，规避旧版引擎连续测量的错乱 Bug
-    function cacheDimensions() {
-      var w = document.documentElement.clientWidth || window.innerWidth;
-      var h = document.documentElement.clientHeight || window.innerHeight;
-      if (w > 0 && h > 0) {
-        screenMax = Math.max(screenMax, Math.max(w, h));
-        screenMin = Math.max(screenMin, Math.min(w, h));
-      }
-    }
-
     function initDOM() {
       var slotsHtml = '';
-      for (var i = 0; i < TOTAL_SLOTS; i++) {
-        slotsHtml += '<div class="track-slot"></div>';
-      }
+      for (var i = 0; i < TOTAL_SLOTS; i++) { slotsHtml += '<div class="track-slot"></div>'; }
       els.tracksBottom.innerHTML = slotsHtml;
       trackSlots = els.tracksBottom.querySelectorAll('.track-slot');
 
       var fwHtml = '';
-      for (var j = 0; j < FW_SVGS.length; j++) {
-        fwHtml += '<div class="fw-frame ' + (j === 0 ? 'active' : '') + '" id="fw-frame-' + j + '"><svg viewBox="0 0 320 420" style="width:100%;height:100%;">' + FW_SVGS[j] + '</svg></div>';
-      }
+      for (var j = 0; j < FW_SVGS.length; j++) { fwHtml += '<div class="fw-frame ' + (j === 0 ? 'active' : '') + '" id="fw-frame-' + j + '"><svg viewBox="0 0 320 420" style="width:100%;height:100%;">' + FW_SVGS[j] + '</svg></div>'; }
       els.fwStage.innerHTML = fwHtml;
       
       var fwNodes = els.fwStage.querySelectorAll('.fw-frame');
-      for (var k = 0; k < fwNodes.length; k++) {
-        fwFrames.push(fwNodes[k]);
-      }
+      for (var k = 0; k < fwNodes.length; k++) { fwFrames.push(fwNodes[k]); }
       
       els.btnToggle.innerHTML = ICON_PLAY;
     }
@@ -555,14 +301,8 @@
     function bindEvents() {
       document.getElementById('btn-orientation').addEventListener('click', toggleOrientation);
       document.getElementById('btn-font-switch').addEventListener('click', switchFont);
-      
       els.btnToggle.addEventListener('click', handleToggleClick);
       els.restScreen.addEventListener('click', hideRestScreen);
-      
-      window.addEventListener('resize', function() {
-        cacheDimensions();
-        updateLayoutDimensions();
-      });
       
       var adjustBtns = document.querySelectorAll('.btn-adjust');
       for (var m = 0; m < adjustBtns.length; m++) {
@@ -574,13 +314,8 @@
 
     function handleToggleClick(e) {
       if (e) e.preventDefault();
-      
       var now = new Date().getTime();
-      if (now - lastToggleClickTime <= 1000) {
-        toggleClickCount++;
-      } else {
-        toggleClickCount = 1;
-      }
+      if (now - lastToggleClickTime <= 1000) { toggleClickCount++; } else { toggleClickCount = 1; }
       lastToggleClickTime = now;
 
       if (toggleClickCount === 6) {
@@ -596,52 +331,46 @@
       }
     }
 
-    /* 物理计算安全区，直接使用缓存的屏幕物理尺寸 */
-    function updateLayoutDimensions() {
-      if (screenMax === 0) cacheDimensions();
+    /* 纯粹的 JS 原子级排版注入，与外部视口脱钩，绝不产生滑块 */
+    function applyOrientationLogic() {
+      // 预留 8px 安全冗余，保证不会碰到 100% 容器的物理边缘
+      var SAFE_LONG = SCREEN_LONG - 8;
+      var SAFE_SHORT = SCREEN_SHORT - 8;
 
-      var isPortrait = document.body.className.indexOf('portrait-mode') !== -1;
-      
-      // 设定 12px 的最高安全余量
-      var OFFSET = 12;
-
-      // 无论横竖，统一设置尺寸，配合 CSS 的 translate(-50%, -50%) 实现完美边界居中
-      if (isPortrait) {
-        els.container.style.width = (screenMin - OFFSET) + 'px';
-        els.container.style.height = (screenMax - OFFSET) + 'px';
+      if (isPortraitMode) {
+        // 竖屏：宽短高长，无旋转
+        els.appContainer.style.width = SAFE_SHORT + 'px';
+        els.appContainer.style.height = SAFE_LONG + 'px';
+        els.appContainer.style.webkitTransform = 'translate(-50%, -50%)';
+        els.appContainer.style.transform = 'translate(-50%, -50%)';
       } else {
-        els.container.style.width = (screenMax - OFFSET) + 'px';
-        els.container.style.height = (screenMin - OFFSET) + 'px';
+        // 横屏：宽长高短，旋转90度
+        els.appContainer.style.width = SAFE_LONG + 'px';
+        els.appContainer.style.height = SAFE_SHORT + 'px';
+        els.appContainer.style.webkitTransform = 'translate(-50%, -50%) rotate(90deg)';
+        els.appContainer.style.transform = 'translate(-50%, -50%) rotate(90deg)';
       }
-
-      // 强制 WebKit 回流，修复卡顿缩放的 Bug
-      if (els.timerText) {
-        els.timerText.style.paddingRight = '1px';
-        var _dummy = els.timerText.offsetWidth; 
-        els.timerText.style.paddingRight = '0px';
-      }
+      
+      // 更新字体大小以适配纵向
+      els.timerText.style.fontSize = isPortraitMode ? '215px' : '210px';
     }
 
     function toggleOrientation() {
-      var currentIsPortrait = document.body.className.indexOf('portrait-mode') !== -1;
-      var nextMode = currentIsPortrait ? 'landscape' : 'portrait';
-      try { localStorage.setItem('kindle_pomodoro_orient', nextMode); } catch(e) {}
-      
-      document.body.className = nextMode === 'portrait' ? 'portrait-mode' : '';
-      updateLayoutDimensions();
+      isPortraitMode = !isPortraitMode;
+      try { localStorage.setItem('kindle_pomodoro_orient', isPortraitMode ? 'portrait' : 'landscape'); } catch(e) {}
+      applyOrientationLogic();
     }
 
     function initSavedSettings() {
       var savedOrient = localStorage.getItem('kindle_pomodoro_orient');
-      if (savedOrient === 'portrait') {
-        document.body.className = 'portrait-mode';
-      }
+      isPortraitMode = (savedOrient === 'portrait');
+      applyOrientationLogic();
+
       var savedFont = localStorage.getItem('kindle_pomodoro_font');
       if (savedFont !== null) {
         currentFontIndex = parseInt(savedFont, 10) % TOTAL_FONTS || 0;
       }
       applyFont();
-      updateLayoutDimensions();
     }
 
     function switchFont() {
@@ -703,11 +432,7 @@
       
       var currentMins = Math.round(totalTime / 60) + mins;
       
-      if (currentMins > 120) {
-        currentMins = 5;
-      } else if (currentMins < 5) {
-        currentMins = 120;
-      }
+      if (currentMins > 120) { currentMins = 5; } else if (currentMins < 5) { currentMins = 120; }
       
       totalTime = currentMins * 60;
       timeLeft = totalTime;
@@ -730,14 +455,10 @@
       var leadIndex = Math.min(TOTAL_SLOTS - 1, Math.floor(progressRatio * TOTAL_SLOTS));
       var count = currentAnimal.feetCount;
 
-      for (var i = 0; i < trackSlots.length; i++) {
-        trackSlots[i].className = 'track-slot';
-      }
+      for (var i = 0; i < trackSlots.length; i++) { trackSlots[i].className = 'track-slot'; }
       for (var k = 0; k < count; k++) {
         var pos = leadIndex - k;
-        if (pos >= 0 && pos < TOTAL_SLOTS) {
-            trackSlots[pos].className = 'track-slot active';
-        }
+        if (pos >= 0 && pos < TOTAL_SLOTS) { trackSlots[pos].className = 'track-slot active'; }
       }
     }
 
@@ -786,7 +507,6 @@
       restAnimState.index = Math.floor(Math.random() * els.restPanels.length);
       updateActiveRestPanel();
       els.restScreen.className = 'rest-screen active';
-
       if (restAnimState.timer) clearInterval(restAnimState.timer);
       restAnimState.timer = setInterval(animateRestPanel, 800);
     }
@@ -815,9 +535,7 @@
         els.steam[2].setAttribute('d', cur.s3);
       } else if (idx === 1) {
         restAnimState.fwStep = (restAnimState.fwStep + 1) % fwFrames.length;
-        for (var k = 0; k < fwFrames.length; k++) {
-          fwFrames[k].className = (k === restAnimState.fwStep) ? 'fw-frame active' : 'fw-frame';
-        }
+        for (var k = 0; k < fwFrames.length; k++) { fwFrames[k].className = (k === restAnimState.fwStep) ? 'fw-frame active' : 'fw-frame'; }
       } else if (idx === 2) {
         restAnimState.catStep = 1 - restAnimState.catStep;
         els.cats[0].className = restAnimState.catStep === 0 ? 'cat-frame active' : 'cat-frame';
@@ -827,7 +545,6 @@
 
     window.addEventListener('load', function() {
         setTimeout(init, 50);
-        setTimeout(updateLayoutDimensions, 300);
     });
 
   </script>
