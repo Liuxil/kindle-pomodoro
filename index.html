@@ -21,7 +21,7 @@
       font-family: sans-serif;
     }
 
-    /* 1. 默认横屏模式 (Landscape) */
+    /* 默认横屏模式 (强制 90 度铺满) */
     .container {
       position: absolute;
       top: 50%;
@@ -43,10 +43,10 @@
       -webkit-box-align: center;
       -webkit-align-items: center;
       align-items: center;
-      padding: 12px 24px 20px 24px;
+      padding: 10px 28px 18px 28px;
     }
 
-    /* 2. 竖屏模式 (Portrait) */
+    /* 竖屏模式 */
     body.portrait-mode .container {
       position: static;
       width: 100%;
@@ -56,13 +56,12 @@
       padding: 10px 16px 36px 16px;
     }
 
-    /* 顶部天象部件（点击切换横竖屏） */
+    /* 顶部昼夜天象部件（点击切换横竖屏并刷新） */
     .sky-badge {
-      width: 52px;
-      height: 52px;
+      width: 48px;
+      height: 48px;
       position: relative;
       cursor: pointer;
-      margin-bottom: 4px;
     }
     .sun-box {
       width: 100%;
@@ -83,12 +82,12 @@
       position: absolute;
       top: 50%;
       left: 50%;
-      width: 26px;
-      height: 26px;
-      margin-top: -13px;
-      margin-left: -13px;
+      width: 24px;
+      height: 24px;
+      margin-top: -12px;
+      margin-left: -12px;
       background: #ffffff;
-      border: 2.2px solid #000000;
+      border: 2px solid #000000;
       border-radius: 50%;
       box-sizing: border-box;
       display: -webkit-box;
@@ -109,10 +108,10 @@
     }
     .moon-star {
       position: absolute;
-      top: 8px;
-      right: 6px;
-      width: 15px;
-      height: 15px;
+      top: 6px;
+      right: 5px;
+      width: 14px;
+      height: 14px;
       -webkit-transition: none;
       transition: none;
     }
@@ -137,10 +136,10 @@
       flex: 1;
     }
 
-    /* 倒计时主容器（点击切换字体，等比放大） */
+    /* 倒计时主容器（等比超大放大） */
     .timer-container {
       width: 100%;
-      height: 140px;
+      height: 160px;
       display: -webkit-box;
       display: -webkit-flex;
       display: flex;
@@ -150,49 +149,47 @@
       -webkit-box-align: center;
       -webkit-align-items: center;
       align-items: center;
-      margin-bottom: 12px;
+      margin-bottom: 8px;
       cursor: pointer;
     }
 
+    /* 横屏下时间拉大至 190px */
     .timer-text {
-      font-size: 165px;
+      font-size: 190px;
       line-height: 1;
       text-align: center;
       width: 100%;
     }
+    body.portrait-mode .timer-text {
+      font-size: 145px;
+    }
 
-    /* 字体 0: 柔和胶囊圆角体 */
+    /* 4 种精选字体样式 */
     .font-style-0 {
       font-family: "Avenir Next Rounded Pro", "Varela Round", "Nunito", "Arial Rounded MT Bold", sans-serif;
       font-weight: 300;
       letter-spacing: 2px;
     }
-
-    /* 字体 1: 极简超细极幼体 */
     .font-style-1 {
       font-family: "Helvetica Neue Light", "Helvetica Neue", "Arial Narrow", sans-serif;
       font-weight: 200;
       letter-spacing: -2px;
     }
-
-    /* 字体 2: 优雅古典细体 */
     .font-style-2 {
       font-family: "Baskerville", "Garamond", "Georgia", serif;
       font-weight: 300;
       letter-spacing: 4px;
     }
-
-    /* 字体 3: 复古等宽打字机体 */
     .font-style-3 {
       font-family: "Courier New", "Menlo", "Lucida Console", monospace;
       font-weight: 900;
       letter-spacing: 6px;
     }
 
-    /* 脚印宽幅进度轨道 (16 档卡槽) */
+    /* 脚印宽幅长轨道 (16 档卡槽) */
     .tracks-container {
-      width: 92%;
-      height: 30px;
+      width: 94%;
+      height: 32px;
       display: -webkit-box;
       display: -webkit-flex;
       display: flex;
@@ -202,11 +199,11 @@
       -webkit-box-align: center;
       -webkit-align-items: center;
       align-items: center;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
     .track-slot {
-      width: 20px;
-      height: 20px;
+      width: 22px;
+      height: 22px;
       display: -webkit-box;
       display: -webkit-flex;
       display: flex;
@@ -218,8 +215,8 @@
       align-items: center;
     }
     .track-slot svg {
-      width: 18px;
-      height: 18px;
+      width: 19px;
+      height: 19px;
       fill: #000000;
       display: none;
     }
@@ -237,19 +234,31 @@
       display: block;
     }
 
+    /* 底部按钮排版：左右分立式布局 */
     .footer {
-      width: 100%;
-      text-align: center;
+      width: 96%;
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: flex;
+      -webkit-box-pack: justify;
+      -webkit-justify-content: space-between;
+      justify-content: space-between;
+      -webkit-box-align: center;
+      -webkit-align-items: center;
+      align-items: center;
     }
-    .btn-row {
-      margin-bottom: 12px;
+    .btn-adjust-group {
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: flex;
+      gap: 12px;
     }
     button {
       background: #ffffff;
       color: #000000;
-      border: 2.5px solid #000000;
+      border: 3px solid #000000;
       font-weight: bold;
-      border-radius: 7px;
+      border-radius: 8px;
       cursor: pointer;
     }
     button:active {
@@ -257,14 +266,12 @@
       color: #ffffff;
     }
     .btn-adjust {
-      font-size: 20px;
-      padding: 5px 20px;
-      margin: 0 8px;
+      font-size: 22px;
+      padding: 8px 20px;
     }
     .btn-start {
       font-size: 28px;
-      padding: 10px 56px;
-      display: inline-block;
+      padding: 8px 48px;
     }
   </style>
 </head>
@@ -272,7 +279,7 @@
 
   <div class="container">
     
-    <!-- 顶部天象图标（点击切换横/竖屏） -->
+    <!-- 顶部天象图标（点击切换横/竖屏并自动强制刷新） -->
     <div class="sky-badge" onclick="toggleScreenOrientation()" title="点击切换横/竖屏">
       <div class="sun-box" id="sun-box">
         <div class="sun-rays" id="sun-rays">
@@ -310,12 +317,12 @@
 
     <!-- 主体区域 -->
     <div class="main-section">
-      <!-- 倒计时区域（点击切换 4 种精选字体） -->
+      <!-- 倒计时数字（点击循环切换 4 套字体） -->
       <div class="timer-container" onclick="switchFont()">
         <div class="timer-text font-style-0" id="timer-text">00:25</div>
       </div>
       
-      <!-- 脚印全幅进度滑槽（16 档宽屏点位） -->
+      <!-- 脚印全幅进度滑槽（16 档宽屏点位，未开始前保持隐藏） -->
       <div class="tracks-container" id="tracks-bottom">
         <div class="track-slot"></div>
         <div class="track-slot"></div>
@@ -336,9 +343,9 @@
       </div>
     </div>
 
-    <!-- 底部按键 -->
+    <!-- 底部按键（左：+5m/+10m，右：开始/暂停） -->
     <div class="footer">
-      <div class="btn-row">
+      <div class="btn-adjust-group">
         <button class="btn-adjust" onclick="addMinutes(5)">+5m</button>
         <button class="btn-adjust" onclick="addMinutes(10)">+10m</button>
       </div>
@@ -401,12 +408,15 @@
     var moonStarEl = document.getElementById('moon-star');
     var trackSlots = document.querySelectorAll('.track-slot');
 
+    // 切换横/竖屏模式并立刻强制刷新页面
     function toggleScreenOrientation() {
-      document.body.classList.toggle('portrait-mode');
-      var isPortrait = document.body.classList.contains('portrait-mode');
+      var current = localStorage.getItem('kindle_pomodoro_orient');
+      var next = (current === 'portrait') ? 'landscape' : 'portrait';
       try {
-        localStorage.setItem('kindle_pomodoro_orient', isPortrait ? 'portrait' : 'landscape');
+        localStorage.setItem('kindle_pomodoro_orient', next);
       } catch(e) {}
+      // 强制整页重新载入，触发 WebKit 重新计算全屏真实视口
+      window.location.reload();
     }
 
     function initSavedOrientation() {
@@ -596,6 +606,7 @@
       updateDisplay();
     }
 
+    // 初始化运行
     initSavedOrientation();
     initSavedFont();
     updateDayNightMode();
