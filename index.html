@@ -36,7 +36,7 @@
       -webkit-box-align: center;
       -webkit-align-items: center;
       align-items: center;
-      padding: 0 10px 36px 10px;
+      padding: 0 16px 36px 16px;
     }
     .main-section {
       width: 100%;
@@ -60,8 +60,8 @@
 
     /* 顶部昼夜天象 */
     .sky-badge {
-      width: 60px;
-      height: 60px;
+      width: 64px;
+      height: 64px;
       position: relative;
       margin-bottom: 6px;
       cursor: pointer;
@@ -85,10 +85,10 @@
       position: absolute;
       top: 50%;
       left: 50%;
-      width: 30px;
-      height: 30px;
-      margin-top: -15px;
-      margin-left: -15px;
+      width: 32px;
+      height: 32px;
+      margin-top: -16px;
+      margin-left: -16px;
       background: #ffffff;
       border: 2.5px solid #000000;
       border-radius: 50%;
@@ -111,33 +111,107 @@
     }
     .moon-star {
       position: absolute;
-      top: 10px;
-      right: 6px;
+      top: 12px;
+      right: 8px;
       width: 18px;
       height: 18px;
       -webkit-transition: none;
       transition: none;
     }
 
-    /* 满屏拉伸超大时间容器 */
-    .timer-svg-box {
-      width: 96%;
-      height: 180px;
-      margin-bottom: 24px;
-    }
-    .timer-svg-box svg {
+    /* 倒计时展示容器（点击切换字体，等比自然放大） */
+    .timer-container {
       width: 100%;
-      height: 100%;
+      height: 150px;
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: flex;
+      -webkit-box-pack: center;
+      -webkit-justify-content: center;
+      justify-content: center;
+      -webkit-box-align: center;
+      -webkit-align-items: center;
+      align-items: center;
+      margin-bottom: 24px;
+      cursor: pointer;
     }
-    .timer-svg-text {
-      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+    /* 常规文本字形 */
+    .timer-text {
+      font-size: 145px;
+      line-height: 1;
+      text-align: center;
+      display: none;
+    }
+
+    /* 字体 0: 柔和胶囊圆角体 */
+    .font-style-0 {
+      font-family: "Avenir Next Rounded Pro", "Varela Round", "Nunito", "Arial Rounded MT Bold", sans-serif;
       font-weight: 300;
-      fill: #000000;
+      letter-spacing: 0px;
+    }
+
+    /* 字体 1: 极简超细极幼体 */
+    .font-style-1 {
+      font-family: "Helvetica Neue Light", "Helvetica Neue", "Arial Narrow", sans-serif;
+      font-weight: 200;
+      letter-spacing: -2px;
+    }
+
+    /* 字体 2: 优雅古典细体 */
+    .font-style-2 {
+      font-family: "Baskerville", "Garamond", "Georgia", serif;
+      font-weight: 300;
+      letter-spacing: 2px;
+    }
+
+    /* 字体 3: 复古等宽打字机体 */
+    .font-style-3 {
+      font-family: "Courier New", "Menlo", "Lucida Console", monospace;
+      font-weight: 900;
+      letter-spacing: 4px;
+    }
+
+    /* 字体 4: 七段数码管液晶结构 (7-Segment) */
+    .timer-segment {
+      display: none;
+      -webkit-box-align: center;
+      -webkit-align-items: center;
+      align-items: center;
+      -webkit-box-pack: center;
+      -webkit-justify-content: center;
+      justify-content: center;
+      height: 130px;
+      gap: 6px;
+    }
+    .timer-segment svg {
+      height: 120px;
+      width: auto;
+    }
+    .seg-colon {
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: flex;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+      -webkit-flex-direction: column;
+      flex-direction: column;
+      -webkit-box-pack: center;
+      -webkit-justify-content: center;
+      justify-content: center;
+      gap: 18px;
+      margin: 0 4px;
+    }
+    .seg-colon span {
+      width: 10px;
+      height: 10px;
+      background: #000000;
+      border-radius: 1px;
     }
 
     /* 脚印全幅进度滑槽 */
     .tracks-container {
-      width: 92%;
+      width: 90%;
       height: 32px;
       display: -webkit-box;
       display: -webkit-flex;
@@ -219,7 +293,7 @@
   <div class="container">
     <div class="main-section">
       
-      <!-- 顶部昼夜天象 -->
+      <!-- 顶部昼夜天象（点击可手动切换） -->
       <div class="sky-badge" onclick="toggleManualSky()">
         <!-- 太阳 -->
         <div class="sun-box" id="sun-box">
@@ -257,14 +331,22 @@
         </div>
       </div>
 
-      <!-- 满屏拉伸超大时间 -->
-      <div class="timer-svg-box">
-        <svg viewBox="0 0 500 200" preserveAspectRatio="none">
-          <text id="timer-text" class="timer-svg-text" x="250" y="165" font-size="200" text-anchor="middle" textLength="480" lengthAdjust="spacingAndGlyphs">00:25</text>
-        </svg>
+      <!-- 倒计时区域（点击任意位置即可循环切换 5 套字体） -->
+      <div class="timer-container" onclick="switchFont()">
+        <!-- 常规文本字体容器 -->
+        <div class="timer-text" id="timer-text">00:25</div>
+
+        <!-- 七段数码管液晶容器 -->
+        <div class="timer-segment" id="timer-segment">
+          <svg id="seg-d0" viewBox="0 0 54 90"></svg>
+          <svg id="seg-d1" viewBox="0 0 54 90"></svg>
+          <div class="seg-colon"><span></span><span></span></div>
+          <svg id="seg-d2" viewBox="0 0 54 90"></svg>
+          <svg id="seg-d3" viewBox="0 0 54 90"></svg>
+        </div>
       </div>
       
-      <!-- 脚印进度轨道 -->
+      <!-- 脚印全幅进度滑槽（未开始前保持隐藏） -->
       <div class="tracks-container" id="tracks-bottom">
         <div class="track-slot"></div>
         <div class="track-slot"></div>
@@ -326,10 +408,35 @@
       }
     ];
 
+    // 七段数码管每个段的几何多边形
+    var SEG_PATHS = {
+      a: '<polygon points="6,6 12,2 42,2 48,6 42,10 12,10" fill="#000"/>',
+      b: '<polygon points="48,6 52,12 52,40 48,44 44,40 44,12" fill="#000"/>',
+      c: '<polygon points="48,46 52,50 52,80 48,84 44,80 44,50" fill="#000"/>',
+      d: '<polygon points="6,84 12,88 42,88 48,84 42,80 12,80" fill="#000"/>',
+      e: '<polygon points="6,46 10,50 10,80 6,84 2,80 2,50" fill="#000"/>',
+      f: '<polygon points="6,6 10,12 10,40 6,44 2,40 2,12" fill="#000"/>',
+      g: '<polygon points="6,45 12,41 42,41 48,45 42,49 12,49" fill="#000"/>'
+    };
+
+    // 0~9 对应的段亮起表
+    var DIGIT_MAP = {
+      '0': ['a','b','c','d','e','f'],
+      '1': ['b','c'],
+      '2': ['a','b','g','e','d'],
+      '3': ['a','b','g','c','d'],
+      '4': ['f','g','b','c'],
+      '5': ['a','f','g','c','d'],
+      '6': ['a','f','e','d','c','g'],
+      '7': ['a','b','c'],
+      '8': ['a','b','c','d','e','f','g'],
+      '9': ['a','b','c','d','f','g']
+    };
+
     var totalTime = 25 * 60;
     var timeLeft = totalTime;
     var timerId = null;
-    var hasStarted = false; // 标记是否已开始计时
+    var hasStarted = false;
 
     var isDayTime = true;
     var sunAngle = 0;
@@ -339,13 +446,51 @@
     var TOTAL_SLOTS = 12;
     var SKY_INTERVAL = 2;
 
+    var currentFontIndex = 0;
+    var TOTAL_FONTS = 5; // 0:圆角, 1:极细, 2:古典, 3:复古等宽, 4:七段数码管
+
     var timerTextEl = document.getElementById('timer-text');
+    var timerSegmentEl = document.getElementById('timer-segment');
     var toggleBtn = document.getElementById('btn-toggle');
     var sunBoxEl = document.getElementById('sun-box');
     var moonBoxEl = document.getElementById('moon-box');
     var sunRaysEl = document.getElementById('sun-rays');
     var moonStarEl = document.getElementById('moon-star');
     var trackSlots = document.querySelectorAll('.track-slot');
+
+    function initSavedFont() {
+      var saved = localStorage.getItem('kindle_pomodoro_font');
+      if (saved !== null) {
+        currentFontIndex = parseInt(saved, 10) || 0;
+        if (currentFontIndex >= TOTAL_FONTS) {
+          currentFontIndex = 0;
+        }
+      }
+      applyFont();
+    }
+
+    function switchFont() {
+      currentFontIndex = (currentFontIndex + 1) % TOTAL_FONTS;
+      try {
+        localStorage.setItem('kindle_pomodoro_font', currentFontIndex);
+      } catch(e) {}
+      applyFont();
+      updateDisplay();
+    }
+
+    function applyFont() {
+      if (currentFontIndex === 4) {
+        // 模式 4：显示七段数码管
+        timerTextEl.style.display = 'none';
+        timerSegmentEl.style.display = '-webkit-flex';
+        timerSegmentEl.style.display = 'flex';
+      } else {
+        // 模式 0~3：显示等比放大文本字体
+        timerSegmentEl.style.display = 'none';
+        timerTextEl.style.display = 'block';
+        timerTextEl.className = 'timer-text font-style-' + currentFontIndex;
+      }
+    }
 
     function getLocalHour() {
       var d = new Date();
@@ -377,7 +522,6 @@
       renderSkyIcon();
     }
 
-    // 清空并隐藏所有脚印槽
     function clearTracks() {
       for (var i = 0; i < TOTAL_SLOTS; i++) {
         trackSlots[i].innerHTML = '';
@@ -386,7 +530,6 @@
       hasStarted = false;
     }
 
-    // 开始时初始化随机动物
     function startAnimalTracks() {
       var randIndex = Math.floor(Math.random() * ANIMALS.length);
       currentAnimal = ANIMALS[randIndex];
@@ -398,7 +541,6 @@
       updateProgressTracks();
     }
 
-    // 根据进度推进脚印滑块
     function updateProgressTracks() {
       if (!hasStarted || !currentAnimal) {
         return;
@@ -433,20 +575,42 @@
       }
     }
 
-    function formatTime(seconds) {
+    function formatTimeStrings(seconds) {
       var totalMinutes = Math.ceil(seconds / 60);
-      if (totalMinutes <= 0) return '00:00';
+      if (totalMinutes <= 0) return ['00', '00'];
 
       var hours = Math.floor(totalMinutes / 60);
       var mins = totalMinutes % 60;
 
       var strH = (hours < 10 ? '0' : '') + hours;
       var strM = (mins < 10 ? '0' : '') + mins;
-      return strH + ':' + strM;
+      return [strH, strM];
+    }
+
+    function renderSegmentDigit(svgId, char) {
+      var el = document.getElementById(svgId);
+      if (!el) return;
+      var segs = DIGIT_MAP[char] || [];
+      var html = '';
+      for (var i = 0; i < segs.length; i++) {
+        html += SEG_PATHS[segs[i]];
+      }
+      el.innerHTML = html;
     }
 
     function updateDisplay() {
-      timerTextEl.textContent = formatTime(timeLeft);
+      var parts = formatTimeStrings(timeLeft);
+      var timeStr = parts[0] + ':' + parts[1];
+
+      if (currentFontIndex === 4) {
+        renderSegmentDigit('seg-d0', parts[0].charAt(0));
+        renderSegmentDigit('seg-d1', parts[0].charAt(1));
+        renderSegmentDigit('seg-d2', parts[1].charAt(0));
+        renderSegmentDigit('seg-d3', parts[1].charAt(1));
+      } else {
+        timerTextEl.innerText = timeStr;
+      }
+
       updateProgressTracks();
     }
 
@@ -458,7 +622,7 @@
       } else {
         if (timeLeft <= 0 || !hasStarted) {
           timeLeft = totalTime;
-          startAnimalTracks(); // 首次点击开始时才生成动物
+          startAnimalTracks();
         }
         updateDayNightMode();
         timerId = setInterval(tick, 1000);
@@ -486,7 +650,7 @@
         timerId = null;
         toggleBtn.innerText = '开始';
         timeLeft = totalTime;
-        clearTracks(); // 倒计时结束恢复隐藏
+        clearTracks();
         updateDisplay();
       }
     }
@@ -507,12 +671,13 @@
 
       totalTime = currentMins * 60;
       timeLeft = totalTime;
-      clearTracks(); // 调节时长重置为待机隐藏
+      clearTracks();
       updateDayNightMode();
       updateDisplay();
     }
 
-    // 初始状态：仅显示天象与时间，脚印隐藏
+    // 初始化
+    initSavedFont();
     updateDayNightMode();
     clearTracks();
     updateDisplay();
