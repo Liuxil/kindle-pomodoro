@@ -42,7 +42,7 @@
       background: transparent !important;
     }
 
-    /* 物理隔离层：防止旋转包围盒撑破页面产生滑块 */
+    /* 物理隔离层：绝对锁死，杜绝任何内部元素撑出滚动条 */
     #viewport-wrapper {
       position: absolute;
       top: 0;
@@ -53,6 +53,7 @@
       background-color: #ffffff;
     }
 
+    /* 容器统一使用绝对中心锚点，由 JS 注入精确像素宽高 */
     .container {
       position: absolute;
       top: 50%;
@@ -73,15 +74,12 @@
       align-items: center;
       
       padding: 6px 4px 10px 4px;
-      overflow: hidden !important;
     }
 
+    /* 竖屏模式：仅取消旋转，保持绝对居中 */
     body.portrait-mode .container {
-      position: absolute !important;
-      top: 4px !important;
-      left: 4px !important;
-      -webkit-transform: none !important;
-      transform: none !important;
+      -webkit-transform: translate(-50%, -50%) !important;
+      transform: translate(-50%, -50%) !important;
       padding: 16px 4px 28px 4px !important;
     }
 
@@ -148,8 +146,7 @@
       align-items: center;
       -webkit-box-pack: center;
       justify-content: center;
-      max-width: 100%;
-      overflow: hidden;
+      /* 修复：移除 overflow: hidden 解决字体削顶问题 */
     }
 
     .timer-container {
@@ -161,13 +158,13 @@
       -webkit-box-align: center;
       align-items: center;
       cursor: pointer;
-      max-width: 100%;
-      overflow: hidden;
+      /* 修复：移除 overflow: hidden 解决字体削顶问题 */
     }
 
+    /* 稍微放宽 line-height 防止极端字体渲染溢出 */
     .timer-text {
       font-size: 240px;
-      line-height: 0.85;
+      line-height: 0.9;
       text-align: center;
       width: 100%;
       display: block;
@@ -176,7 +173,7 @@
     }
     body.portrait-mode .timer-text {
       font-size: 215px;
-      line-height: 0.82;
+      line-height: 0.88;
     }
 
     .font-style-0 {
@@ -344,7 +341,6 @@
 </head>
 <body>
   
-  <!-- 物理隔离层 -->
   <div id="viewport-wrapper">
     <div class="container" id="main-container">
       <div class="sky-badge" id="btn-orientation" title="点击切换横/竖屏">
@@ -490,6 +486,10 @@
     var toggleClickCount = 0;
     var lastToggleClickTime = 0;
 
+    // 核心缓存：用来记录设备的物理分辨率，坚决不用实时获取的、波动的 innerWidth
+    var screenMax = 0;
+    var screenMin = 0;
+
     var els = {
       container: document.getElementById('main-container'),
       timerText: document.getElementById('timer-text'),
@@ -512,11 +512,22 @@
 
     function init() {
       initDOM();
+      cacheDimensions();
       initSavedSettings();
       updateDayNightMode();
       clearTracks();
       updateDisplay();
       bindEvents();
+    }
+
+    // 只读取屏幕的最大值和最小值缓存起来，规避旧版引擎连续测量的错乱 Bug
+    function cacheDimensions() {
+      var w = document.documentElement.clientWidth || window.innerWidth;
+      var h = document.documentElement.clientHeight || window.innerHeight;
+      if (w > 0 && h > 0) {
+        screenMax = Math.max(screenMax, Math.max(w, h));
+        screenMin = Math.max(screenMin, Math.min(w, h));
+      }
     }
 
     function initDOM() {
@@ -549,6 +560,7 @@
       els.restScreen.addEventListener('click', hideRestScreen);
       
       window.addEventListener('resize', function() {
+        cacheDimensions();
         updateLayoutDimensions();
       });
       
@@ -584,31 +596,25 @@
       }
     }
 
-    /* 物理计算安全区，并将包装层强制撑满屏幕，裁剪所有外溢变形 */
+    /* 物理计算安全区，直接使用缓存的屏幕物理尺寸 */
     function updateLayoutDimensions() {
+      if (screenMax === 0) cacheDimensions();
+
       var isPortrait = document.body.className.indexOf('portrait-mode') !== -1;
       
-      var w = document.documentElement.clientWidth || window.innerWidth;
-      var h = document.documentElement.clientHeight || window.innerHeight;
+      // 设定 12px 的最高安全余量
+      var OFFSET = 12;
 
-      var wrapper = document.getElementById('viewport-wrapper');
-      if (wrapper) {
-         wrapper.style.width = w + 'px';
-         wrapper.style.height = h + 'px';
-      }
-
-      var OFFSET = 8;
-
+      // 无论横竖，统一设置尺寸，配合 CSS 的 translate(-50%, -50%) 实现完美边界居中
       if (isPortrait) {
-        els.container.style.width = (w - OFFSET) + 'px';
-        els.container.style.height = (h - OFFSET) + 'px';
+        els.container.style.width = (screenMin - OFFSET) + 'px';
+        els.container.style.height = (screenMax - OFFSET) + 'px';
       } else {
-        var maxDim = Math.max(w, h);
-        var minDim = Math.min(w, h);
-        els.container.style.width = (maxDim - OFFSET) + 'px';
-        els.container.style.height = (minDim - OFFSET) + 'px';
+        els.container.style.width = (screenMax - OFFSET) + 'px';
+        els.container.style.height = (screenMin - OFFSET) + 'px';
       }
 
+      // 强制 WebKit 回流，修复卡顿缩放的 Bug
       if (els.timerText) {
         els.timerText.style.paddingRight = '1px';
         var _dummy = els.timerText.offsetWidth; 
@@ -623,17 +629,6 @@
       
       document.body.className = nextMode === 'portrait' ? 'portrait-mode' : '';
       updateLayoutDimensions();
-      
-      // 加入双重延迟唤醒机制，模拟计时器运行时的更新状态，解决静态切屏缩小 Bug
-      setTimeout(function() {
-         updateLayoutDimensions();
-         updateDisplay();
-      }, 50);
-      
-      setTimeout(function() {
-         updateLayoutDimensions();
-         updateDisplay();
-      }, 200);
     }
 
     function initSavedSettings() {
