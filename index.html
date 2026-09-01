@@ -229,8 +229,6 @@
     var starToggled = false;
     var currentAnimal = null;
     var currentFontIndex = 1; 
-    
-    // 强制默认横屏，且每次刷新后不恢复记忆
     var isPortraitMode = false;
 
     var easterEggStep = 0;
@@ -262,10 +260,9 @@
     var restAnimState = { timer: null, index: 0, steamStep: 0, fwStep: 0, catStep: 0 };
 
     function init() {
-      var w = document.documentElement.clientWidth || window.innerWidth;
-      var h = document.documentElement.clientHeight || window.innerHeight;
-      SCREEN_LONG = Math.max(w, h);
-      SCREEN_SHORT = Math.min(w, h);
+      // 关键防错：使用 documentElement 动态获取当前真实的物理宽高，
+      // 避免因为反复横竖屏切换导致 SCREEN_LONG 和 SCREEN_SHORT 发生颠倒混乱。
+      updateDimensions();
 
       initDOM();
       initSavedSettings();
@@ -273,6 +270,13 @@
       clearTracks();
       updateDisplay();
       bindEvents();
+    }
+
+    function updateDimensions() {
+      var w = document.documentElement.clientWidth || window.innerWidth;
+      var h = document.documentElement.clientHeight || window.innerHeight;
+      SCREEN_LONG = Math.max(w, h);
+      SCREEN_SHORT = Math.min(w, h);
     }
 
     function initDOM() {
@@ -337,10 +341,13 @@
       return false;
     }
 
-    /* 纯净尺寸注入：移除所有缩放代码，利用准确边界杜绝溢出滑块 */
+    /* 终极修复旋转包围盒错位：动态获取最新宽高，并严格对调长短边像素 */
     function applyOrientationLogic() {
-      var SAFE_LONG = SCREEN_LONG - 12;
-      var SAFE_SHORT = SCREEN_SHORT - 12;
+      updateDimensions();
+      
+      // 安全减去 6px 彻底杜绝亚像素溢出黑条
+      var SAFE_LONG = SCREEN_LONG - 6;
+      var SAFE_SHORT = SCREEN_SHORT - 6;
 
       if (isPortraitMode) {
         els.appContainer.style.width = SAFE_SHORT + 'px';
@@ -351,13 +358,15 @@
         els.timerText.style.fontSize = '215px';
         els.timerText.style.margin = '-10px 0';
       } else {
+        // 横屏状态：宽度严格使用长边，高度使用短边，完美对调旋转包围盒
         els.appContainer.style.width = SAFE_LONG + 'px';
         els.appContainer.style.height = SAFE_SHORT + 'px';
         els.appContainer.style.webkitTransform = 'translate(-50%, -50%) rotate(90deg)';
         els.appContainer.style.transform = 'translate(-50%, -50%) rotate(90deg)';
         
-        els.timerText.style.fontSize = '250px';
-        els.timerText.style.margin = '-15px 0';
+        // 稳定在 210px，恢复与竖屏完美一致的视觉留白
+        els.timerText.style.fontSize = '210px';
+        els.timerText.style.margin = '-10px 0';
       }
     }
 
@@ -367,7 +376,6 @@
     }
 
     function initSavedSettings() {
-      // 每次刷新强制初始化为横屏，不读取记忆
       isPortraitMode = false;
       applyOrientationLogic();
 
