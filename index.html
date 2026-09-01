@@ -88,12 +88,22 @@
       height: 160px;
     }
 
-    /* 方案 2：烟花画布 */
-    .firework-svg {
-      width: 90%;
-      height: 90%;
-      max-width: 320px;
-      max-height: 440px;
+    /* 方案 2：烟花多帧容器 */
+    .firework-stage {
+      width: 320px;
+      height: 420px;
+      position: relative;
+    }
+    .fw-frame {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: none;
+    }
+    .fw-frame.active {
+      display: block;
     }
   </style>
 </head>
@@ -117,98 +127,115 @@
       </div>
     </div>
 
-    <!-- 方案 2: 双烟花 + 极简碎纸（纯 DOM 稳妥控制） -->
+    <!-- 方案 2: 双烟花 + 极简碎纸（纯 DIV 帧切换，确保 100% 触发重绘） -->
     <div class="view-panel" id="panel-firework">
-      <svg viewBox="0 0 320 440" class="firework-svg">
+      <div class="firework-stage">
         
-        <!-- ================= 烟花 1 (左侧) ================= -->
-        <!-- 阶段 1: 升空 -->
-        <g id="fw1-s1" style="display:none;">
-          <circle cx="90" cy="200" r="3" fill="#000"/>
-          <line x1="90" y1="205" x2="90" y2="235" stroke="#000" stroke-width="2" stroke-dasharray="3 4" stroke-linecap="round"/>
-        </g>
-        <!-- 阶段 2: 初绽 -->
-        <g id="fw1-s2" style="display:none;" fill="none" stroke="#000" stroke-linecap="round">
-          <line x1="90" y1="115" x2="90" y2="100" stroke-width="2.4"/>
-          <line x1="90" y1="145" x2="90" y2="160" stroke-width="2.4"/>
-          <line x1="75" y1="130" x2="60" y2="130" stroke-width="2.4"/>
-          <line x1="105" y1="130" x2="120" y2="130" stroke-width="2.4"/>
-          <circle cx="90" cy="130" r="2.5" fill="#000" stroke="none"/>
-        </g>
-        <!-- 阶段 3: 扩散盛开与火花 -->
-        <g id="fw1-s3" style="display:none;" fill="none" stroke="#000" stroke-linecap="round">
-          <line x1="90" y1="95" x2="90" y2="70" stroke-width="2.2"/>
-          <line x1="90" y1="165" x2="90" y2="190" stroke-width="2.2"/>
-          <line x1="55" y1="130" x2="30" y2="130" stroke-width="2.2"/>
-          <line x1="125" y1="130" x2="150" y2="130" stroke-width="2.2"/>
-          <line x1="65" y1="105" x2="48" y2="88" stroke-width="1.8"/>
-          <line x1="115" y1="155" x2="132" y2="172" stroke-width="1.8"/>
-          <line x1="65" y1="155" x2="48" y2="172" stroke-width="1.8"/>
-          <line x1="115" y1="105" x2="132" y2="88" stroke-width="1.8"/>
-          <circle cx="90" cy="60" r="1.8" fill="#000" stroke="none"/>
-          <circle cx="90" cy="200" r="1.8" fill="#000" stroke="none"/>
-          <circle cx="20" cy="130" r="1.8" fill="#000" stroke="none"/>
-          <circle cx="160" cy="130" r="1.8" fill="#000" stroke="none"/>
-        </g>
+        <!-- 帧 0: 左侧升空 + 碎纸高位 A -->
+        <div class="fw-frame active" id="frame-0">
+          <svg viewBox="0 0 320 420" style="width:100%;height:100%;">
+            <!-- 左升空 -->
+            <circle cx="90" cy="200" r="3" fill="#000"/>
+            <line x1="90" y1="205" x2="90" y2="235" stroke="#000" stroke-width="2" stroke-dasharray="3 4" stroke-linecap="round"/>
+            <!-- 碎纸 A (高) -->
+            <rect x="60" y="60" width="8" height="3.5" rx="1" fill="#000" transform="rotate(25 60 60)"/>
+            <rect x="180" y="45" width="7" height="3.5" rx="1" fill="none" stroke="#000" stroke-width="1.2" transform="rotate(-30 180 45)"/>
+            <circle cx="270" cy="80" r="1.8" fill="#000"/>
+          </svg>
+        </div>
 
-        <!-- ================= 烟花 2 (右侧) ================= -->
-        <!-- 阶段 1: 升空 -->
-        <g id="fw2-s1" style="display:none;">
-          <circle cx="230" cy="220" r="3" fill="#000"/>
-          <line x1="230" y1="225" x2="230" y2="255" stroke="#000" stroke-width="2" stroke-dasharray="3 4" stroke-linecap="round"/>
-        </g>
-        <!-- 阶段 2: 初绽 -->
-        <g id="fw2-s2" style="display:none;" fill="none" stroke="#000" stroke-linecap="round">
-          <line x1="230" y1="135" x2="230" y2="120" stroke-width="2.4"/>
-          <line x1="230" y1="165" x2="230" y2="180" stroke-width="2.4"/>
-          <line x1="215" y1="150" x2="200" y2="150" stroke-width="2.4"/>
-          <line x1="245" y1="150" x2="260" y2="150" stroke-width="2.4"/>
-          <circle cx="230" cy="150" r="2.5" fill="#000" stroke="none"/>
-        </g>
-        <!-- 阶段 3: 扩散盛开与火花 -->
-        <g id="fw2-s3" style="display:none;" fill="none" stroke="#000" stroke-linecap="round">
-          <line x1="230" y1="115" x2="230" y2="90" stroke-width="2.2"/>
-          <line x1="230" y1="185" x2="230" y2="210" stroke-width="2.2"/>
-          <line x1="195" y1="150" x2="170" y2="150" stroke-width="2.2"/>
-          <line x1="265" y1="150" x2="290" y2="150" stroke-width="2.2"/>
-          <line x1="205" y1="125" x2="188" y2="108" stroke-width="1.8"/>
-          <line x1="255" y1="175" x2="272" y2="192" stroke-width="1.8"/>
-          <line x1="205" y1="175" x2="188" y2="192" stroke-width="1.8"/>
-          <line x1="255" y1="125" x2="272" y2="108" stroke-width="1.8"/>
-          <circle cx="230" cy="80" r="1.8" fill="#000" stroke="none"/>
-          <circle cx="230" cy="220" r="1.8" fill="#000" stroke="none"/>
-          <circle cx="160" cy="150" r="1.8" fill="#000" stroke="none"/>
-          <circle cx="300" cy="150" r="1.8" fill="#000" stroke="none"/>
-        </g>
+        <!-- 帧 1: 左侧初绽 + 碎纸中位 A -->
+        <div class="fw-frame" id="frame-1">
+          <svg viewBox="0 0 320 420" style="width:100%;height:100%;" fill="none" stroke="#000" stroke-linecap="round">
+            <!-- 左初绽 -->
+            <line x1="90" y1="115" x2="90" y2="100" stroke-width="2.4"/>
+            <line x1="90" y1="145" x2="90" y2="160" stroke-width="2.4"/>
+            <line x1="75" y1="130" x2="60" y2="130" stroke-width="2.4"/>
+            <line x1="105" y1="130" x2="120" y2="130" stroke-width="2.4"/>
+            <circle cx="90" cy="130" r="2.5" fill="#000" stroke="none"/>
+            <!-- 碎纸 A (中) -->
+            <rect x="62" y="140" width="8" height="3.5" rx="1" fill="#000" transform="rotate(15 62 140)"/>
+            <rect x="178" y="125" width="7" height="3.5" rx="1" fill="none" stroke="#000" stroke-width="1.2" transform="rotate(-15 178 125)"/>
+            <circle cx="268" cy="160" r="1.8" fill="#000" stroke="none"/>
+          </svg>
+        </div>
 
-        <!-- ================= 飘落碎纸 ================= -->
-        <!-- 碎纸 A 组 -->
-        <g id="conf-a" style="display:none;">
-          <rect x="60" y="80" width="8" height="3.5" rx="1" fill="#000" transform="rotate(25 60 80)"/>
-          <rect x="180" y="65" width="7" height="3.5" rx="1" fill="none" stroke="#000" stroke-width="1.2" transform="rotate(-30 180 65)"/>
-          <circle cx="270" cy="100" r="1.8" fill="#000"/>
-        </g>
-        <g id="conf-a-low" style="display:none;">
-          <rect x="65" y="240" width="8" height="3.5" rx="1" fill="#000" transform="rotate(-15 65 240)"/>
-          <rect x="175" y="225" width="7" height="3.5" rx="1" fill="none" stroke="#000" stroke-width="1.2" transform="rotate(20 175 225)"/>
-          <circle cx="265" cy="260" r="1.8" fill="#000"/>
-        </g>
+        <!-- 帧 2: 左侧大盛开 + 碎纸低位 A + 右侧升空准备 -->
+        <div class="fw-frame" id="frame-2">
+          <svg viewBox="0 0 320 420" style="width:100%;height:100%;" fill="none" stroke="#000" stroke-linecap="round">
+            <!-- 左盛开 -->
+            <line x1="90" y1="95" x2="90" y2="70" stroke-width="2.2"/>
+            <line x1="90" y1="165" x2="90" y2="190" stroke-width="2.2"/>
+            <line x1="55" y1="130" x2="30" y2="130" stroke-width="2.2"/>
+            <line x1="125" y1="130" x2="150" y2="130" stroke-width="2.2"/>
+            <line x1="65" y1="105" x2="48" y2="88" stroke-width="1.8"/>
+            <line x1="115" y1="155" x2="132" y2="172" stroke-width="1.8"/>
+            <line x1="65" y1="155" x2="48" y2="172" stroke-width="1.8"/>
+            <line x1="115" y1="105" x2="132" y2="88" stroke-width="1.8"/>
+            <circle cx="90" cy="60" r="1.8" fill="#000" stroke="none"/>
+            <circle cx="90" cy="200" r="1.8" fill="#000" stroke="none"/>
+            <circle cx="20" cy="130" r="1.8" fill="#000" stroke="none"/>
+            <circle cx="160" cy="130" r="1.8" fill="#000" stroke="none"/>
+            <!-- 碎纸 A (低) -->
+            <rect x="65" y="240" width="8" height="3.5" rx="1" fill="#000" transform="rotate(-15 65 240)"/>
+            <rect x="175" y="225" width="7" height="3.5" rx="1" fill="none" stroke="#000" stroke-width="1.2" transform="rotate(20 175 225)"/>
+            <circle cx="265" cy="260" r="1.8" fill="#000" stroke="none"/>
+          </svg>
+        </div>
 
-        <!-- 碎纸 B 组 -->
-        <g id="conf-b" style="display:none;">
-          <rect x="120" y="75" width="8" height="3.5" rx="1" fill="none" stroke="#000" stroke-width="1.2" transform="rotate(35 120 75)"/>
-          <rect x="220" y="90" width="7.5" height="3.5" rx="1" fill="#000" transform="rotate(-20 220 90)"/>
-          <circle cx="75" cy="110" r="1.8" fill="#000"/>
-          <polygon points="160,60 163,65 157,65" fill="#000"/>
-        </g>
-        <g id="conf-b-low" style="display:none;">
-          <rect x="125" y="255" width="8" height="3.5" rx="1" fill="none" stroke="#000" stroke-width="1.2" transform="rotate(-20 125 255)"/>
-          <rect x="215" y="270" width="7.5" height="3.5" rx="1" fill="#000" transform="rotate(15 215 270)"/>
-          <circle cx="80" cy="290" r="1.8" fill="#000"/>
-          <polygon points="160,240 163,245 157,245" fill="#000"/>
-        </g>
+        <!-- 帧 3: 右侧升空 + 碎纸高位 B -->
+        <div class="fw-frame" id="frame-3">
+          <svg viewBox="0 0 320 420" style="width:100%;height:100%;">
+            <!-- 右升空 -->
+            <circle cx="230" cy="220" r="3" fill="#000"/>
+            <line x1="230" y1="225" x2="230" y2="255" stroke="#000" stroke-width="2" stroke-dasharray="3 4" stroke-linecap="round"/>
+            <!-- 碎纸 B (高) -->
+            <rect x="120" y="55" width="8" height="3.5" rx="1" fill="none" stroke="#000" stroke-width="1.2" transform="rotate(35 120 55)"/>
+            <rect x="220" y="70" width="7.5" height="3.5" rx="1" fill="#000" transform="rotate(-20 220 70)"/>
+            <circle cx="75" cy="90" r="1.8" fill="#000"/>
+          </svg>
+        </div>
 
-      </svg>
+        <!-- 帧 4: 右侧初绽 + 碎纸中位 B -->
+        <div class="fw-frame" id="frame-4">
+          <svg viewBox="0 0 320 420" style="width:100%;height:100%;" fill="none" stroke="#000" stroke-linecap="round">
+            <!-- 右初绽 -->
+            <line x1="230" y1="135" x2="230" y2="120" stroke-width="2.4"/>
+            <line x1="230" y1="165" x2="230" y2="180" stroke-width="2.4"/>
+            <line x1="215" y1="150" x2="200" y2="150" stroke-width="2.4"/>
+            <line x1="245" y1="150" x2="260" y2="150" stroke-width="2.4"/>
+            <circle cx="230" cy="150" r="2.5" fill="#000" stroke="none"/>
+            <!-- 碎纸 B (中) -->
+            <rect x="122" y="145" width="8" height="3.5" rx="1" fill="none" stroke="#000" stroke-width="1.2" transform="rotate(20 122 145)"/>
+            <rect x="218" y="160" width="7.5" height="3.5" rx="1" fill="#000" transform="rotate(-10 218 160)"/>
+            <circle cx="78" cy="180" r="1.8" fill="#000" stroke="none"/>
+          </svg>
+        </div>
+
+        <!-- 帧 5: 右侧大盛开 + 碎纸低位 B -->
+        <div class="fw-frame" id="frame-5">
+          <svg viewBox="0 0 320 420" style="width:100%;height:100%;" fill="none" stroke="#000" stroke-linecap="round">
+            <!-- 右盛开 -->
+            <line x1="230" y1="115" x2="230" y2="90" stroke-width="2.2"/>
+            <line x1="230" y1="185" x2="230" y2="210" stroke-width="2.2"/>
+            <line x1="195" y1="150" x2="170" y2="150" stroke-width="2.2"/>
+            <line x1="265" y1="150" x2="290" y2="150" stroke-width="2.2"/>
+            <line x1="205" y1="125" x2="188" y2="108" stroke-width="1.8"/>
+            <line x1="255" y1="175" x2="272" y2="192" stroke-width="1.8"/>
+            <line x1="205" y1="175" x2="188" y2="192" stroke-width="1.8"/>
+            <line x1="255" y1="125" x2="272" y2="108" stroke-width="1.8"/>
+            <circle cx="230" cy="80" r="1.8" fill="#000" stroke="none"/>
+            <circle cx="230" cy="220" r="1.8" fill="#000" stroke="none"/>
+            <circle cx="160" cy="150" r="1.8" fill="#000" stroke="none"/>
+            <circle cx="300" cy="150" r="1.8" fill="#000" stroke="none"/>
+            <!-- 碎纸 B (低) -->
+            <rect x="125" y="255" width="8" height="3.5" rx="1" fill="none" stroke="#000" stroke-width="1.2" transform="rotate(-20 125 255)"/>
+            <rect x="215" y="270" width="7.5" height="3.5" rx="1" fill="#000" transform="rotate(15 215 270)"/>
+            <circle cx="80" cy="290" r="1.8" fill="#000" stroke="none"/>
+          </svg>
+        </div>
+
+      </div>
     </div>
 
     <div class="footer-tip">点击屏幕任意区域切换方案</div>
@@ -221,7 +248,7 @@
     var panelCoffeeEl = document.getElementById('panel-coffee');
     var panelFireworkEl = document.getElementById('panel-firework');
 
-    /* ================= 方案 1: 咖啡热气控制 ================= */
+    /* ================= 方案 1: 咖啡热气（2000ms 慢节奏） ================= */
     var STEAM_PATHS = [
       { s1: 'M36 22 Q 32 14 36 6', s2: 'M48 22 Q 44 14 48 6', s3: 'M60 22 Q 56 14 60 6' },
       { s1: 'M36 22 Q 40 14 36 6', s2: 'M48 22 Q 52 14 48 6', s3: 'M60 22 Q 64 14 60 6' },
@@ -232,67 +259,36 @@
     var steam2El = document.getElementById('steam-2');
     var steam3El = document.getElementById('steam-3');
 
-    /* ================= 方案 2: 烟花纯 JS 状态步进 ================= */
-    var fwTickStep = 0;
-    var fw1_s1 = document.getElementById('fw1-s1');
-    var fw1_s2 = document.getElementById('fw1-s2');
-    var fw1_s3 = document.getElementById('fw1-s3');
-
-    var fw2_s1 = document.getElementById('fw2-s1');
-    var fw2_s2 = document.getElementById('fw2-s2');
-    var fw2_s3 = document.getElementById('fw2-s3');
-
-    var conf_a = document.getElementById('conf-a');
-    var conf_a_low = document.getElementById('conf-a-low');
-    var conf_b = document.getElementById('conf-b');
-    var conf_b_low = document.getElementById('conf-b-low');
-
-    function updateAnimationTick() {
+    setInterval(function() {
       if (currentMode === 0) {
-        // 咖啡低频摇曳
         steamStep = (steamStep + 1) % STEAM_PATHS.length;
         var cur = STEAM_PATHS[steamStep];
         steam1El.setAttribute('d', cur.s1);
         steam2El.setAttribute('d', cur.s2);
         steam3El.setAttribute('d', cur.s3);
-      } else {
-        // 烟花 8 拍状态机循环 (每 600ms 一拍)
-        fwTickStep = (fwTickStep + 1) % 8;
-
-        // 重置所有显示
-        fw1_s1.style.display = 'none';
-        fw1_s2.style.display = 'none';
-        fw1_s3.style.display = 'none';
-
-        fw2_s1.style.display = 'none';
-        fw2_s2.style.display = 'none';
-        fw2_s3.style.display = 'none';
-
-        conf_a.style.display = 'none';
-        conf_a_low.style.display = 'none';
-        conf_b.style.display = 'none';
-        conf_b_low.style.display = 'none';
-
-        // 烟花 1 (左侧) 节拍
-        if (fwTickStep === 0) fw1_s1.style.display = 'block';
-        if (fwTickStep === 1) fw1_s2.style.display = 'block';
-        if (fwTickStep === 2) fw1_s3.style.display = 'block';
-
-        // 烟花 2 (右侧) 节拍 (错峰 4 拍)
-        if (fwTickStep === 4) fw2_s1.style.display = 'block';
-        if (fwTickStep === 5) fw2_s2.style.display = 'block';
-        if (fwTickStep === 6) fw2_s3.style.display = 'block';
-
-        // 碎纸下落交替节拍
-        if (fwTickStep === 1 || fwTickStep === 2) conf_a.style.display = 'block';
-        if (fwTickStep === 3 || fwTickStep === 4) conf_a_low.style.display = 'block';
-        if (fwTickStep === 5 || fwTickStep === 6) conf_b.style.display = 'block';
-        if (fwTickStep === 7 || fwTickStep === 0) conf_b_low.style.display = 'block';
       }
+    }, 2000);
+
+    /* ================= 方案 2: 烟花（800ms 原生帧切换，稳定可靠） ================= */
+    var fwStep = 0;
+    var TOTAL_FRAMES = 6;
+    var fwFrames = [];
+    for (var i = 0; i < TOTAL_FRAMES; i++) {
+      fwFrames.push(document.getElementById('frame-' + i));
     }
 
-    // 600ms 定时器驱动
-    setInterval(updateAnimationTick, 600);
+    setInterval(function() {
+      if (currentMode === 1) {
+        fwStep = (fwStep + 1) % TOTAL_FRAMES;
+        for (var k = 0; k < TOTAL_FRAMES; k++) {
+          if (k === fwStep) {
+            fwFrames[k].className = 'fw-frame active';
+          } else {
+            fwFrames[k].className = 'fw-frame';
+          }
+        }
+      }
+    }, 800);
 
     function toggleMode() {
       currentMode = (currentMode === 0) ? 1 : 0;
