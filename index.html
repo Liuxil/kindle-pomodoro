@@ -21,7 +21,7 @@
       font-family: sans-serif;
     }
 
-    /* 默认横屏模式 (90度全屏铺满) */
+    /* 默认横屏模式 (90度旋转全屏铺满) */
     .container {
       position: absolute;
       top: 50%;
@@ -43,7 +43,7 @@
       -webkit-box-align: center;
       -webkit-align-items: center;
       align-items: center;
-      padding: 6px 24px 14px 24px;
+      padding: 8px 24px 6px 24px;
     }
 
     /* 竖屏模式 */
@@ -153,7 +153,6 @@
       cursor: pointer;
     }
 
-    /* 进一步等比放大时间 */
     .timer-text {
       font-size: 235px;
       line-height: 0.95;
@@ -164,21 +163,18 @@
       font-size: 160px;
     }
 
-    /* 仅保留 3 种精选字体 */
+    /* 3 种精选字体 */
     .font-style-0 {
-      /* 柔和胶囊圆角体 */
       font-family: "Avenir Next Rounded Pro", "Varela Round", "Nunito", "Arial Rounded MT Bold", sans-serif;
       font-weight: 300;
       letter-spacing: -2px;
     }
     .font-style-1 {
-      /* 极简超细极幼体 */
       font-family: "Helvetica Neue Light", "Helvetica Neue", "Arial Narrow", sans-serif;
       font-weight: 200;
       letter-spacing: -4px;
     }
     .font-style-2 {
-      /* 优雅古典细体 */
       font-family: "Baskerville", "Garamond", "Georgia", serif;
       font-weight: 300;
       letter-spacing: 0px;
@@ -232,7 +228,7 @@
       display: block;
     }
 
-    /* 底部按钮排版：左右分立 */
+    /* 底部按钮栏：彻底贴底排版 */
     .footer {
       width: 96%;
       display: -webkit-box;
@@ -244,6 +240,8 @@
       -webkit-box-align: center;
       -webkit-align-items: center;
       align-items: center;
+      margin-bottom: 0px;
+      padding-bottom: 0px;
     }
     .btn-adjust-group {
       display: -webkit-box;
@@ -341,7 +339,7 @@
       </div>
     </div>
 
-    <!-- 底部按键 -->
+    <!-- 底部按钮：完全置底 -->
     <div class="footer">
       <div class="btn-adjust-group">
         <button class="btn-adjust" onclick="addMinutes(5)">+5m</button>
@@ -396,7 +394,7 @@
     var SKY_INTERVAL = 2;
 
     var currentFontIndex = 0;
-    var TOTAL_FONTS = 3; // 仅保留 3 种精选字体
+    var TOTAL_FONTS = 3;
 
     var timerTextEl = document.getElementById('timer-text');
     var toggleBtn = document.getElementById('btn-toggle');
