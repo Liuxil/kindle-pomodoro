@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Pomodoro</title>
+  <title>Kindle 庆祝/休息动画预览</title>
   <style>
     * {
       box-sizing: border-box;
@@ -26,13 +26,11 @@
       height: 0 !important;
     }
 
-    /* 默认横屏模式 */
+    /* 全屏点击交互容器 */
     .container {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      -webkit-transform: translate(-50%, -50%) rotate(90deg);
-      transform: translate(-50%, -50%) rotate(90deg);
+      width: 100%;
+      height: 100%;
+      position: relative;
       display: -webkit-box;
       display: -webkit-flex;
       display: flex;
@@ -40,115 +38,6 @@
       -webkit-box-direction: normal;
       -webkit-flex-direction: column;
       flex-direction: column;
-      -webkit-box-pack: justify;
-      -webkit-justify-content: space-between;
-      justify-content: space-between;
-      -webkit-box-align: center;
-      -webkit-align-items: center;
-      align-items: center;
-      padding: 6px 4px 10px 4px;
-      overflow: hidden !important;
-    }
-
-    /* 竖屏模式：纯 CSS 视口锁定，彻底杜绝 JS 初始化时序误差 */
-    body.portrait-mode .container {
-      position: static !important;
-      width: 100% !important;
-      height: 100% !important;
-      -webkit-transform: none !important;
-      transform: none !important;
-      padding: 16px 4px 28px 4px !important;
-    }
-
-    /* 顶部天象部件 */
-    .sky-badge {
-      width: 60px;
-      height: 60px;
-      position: relative;
-      cursor: pointer;
-      -webkit-flex-shrink: 0;
-      flex-shrink: 0;
-    }
-    .sun-box {
-      width: 100%;
-      height: 100%;
-      position: relative;
-      display: none;
-    }
-    .sun-rays {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      -webkit-transition: none;
-      transition: none;
-    }
-    .sun-face {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 30px;
-      height: 30px;
-      margin-top: -15px;
-      margin-left: -15px;
-      background: #ffffff;
-      border: 2.5px solid #000000;
-      border-radius: 50%;
-      box-sizing: border-box;
-      display: -webkit-box;
-      display: -webkit-flex;
-      display: flex;
-      -webkit-box-align: center;
-      -webkit-align-items: center;
-      align-items: center;
-      -webkit-box-pack: center;
-      -webkit-justify-content: center;
-      justify-content: center;
-    }
-    .moon-box {
-      width: 100%;
-      height: 100%;
-      position: relative;
-      display: none;
-    }
-    .moon-star {
-      position: absolute;
-      top: 6px;
-      right: 6px;
-      width: 18px;
-      height: 18px;
-      -webkit-transition: none;
-      transition: none;
-    }
-
-    /* 中间主体区 */
-    .main-section {
-      width: 100%;
-      -webkit-box-flex: 1;
-      -webkit-flex: 1;
-      flex: 1;
-      display: -webkit-box;
-      display: -webkit-flex;
-      display: flex;
-      -webkit-box-orient: vertical;
-      -webkit-box-direction: normal;
-      -webkit-flex-direction: column;
-      flex-direction: column;
-      -webkit-box-align: center;
-      -webkit-align-items: center;
-      align-items: center;
-      -webkit-box-pack: center;
-      -webkit-justify-content: center;
-      justify-content: center;
-    }
-
-    /* 倒计时主容器 */
-    .timer-container {
-      width: 100%;
-      display: -webkit-box;
-      display: -webkit-flex;
-      display: flex;
       -webkit-box-pack: center;
       -webkit-justify-content: center;
       justify-content: center;
@@ -158,169 +47,46 @@
       cursor: pointer;
     }
 
-    /* 横屏大字 */
-    .timer-text {
-      font-size: 240px;
-      line-height: 0.85;
-      text-align: center;
-      width: 100%;
-      display: block;
-      letter-spacing: -6px;
-    }
-
-    /* 竖屏大字 */
-    body.portrait-mode .timer-text {
-      font-size: 215px;
-      line-height: 0.82;
-      letter-spacing: -6px;
-    }
-
-    /* 方案 0: 极细物理描边字（镂空透明版） */
-    .font-style-0 {
-      font-family: "Helvetica Neue Light", "Helvetica Neue", "Arial Narrow", sans-serif;
-      font-weight: 200;
-      letter-spacing: -3px;
-      color: transparent !important;
-      -webkit-text-fill-color: transparent !important;
-      -webkit-text-stroke: 1.5px #000000;
-    }
-
-    /* 方案 1: 极细物理描边字（纯实心黑色版） */
-    .font-style-1 {
-      font-family: "Helvetica Neue Light", "Helvetica Neue", "Arial Narrow", sans-serif;
-      font-weight: 200;
-      letter-spacing: -3px;
-      color: #000000 !important;
-      -webkit-text-fill-color: #000000 !important;
-      -webkit-text-stroke: 0 !important;
-    }
-
-    /* 方案 2: 古典雅致细体 */
-    .font-style-2 {
-      font-family: "Baskerville", "Bookerly Light", "Georgia", serif;
-      font-weight: 200;
-      letter-spacing: -1px;
-      color: #000000;
-      -webkit-text-fill-color: #000000;
-      -webkit-text-stroke: 0;
-    }
-
-    /* 脚印宽幅长轨道 (16 档卡槽) */
-    .tracks-container {
-      width: 96%;
-      height: 26px;
-      display: -webkit-box;
-      display: -webkit-flex;
-      display: flex;
-      -webkit-box-pack: justify;
-      -webkit-justify-content: space-between;
-      justify-content: space-between;
-      -webkit-box-align: center;
-      -webkit-align-items: center;
-      align-items: center;
-      margin-top: 6px;
-    }
-    body.portrait-mode .tracks-container {
-      margin-top: 14px;
-    }
-    .track-slot {
-      width: 20px;
-      height: 20px;
-      display: -webkit-box;
-      display: -webkit-flex;
-      display: flex;
-      -webkit-box-pack: center;
-      -webkit-justify-content: center;
-      justify-content: center;
-      -webkit-box-align: center;
-      -webkit-align-items: center;
-      align-items: center;
-    }
-    .track-slot svg {
-      width: 18px;
-      height: 18px;
-      fill: #000000;
-      display: none;
-    }
-    .track-slot:nth-child(even) svg {
-      margin-top: 4px;
-      -webkit-transform: rotate(6deg);
-      transform: rotate(6deg);
-    }
-    .track-slot:nth-child(odd) svg {
-      margin-top: -4px;
-      -webkit-transform: rotate(-6deg);
-      transform: rotate(-6deg);
-    }
-    .track-slot.active svg {
-      display: block;
-    }
-
-    /* 底部按钮栏 */
-    .footer {
-      width: 94%;
-      display: -webkit-box;
-      display: -webkit-flex;
-      display: flex;
-      -webkit-box-pack: justify;
-      -webkit-justify-content: space-between;
-      justify-content: space-between;
-      -webkit-box-align: center;
-      -webkit-align-items: center;
-      align-items: center;
-      -webkit-flex-shrink: 0;
-      flex-shrink: 0;
-    }
-    .btn-adjust-group {
-      display: -webkit-box;
-      display: -webkit-flex;
-      display: flex;
-      gap: 10px;
-    }
-    button {
-      background: #ffffff;
-      color: #000000;
-      border: 3px solid #000000;
+    /* 顶部微提示 */
+    .mode-tip {
+      position: absolute;
+      top: 14px;
+      font-size: 14px;
+      letter-spacing: 2px;
       font-weight: bold;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    button:active {
-      background: #000000;
-      color: #ffffff;
-    }
-    .btn-adjust {
-      font-size: 18px;
-      padding: 5px 14px;
-    }
-    .btn-start {
-      font-size: 26px;
-      padding: 5px 44px;
+      border: 1.5px solid #000000;
+      padding: 4px 12px;
+      border-radius: 6px;
     }
 
-    /* 休息 / 庆祝全屏层（去文字纯静谧咖啡） */
-    .rest-screen {
-      display: none;
+    /* 底部操作提示 */
+    .footer-tip {
       position: absolute;
-      top: 0;
-      left: 0;
+      bottom: 16px;
+      font-size: 12px;
+      letter-spacing: 1px;
+      color: #333333;
+    }
+
+    /* 方案展示区域 */
+    .view-panel {
       width: 100%;
-      height: 100%;
-      background: #ffffff;
+      height: 75%;
+      display: none;
       -webkit-box-pack: center;
       -webkit-justify-content: center;
       justify-content: center;
       -webkit-box-align: center;
       -webkit-align-items: center;
       align-items: center;
-      cursor: pointer;
-      z-index: 100;
     }
-    .rest-screen.active {
+    .view-panel.active {
       display: -webkit-box;
       display: -webkit-flex;
       display: flex;
     }
+
+    /* ================= 方案 1：咖啡杯热气 ================= */
     .coffee-icon {
       width: 160px;
       height: 160px;
@@ -329,90 +95,124 @@
       -webkit-transition: none;
       transition: none;
     }
+
+    /* ================= 方案 2：双烟花 + 极简碎纸 ================= */
+    .firework-svg {
+      width: 100%;
+      height: 100%;
+      max-width: 340px;
+      max-height: 480px;
+    }
+
+    /* 左上方烟花 (周期 3.6s, 延迟 0s) */
+    .fw-1-rocket {
+      animation: r1 3.6s steps(4, start) infinite;
+    }
+    @keyframes r1 {
+      0%   { transform: translateY(180px); opacity: 0; }
+      12%  { transform: translateY(140px); opacity: 1; }
+      32%  { transform: translateY(0px); opacity: 1; }
+      40%  { transform: translateY(-25px); opacity: 0; }
+      100% { transform: translateY(-25px); opacity: 0; }
+    }
+    .fw-1-burst {
+      transform-origin: 90px 130px;
+      animation: b1 3.6s steps(3, start) infinite;
+    }
+    @keyframes b1 {
+      0%, 32% { transform: scale(0.1); opacity: 0; }
+      40%     { transform: scale(0.6); opacity: 1; }
+      58%     { transform: scale(1.15) translateY(3px); opacity: 1; }
+      76%     { transform: scale(1.35) translateY(14px); opacity: 0; }
+      100%    { transform: scale(1.35) translateY(14px); opacity: 0; }
+    }
+    .fw-1-sparks {
+      transform-origin: 90px 130px;
+      animation: s1 3.6s steps(3, start) infinite;
+    }
+    @keyframes s1 {
+      0%, 40% { transform: scale(0.3); opacity: 0; }
+      58%     { transform: scale(1.1) translateY(5px); opacity: 1; }
+      76%     { transform: scale(1.4) translateY(20px); opacity: 0; }
+      100%    { transform: scale(1.4) translateY(20px); opacity: 0; }
+    }
+
+    /* 右上方烟花 (周期 3.6s, 延迟 1.8s) */
+    .fw-2-rocket {
+      animation: r2 3.6s steps(4, start) 1.8s infinite;
+    }
+    @keyframes r2 {
+      0%   { transform: translateY(190px); opacity: 0; }
+      12%  { transform: translateY(150px); opacity: 1; }
+      32%  { transform: translateY(0px); opacity: 1; }
+      40%  { transform: translateY(-25px); opacity: 0; }
+      100% { transform: translateY(-25px); opacity: 0; }
+    }
+    .fw-2-burst {
+      transform-origin: 230px 150px;
+      animation: b2 3.6s steps(3, start) 1.8s infinite;
+    }
+    @keyframes b2 {
+      0%, 32% { transform: scale(0.1); opacity: 0; }
+      40%     { transform: scale(0.6); opacity: 1; }
+      58%     { transform: scale(1.15) translateY(3px); opacity: 1; }
+      76%     { transform: scale(1.35) translateY(14px); opacity: 0; }
+      100%    { transform: scale(1.35) translateY(14px); opacity: 0; }
+    }
+    .fw-2-sparks {
+      transform-origin: 230px 150px;
+      animation: s2 3.6s steps(3, start) 1.8s infinite;
+    }
+    @keyframes s2 {
+      0%, 40% { transform: scale(0.3); opacity: 0; }
+      58%     { transform: scale(1.1) translateY(5px); opacity: 1; }
+      76%     { transform: scale(1.4) translateY(20px); opacity: 0; }
+      100%    { transform: scale(1.4) translateY(20px); opacity: 0; }
+    }
+
+    /* 极简碎纸 3 组交替下落 (每组 3~4 个) */
+    .confetti-group-a {
+      animation: conf-a 4.5s steps(4, start) infinite;
+    }
+    @keyframes conf-a {
+      0%   { transform: translateY(-30px) rotate(0deg); opacity: 0; }
+      15%  { transform: translateY(30px) rotate(15deg); opacity: 1; }
+      60%  { transform: translateY(170px) rotate(-10deg); opacity: 1; }
+      90%  { transform: translateY(280px) rotate(20deg); opacity: 0; }
+      100% { transform: translateY(280px); opacity: 0; }
+    }
+
+    .confetti-group-b {
+      animation: conf-b 4.5s steps(4, start) 1.5s infinite;
+    }
+    @keyframes conf-b {
+      0%   { transform: translateY(-30px) rotate(0deg); opacity: 0; }
+      15%  { transform: translateY(35px) rotate(-15deg); opacity: 1; }
+      60%  { transform: translateY(180px) rotate(15deg); opacity: 1; }
+      90%  { transform: translateY(290px) rotate(-20deg); opacity: 0; }
+      100% { transform: translateY(290px); opacity: 0; }
+    }
+
+    .confetti-group-c {
+      animation: conf-c 4.5s steps(4, start) 3.0s infinite;
+    }
+    @keyframes conf-c {
+      0%   { transform: translateY(-30px) rotate(0deg); opacity: 0; }
+      15%  { transform: translateY(30px) rotate(20deg); opacity: 1; }
+      60%  { transform: translateY(175px) rotate(-15deg); opacity: 1; }
+      90%  { transform: translateY(285px) rotate(10deg); opacity: 0; }
+      100% { transform: translateY(285px); opacity: 0; }
+    }
   </style>
 </head>
 <body>
 
-  <div class="container" id="main-container">
+  <div class="container" onclick="toggleMode()">
     
-    <!-- 顶部天象图标（点击切换横/竖屏） -->
-    <div class="sky-badge" onclick="toggleScreenOrientation()" title="点击切换横/竖屏">
-      <div class="sun-box" id="sun-box">
-        <div class="sun-rays" id="sun-rays">
-          <svg viewBox="0 0 100 100" stroke="#000" stroke-linecap="round">
-            <path d="M50 4 L50 16" stroke-width="4.5"/>
-            <path d="M50 84 L50 96" stroke-width="4.5"/>
-            <path d="M4 50 L16 50" stroke-width="4.5"/>
-            <path d="M84 50 L96 50" stroke-width="4.5"/>
-            <path d="M17 17 L26 26" stroke-width="4"/>
-            <path d="M74 74 L83 83" stroke-width="4"/>
-            <path d="M17 83 L26 74" stroke-width="4"/>
-            <path d="M74 26 L83 17" stroke-width="4"/>
-          </svg>
-        </div>
-        <div class="sun-face">
-          <svg viewBox="0 0 34 34">
-            <circle cx="12" cy="14" r="1.8" fill="#000"/>
-            <circle cx="22" cy="14" r="1.8" fill="#000"/>
-            <path d="M12 19 Q 17 24 22 19" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round"/>
-          </svg>
-        </div>
-      </div>
+    <div class="mode-tip" id="mode-text">方案 A：摇曳热气咖啡</div>
 
-      <div class="moon-box" id="moon-box">
-        <svg viewBox="0 0 68 68" style="width:100%;height:100%;">
-          <path d="M38 12 C24 12 12 24 12 38 C12 48 18 56 26 59 C23 54 22 48 22 42 C22 28 32 17 46 16 C43 13 40 12 38 12 Z" fill="#000"/>
-        </svg>
-        <div class="moon-star" id="moon-star">
-          <svg viewBox="0 0 24 24">
-            <path d="M12 2 Q 12 12 2 12 Q 12 12 12 22 Q 12 12 22 12 Q 12 12 12 2 Z" fill="#000"/>
-          </svg>
-        </div>
-      </div>
-    </div>
-
-    <!-- 中间主体区 -->
-    <div class="main-section">
-      <!-- 倒计时区域（点击循环切换 3 套字体） -->
-      <div class="timer-container" onclick="switchFont()">
-        <div class="timer-text font-style-0" id="timer-text">00:25</div>
-      </div>
-      
-      <!-- 脚印进度滑槽（16 档宽轨，未开始前保持隐藏） -->
-      <div class="tracks-container" id="tracks-bottom">
-        <div class="track-slot"></div>
-        <div class="track-slot"></div>
-        <div class="track-slot"></div>
-        <div class="track-slot"></div>
-        <div class="track-slot"></div>
-        <div class="track-slot"></div>
-        <div class="track-slot"></div>
-        <div class="track-slot"></div>
-        <div class="track-slot"></div>
-        <div class="track-slot"></div>
-        <div class="track-slot"></div>
-        <div class="track-slot"></div>
-        <div class="track-slot"></div>
-        <div class="track-slot"></div>
-        <div class="track-slot"></div>
-        <div class="track-slot"></div>
-      </div>
-    </div>
-
-    <!-- 底部按钮栏 -->
-    <div class="footer">
-      <div class="btn-adjust-group">
-        <button class="btn-adjust" onclick="addMinutes(5)">+5m</button>
-        <button class="btn-adjust" onclick="addMinutes(10)">+10m</button>
-        <button class="btn-adjust" onclick="addMinutes(-5)">-5m</button>
-      </div>
-      <div>
-        <button id="btn-toggle" class="btn-start" onclick="toggleTimer()">开始</button>
-      </div>
-    </div>
-
-    <!-- 休息静态页面：纯咖啡图案（点击返回主页面） -->
-    <div class="rest-screen" id="rest-screen" onclick="dismissRestScreen()">
+    <!-- 方案 1: 咖啡热气 -->
+    <div class="view-panel active" id="panel-coffee">
       <div class="coffee-icon">
         <svg viewBox="0 0 100 100" style="width:100%;height:100%;">
           <!-- 3 缕动态摇曳热气 -->
@@ -429,70 +229,102 @@
       </div>
     </div>
 
+    <!-- 方案 2: 双烟花 + 碎纸 -->
+    <div class="view-panel" id="panel-firework">
+      <svg viewBox="0 0 320 460" class="firework-svg">
+        
+        <!-- 1. 左上方烟花 (爆心: 90, 130) -->
+        <g>
+          <g class="fw-1-rocket">
+            <circle cx="90" cy="150" r="3" fill="#000"/>
+            <line x1="90" y1="155" x2="90" y2="195" stroke="#000" stroke-width="2" stroke-dasharray="3 4" stroke-linecap="round"/>
+          </g>
+          <g class="fw-1-burst" fill="none" stroke="#000" stroke-linecap="round">
+            <line x1="90" y1="98" x2="90" y2="72" stroke-width="2.2"/>
+            <line x1="90" y1="162" x2="90" y2="188" stroke-width="2.2"/>
+            <line x1="58" y1="130" x2="32" y2="130" stroke-width="2.2"/>
+            <line x1="122" y1="130" x2="148" y2="130" stroke-width="2.2"/>
+            <line x1="68" y1="108" x2="50" y2="90" stroke-width="1.8"/>
+            <line x1="112" y1="152" x2="130" y2="170" stroke-width="1.8"/>
+            <line x1="68" y1="152" x2="50" y2="170" stroke-width="1.8"/>
+            <line x1="112" y1="108" x2="130" y2="90" stroke-width="1.8"/>
+            <circle cx="90" cy="130" r="2.4" fill="#000" stroke="none"/>
+          </g>
+          <g class="fw-1-sparks" fill="#000">
+            <circle cx="90" cy="60" r="2"/>
+            <circle cx="90" cy="200" r="2"/>
+            <circle cx="20" cy="130" r="2"/>
+            <circle cx="160" cy="130" r="2"/>
+            <circle cx="40" cy="80" r="1.4"/>
+            <circle cx="140" cy="180" r="1.4"/>
+            <circle cx="40" cy="180" r="1.4"/>
+            <circle cx="140" cy="80" r="1.4"/>
+          </g>
+        </g>
+
+        <!-- 2. 右上方烟花 (爆心: 230, 150) -->
+        <g>
+          <g class="fw-2-rocket">
+            <circle cx="230" cy="170" r="3" fill="#000"/>
+            <line x1="230" y1="175" x2="230" y2="215" stroke="#000" stroke-width="2" stroke-dasharray="3 4" stroke-linecap="round"/>
+          </g>
+          <g class="fw-2-burst" fill="none" stroke="#000" stroke-linecap="round">
+            <line x1="230" y1="118" x2="230" y2="92" stroke-width="2.2"/>
+            <line x1="230" y1="182" x2="230" y2="208" stroke-width="2.2"/>
+            <line x1="198" y1="150" x2="172" y2="150" stroke-width="2.2"/>
+            <line x1="262" y1="150" x2="288" y2="150" stroke-width="2.2"/>
+            <line x1="208" y1="128" x2="190" y2="110" stroke-width="1.8"/>
+            <line x1="252" y1="172" x2="270" y2="190" stroke-width="1.8"/>
+            <line x1="208" y1="172" x2="190" y2="190" stroke-width="1.8"/>
+            <line x1="252" y1="128" x2="270" y2="110" stroke-width="1.8"/>
+            <circle cx="230" cy="150" r="2.4" fill="#000" stroke="none"/>
+          </g>
+          <g class="fw-2-sparks" fill="#000">
+            <circle cx="230" cy="80" r="2"/>
+            <circle cx="230" cy="220" r="2"/>
+            <circle cx="160" cy="150" r="2"/>
+            <circle cx="300" cy="150" r="2"/>
+            <circle cx="180" cy="100" r="1.4"/>
+            <circle cx="280" cy="200" r="1.4"/>
+            <circle cx="180" cy="200" r="1.4"/>
+            <circle cx="280" cy="100" r="1.4"/>
+          </g>
+        </g>
+
+        <!-- 3. 极简碎纸组 (每组 3~4 个元素) -->
+        <g class="confetti-group-a">
+          <rect x="60" y="50" width="8" height="3.5" rx="1" fill="#000" transform="rotate(25 60 50)"/>
+          <rect x="180" y="35" width="7" height="3.5" rx="1" fill="none" stroke="#000" stroke-width="1.2" transform="rotate(-30 180 35)"/>
+          <circle cx="270" cy="70" r="1.8" fill="#000"/>
+        </g>
+
+        <g class="confetti-group-b">
+          <rect x="120" y="45" width="8" height="3.5" rx="1" fill="none" stroke="#000" stroke-width="1.2" transform="rotate(35 120 45)"/>
+          <rect x="220" y="60" width="7.5" height="3.5" rx="1" fill="#000" transform="rotate(-20 220 60)"/>
+          <circle cx="75" cy="80" r="1.8" fill="#000"/>
+          <polygon points="160,30 163,35 157,35" fill="#000"/>
+        </g>
+
+        <g class="confetti-group-c">
+          <rect x="145" y="70" width="8" height="3.5" rx="1" fill="#000" transform="rotate(-40 145 70)"/>
+          <rect x="250" y="40" width="7" height="3.5" rx="1" fill="none" stroke="#000" stroke-width="1.2" transform="rotate(15 250 40)"/>
+          <circle cx="195" cy="85" r="1.8" fill="#000"/>
+        </g>
+
+      </svg>
+    </div>
+
+    <div class="footer-tip">点击屏幕任意区域切换方案</div>
+
   </div>
 
   <script>
-    var ANIMALS = [
-      {
-        name: 'cat',
-        feetCount: 4,
-        svg: '<svg viewBox="0 0 24 24"><ellipse cx="9" cy="12" rx="4.5" ry="5.5"/><circle cx="16" cy="7" r="2"/><circle cx="19" cy="12" r="2.2"/><circle cx="16" cy="17" r="2"/></svg>'
-      },
-      {
-        name: 'pig_hoof',
-        feetCount: 4,
-        svg: '<svg viewBox="0 0 24 24"><ellipse cx="12" cy="7.5" rx="6" ry="3.2" transform="rotate(10 12 7.5)" fill="#000"/><ellipse cx="12" cy="16.5" rx="6" ry="3.2" transform="rotate(-10 12 16.5)" fill="#000"/></svg>'
-      },
-      {
-        name: 'horse_hoof',
-        feetCount: 4,
-        svg: '<svg viewBox="0 0 24 24"><path d="M5 6 C15 5 19 9 19 12 C19 15 15 19 5 18 L5 14.5 C12 15 14 13.5 14 12 C14 10.5 12 9 5 9.5 Z" fill="#000"/></svg>'
-      },
-      {
-        name: 'bird',
-        feetCount: 2,
-        svg: '<svg viewBox="0 0 24 24"><path d="M5 12 L19 12 M13 12 L19 6 M13 12 L19 18" stroke="#000" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>'
-      },
-      {
-        name: 'duck',
-        feetCount: 2,
-        svg: '<svg viewBox="0 0 24 24"><path d="M4 12 L9 12 M9 12 L17 4 C14 8 13 10 9 12 C13 14 14 16 17 20 Z" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="#000"/></svg>'
-      }
-    ];
+    var currentMode = 0; // 0: 咖啡, 1: 烟花
+    var modeTextEl = document.getElementById('mode-text');
+    var panelCoffeeEl = document.getElementById('panel-coffee');
+    var panelFireworkEl = document.getElementById('panel-firework');
 
-    var totalTime = 25 * 60;
-    var timeLeft = totalTime;
-    var timerId = null;
-    var hasStarted = false;
-
-    var isDayTime = true;
-    var sunAngle = 0;
-    var starToggled = false;
-
-    var currentAnimal = null;
-    var TOTAL_SLOTS = 16;
-    var SKY_INTERVAL = 2;
-
-    var currentFontIndex = 0;
-    var TOTAL_FONTS = 3;
-
-    var restSteamStep = 0;
-    var restTimerId = null;
-
-    var containerEl = document.getElementById('main-container');
-    var timerTextEl = document.getElementById('timer-text');
-    var toggleBtn = document.getElementById('btn-toggle');
-    var restScreenEl = document.getElementById('rest-screen');
-    var sunBoxEl = document.getElementById('sun-box');
-    var moonBoxEl = document.getElementById('moon-box');
-    var sunRaysEl = document.getElementById('sun-rays');
-    var moonStarEl = document.getElementById('moon-star');
-    var trackSlots = document.querySelectorAll('.track-slot');
-
-    var steam1El = document.getElementById('steam-1');
-    var steam2El = document.getElementById('steam-2');
-    var steam3El = document.getElementById('steam-3');
-
+    // 咖啡热气形态数组
     var STEAM_PATHS = [
       {
         s1: 'M36 22 Q 32 14 36 6',
@@ -510,266 +342,33 @@
         s3: 'M60 22 Q 58 14 62 5'
       }
     ];
+    var steamStep = 0;
+    var steam1El = document.getElementById('steam-1');
+    var steam2El = document.getElementById('steam-2');
+    var steam3El = document.getElementById('steam-3');
 
-    // 动态校准横屏尺寸：竖屏模式完全不介入，横屏模式精准计算
-    function updateLayoutDimensions() {
-      var isPortrait = document.body.classList.contains('portrait-mode');
-      if (isPortrait) {
-        containerEl.style.width = '';
-        containerEl.style.height = '';
-        return;
+    setInterval(function() {
+      if (currentMode === 0) {
+        steamStep = (steamStep + 1) % STEAM_PATHS.length;
+        var cur = STEAM_PATHS[steamStep];
+        steam1El.setAttribute('d', cur.s1);
+        steam2El.setAttribute('d', cur.s2);
+        steam3El.setAttribute('d', cur.s3);
       }
-      var w = window.innerWidth || document.documentElement.clientWidth || 600;
-      var h = window.innerHeight || document.documentElement.clientHeight || 800;
-      var screenLong = Math.max(w, h);
-      var screenShort = Math.min(w, h);
-      containerEl.style.width = (screenLong - 6) + 'px';
-      containerEl.style.height = (screenShort - 14) + 'px';
-    }
+    }, 2000);
 
-    function toggleScreenOrientation() {
-      var current = localStorage.getItem('kindle_pomodoro_orient');
-      var next = (current === 'portrait') ? 'landscape' : 'portrait';
-      try {
-        localStorage.setItem('kindle_pomodoro_orient', next);
-      } catch(e) {}
-      window.location.reload();
-    }
-
-    function initSavedOrientation() {
-      var saved = localStorage.getItem('kindle_pomodoro_orient');
-      if (saved === 'portrait') {
-        document.body.classList.add('portrait-mode');
-      }
-      updateLayoutDimensions();
-    }
-
-    function initSavedFont() {
-      var saved = localStorage.getItem('kindle_pomodoro_font');
-      if (saved !== null) {
-        currentFontIndex = parseInt(saved, 10) || 0;
-        if (currentFontIndex >= TOTAL_FONTS) {
-          currentFontIndex = 0;
-        }
-      }
-      applyFont();
-    }
-
-    function switchFont() {
-      currentFontIndex = (currentFontIndex + 1) % TOTAL_FONTS;
-      try {
-        localStorage.setItem('kindle_pomodoro_font', currentFontIndex);
-      } catch(e) {}
-      applyFont();
-    }
-
-    function applyFont() {
-      timerTextEl.className = 'timer-text font-style-' + currentFontIndex;
-    }
-
-    function getLocalHour() {
-      var d = new Date();
-      var tzOffset = d.getTimezoneOffset();
-      if (tzOffset === 0) {
-        return (d.getUTCHours() + 8) % 24;
-      }
-      return d.getHours();
-    }
-
-    function updateDayNightMode() {
-      var hour = getLocalHour();
-      isDayTime = (hour >= 6 && hour < 18);
-      renderSkyIcon();
-    }
-
-    function renderSkyIcon() {
-      if (isDayTime) {
-        sunBoxEl.style.display = 'block';
-        moonBoxEl.style.display = 'none';
+    function toggleMode() {
+      currentMode = (currentMode === 0) ? 1 : 0;
+      if (currentMode === 0) {
+        modeTextEl.innerText = '方案 A：摇曳热气咖啡';
+        panelCoffeeEl.className = 'view-panel active';
+        panelFireworkEl.className = 'view-panel';
       } else {
-        sunBoxEl.style.display = 'none';
-        moonBoxEl.style.display = 'block';
+        modeTextEl.innerText = '方案 B：双烟花 + 极简碎纸';
+        panelCoffeeEl.className = 'view-panel';
+        panelFireworkEl.className = 'view-panel active';
       }
     }
-
-    function clearTracks() {
-      for (var i = 0; i < TOTAL_SLOTS; i++) {
-        trackSlots[i].innerHTML = '';
-        trackSlots[i].className = 'track-slot';
-      }
-      hasStarted = false;
-    }
-
-    function startAnimalTracks() {
-      var randIndex = Math.floor(Math.random() * ANIMALS.length);
-      currentAnimal = ANIMALS[randIndex];
-      for (var i = 0; i < TOTAL_SLOTS; i++) {
-        trackSlots[i].innerHTML = currentAnimal.svg;
-        trackSlots[i].className = 'track-slot';
-      }
-      hasStarted = true;
-      updateProgressTracks();
-    }
-
-    function updateProgressTracks() {
-      if (!hasStarted || !currentAnimal) {
-        return;
-      }
-
-      var progressRatio = (totalTime - timeLeft) / totalTime;
-      var leadIndex = Math.min(TOTAL_SLOTS - 1, Math.floor(progressRatio * TOTAL_SLOTS));
-      var count = currentAnimal.feetCount;
-
-      for (var i = 0; i < TOTAL_SLOTS; i++) {
-        trackSlots[i].className = 'track-slot';
-      }
-
-      for (var k = 0; k < count; k++) {
-        var pos = leadIndex - k;
-        if (pos >= 0 && pos < TOTAL_SLOTS) {
-          trackSlots[pos].className = 'track-slot active';
-        }
-      }
-    }
-
-    function tickSkyBadge() {
-      if (isDayTime) {
-        sunAngle = (sunAngle + 15) % 360;
-        sunRaysEl.style.webkitTransform = 'rotate(' + sunAngle + 'deg)';
-        sunRaysEl.style.transform = 'rotate(' + sunAngle + 'deg)';
-      } else {
-        starToggled = !starToggled;
-        var starAngle = starToggled ? 20 : 0;
-        moonStarEl.style.webkitTransform = 'rotate(' + starAngle + 'deg)';
-        moonStarEl.style.transform = 'rotate(' + starAngle + 'deg)';
-      }
-    }
-
-    function formatTime(seconds) {
-      var totalMinutes = Math.ceil(seconds / 60);
-      if (totalMinutes <= 0) return '00:00';
-
-      var hours = Math.floor(totalMinutes / 60);
-      var mins = totalMinutes % 60;
-
-      var strH = (hours < 10 ? '0' : '') + hours;
-      var strM = (mins < 10 ? '0' : '') + mins;
-      return strH + ':' + strM;
-    }
-
-    function updateDisplay() {
-      timerTextEl.innerText = formatTime(timeLeft);
-      updateProgressTracks();
-    }
-
-    function toggleTimer() {
-      if (timerId) {
-        clearInterval(timerId);
-        timerId = null;
-        toggleBtn.innerText = '开始';
-      } else {
-        if (timeLeft <= 0 || !hasStarted) {
-          timeLeft = totalTime;
-          startAnimalTracks();
-        }
-        updateDayNightMode();
-        timerId = setInterval(tick, 1000);
-        toggleBtn.innerText = '暂停';
-      }
-    }
-
-    function tick() {
-      if (timeLeft > 0) {
-        timeLeft--;
-
-        var elapsed = totalTime - timeLeft;
-
-        if (elapsed % SKY_INTERVAL === 0) {
-          tickSkyBadge();
-        }
-
-        updateProgressTracks();
-
-        if (timeLeft % 60 === 0 || timeLeft === 0) {
-          updateDisplay();
-        }
-      } else {
-        clearInterval(timerId);
-        timerId = null;
-        toggleBtn.innerText = '开始';
-        timeLeft = totalTime;
-        clearTracks();
-        updateDisplay();
-        
-        showRestScreen();
-      }
-    }
-
-    function tickSteamAnimation() {
-      restSteamStep = (restSteamStep + 1) % STEAM_PATHS.length;
-      var cur = STEAM_PATHS[restSteamStep];
-      steam1El.setAttribute('d', cur.s1);
-      steam2El.setAttribute('d', cur.s2);
-      steam3El.setAttribute('d', cur.s3);
-    }
-
-    function showRestScreen() {
-      restScreenEl.className = 'rest-screen active';
-      restSteamStep = 0;
-      if (restTimerId) {
-        clearInterval(restTimerId);
-      }
-      restTimerId = setInterval(tickSteamAnimation, 2000);
-    }
-
-    function dismissRestScreen() {
-      if (restTimerId) {
-        clearInterval(restTimerId);
-        restTimerId = null;
-      }
-      restScreenEl.className = 'rest-screen';
-      updateDisplay();
-    }
-
-    function addMinutes(mins) {
-      if (timerId) {
-        clearInterval(timerId);
-        timerId = null;
-        toggleBtn.innerText = '开始';
-      }
-
-      var currentMins = Math.round(totalTime / 60);
-      currentMins += mins;
-
-      if (currentMins < 5) {
-        currentMins = 5;
-      } else if (currentMins > 120) {
-        currentMins = 120;
-      }
-
-      totalTime = currentMins * 60;
-      timeLeft = totalTime;
-      clearTracks();
-      updateDayNightMode();
-      updateDisplay();
-    }
-
-    window.onresize = updateLayoutDimensions;
-
-    // 页面启动与多阶段重绘校准
-    initSavedOrientation();
-    initSavedFont();
-    updateDayNightMode();
-    clearTracks();
-    updateDisplay();
-
-    window.addEventListener('load', function() {
-      updateLayoutDimensions();
-    });
-
-    setTimeout(function() {
-      updateLayoutDimensions();
-    }, 100);
   </script>
 </body>
 </html>
