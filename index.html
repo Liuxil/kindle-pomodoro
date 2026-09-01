@@ -229,6 +229,8 @@
     var starToggled = false;
     var currentAnimal = null;
     var currentFontIndex = 1; 
+    
+    // 强制默认横屏，且每次刷新后不恢复记忆
     var isPortraitMode = false;
 
     var easterEggStep = 0;
@@ -335,7 +337,7 @@
       return false;
     }
 
-    /* 核心改进：引入更具安全裕度的缩放(0.975)，并对旋转切换加入强制防抖与双重刷新 */
+    /* 纯净尺寸注入：移除所有缩放代码，利用准确边界杜绝溢出滑块 */
     function applyOrientationLogic() {
       var SAFE_LONG = SCREEN_LONG - 12;
       var SAFE_SHORT = SCREEN_SHORT - 12;
@@ -343,36 +345,29 @@
       if (isPortraitMode) {
         els.appContainer.style.width = SAFE_SHORT + 'px';
         els.appContainer.style.height = SAFE_LONG + 'px';
-        els.appContainer.style.webkitTransform = 'translate(-50%, -50%) scale(0.975)';
-        els.appContainer.style.transform = 'translate(-50%, -50%) scale(0.975)';
+        els.appContainer.style.webkitTransform = 'translate(-50%, -50%)';
+        els.appContainer.style.transform = 'translate(-50%, -50%)';
         
         els.timerText.style.fontSize = '215px';
         els.timerText.style.margin = '-10px 0';
       } else {
         els.appContainer.style.width = SAFE_LONG + 'px';
         els.appContainer.style.height = SAFE_SHORT + 'px';
-        els.appContainer.style.webkitTransform = 'translate(-50%, -50%) rotate(90deg) scale(0.975)';
-        els.appContainer.style.transform = 'translate(-50%, -50%) rotate(90deg) scale(0.975)';
+        els.appContainer.style.webkitTransform = 'translate(-50%, -50%) rotate(90deg)';
+        els.appContainer.style.transform = 'translate(-50%, -50%) rotate(90deg)';
         
-        els.timerText.style.fontSize = '210px';
-        els.timerText.style.margin = '-10px 0';
+        els.timerText.style.fontSize = '250px';
+        els.timerText.style.margin = '-15px 0';
       }
     }
 
     function toggleOrientation() {
       isPortraitMode = !isPortraitMode;
       applyOrientationLogic();
-
-      // 强制唤醒旧版 WebKit 引擎，通过连续两次微调尺寸彻底清除缓存的滚动条包围盒
-      setTimeout(function() {
-        applyOrientationLogic();
-      }, 50);
-      setTimeout(function() {
-        applyOrientationLogic();
-      }, 200);
     }
 
     function initSavedSettings() {
+      // 每次刷新强制初始化为横屏，不读取记忆
       isPortraitMode = false;
       applyOrientationLogic();
 
