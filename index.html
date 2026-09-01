@@ -169,7 +169,7 @@
       font-size: 145px;
     }
 
-    /* 方案 0: 极细物理描边字（编号 10 效果，1.5px 极细镂空线条） */
+    /* 方案 0: 极细物理描边字（1.5px 极细镂空线条） */
     .font-style-0 {
       font-family: "Helvetica Neue Light", "Helvetica Neue", "Arial Narrow", sans-serif;
       font-weight: 200;
@@ -179,7 +179,7 @@
       -webkit-text-stroke: 1.5px #000000;
     }
 
-    /* 方案 1: 胶囊几何细圆（方案 2 效果，端点圆润治愈） */
+    /* 方案 1: 胶囊几何细圆（端点圆润治愈） */
     .font-style-1 {
       font-family: "Century Gothic", "Apple Gothic", "Arial Rounded MT Bold", sans-serif;
       font-weight: 200;
@@ -194,16 +194,6 @@
       font-family: "Baskerville", "Bookerly Light", "Georgia", serif;
       font-weight: 200;
       letter-spacing: 0px;
-      color: #000000;
-      -webkit-text-fill-color: #000000;
-      -webkit-text-stroke: 0;
-    }
-
-    /* 方案 3: 极简等宽机械细体（Courier） */
-    .font-style-3 {
-      font-family: "Courier New", "Courier", monospace;
-      font-weight: 200;
-      letter-spacing: 2px;
       color: #000000;
       -webkit-text-fill-color: #000000;
       -webkit-text-stroke: 0;
@@ -342,7 +332,7 @@
 
     <!-- 中间主体区 -->
     <div class="main-section">
-      <!-- 倒计时区域（点击循环切换 4 套字体） -->
+      <!-- 倒计时区域（点击循环切换 3 套字体） -->
       <div class="timer-container" onclick="switchFont()">
         <div class="timer-text font-style-0" id="timer-text">00:25</div>
       </div>
@@ -423,7 +413,7 @@
     var SKY_INTERVAL = 2;
 
     var currentFontIndex = 0;
-    var TOTAL_FONTS = 4; // 0:物理描边, 1:胶囊细圆, 2:Baskerville, 3:Courier
+    var TOTAL_FONTS = 3; // 仅保留 3 种精选细体：0:物理描边, 1:胶囊细圆, 2:Baskerville
 
     var containerEl = document.getElementById('main-container');
     var timerTextEl = document.getElementById('timer-text');
