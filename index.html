@@ -50,14 +50,14 @@
       overflow: hidden !important;
     }
 
-    /* 竖屏模式 */
+    /* 竖屏模式：纯 CSS 视口锁定，彻底杜绝 JS 初始化时序误差 */
     body.portrait-mode .container {
-      position: static;
+      position: static !important;
       width: 100% !important;
       height: 100% !important;
       -webkit-transform: none !important;
       transform: none !important;
-      padding: 16px 4px 28px 4px;
+      padding: 16px 4px 28px 4px !important;
     }
 
     /* 顶部天象部件 */
@@ -493,7 +493,6 @@
     var steam2El = document.getElementById('steam-2');
     var steam3El = document.getElementById('steam-3');
 
-    // 咖啡热气形态字典（低频墨水屏 2 秒摇曳轮播）
     var STEAM_PATHS = [
       {
         s1: 'M36 22 Q 32 14 36 6',
@@ -512,19 +511,20 @@
       }
     ];
 
+    // 动态校准横屏尺寸：竖屏模式完全不介入，横屏模式精准计算
     function updateLayoutDimensions() {
       var isPortrait = document.body.classList.contains('portrait-mode');
       if (isPortrait) {
-        containerEl.style.width = '100%';
-        containerEl.style.height = '100%';
-      } else {
-        var w = window.innerWidth || document.documentElement.clientWidth || 600;
-        var h = window.innerHeight || document.documentElement.clientHeight || 800;
-        var screenLong = Math.max(w, h);
-        var screenShort = Math.min(w, h);
-        containerEl.style.width = (screenLong - 6) + 'px';
-        containerEl.style.height = (screenShort - 14) + 'px';
+        containerEl.style.width = '';
+        containerEl.style.height = '';
+        return;
       }
+      var w = window.innerWidth || document.documentElement.clientWidth || 600;
+      var h = window.innerHeight || document.documentElement.clientHeight || 800;
+      var screenLong = Math.max(w, h);
+      var screenShort = Math.min(w, h);
+      containerEl.style.width = (screenLong - 6) + 'px';
+      containerEl.style.height = (screenShort - 14) + 'px';
     }
 
     function toggleScreenOrientation() {
@@ -705,7 +705,6 @@
       }
     }
 
-    // 咖啡热气低频动画
     function tickSteamAnimation() {
       restSteamStep = (restSteamStep + 1) % STEAM_PATHS.length;
       var cur = STEAM_PATHS[restSteamStep];
@@ -757,11 +756,20 @@
 
     window.onresize = updateLayoutDimensions;
 
+    // 页面启动与多阶段重绘校准
     initSavedOrientation();
     initSavedFont();
     updateDayNightMode();
     clearTracks();
     updateDisplay();
+
+    window.addEventListener('load', function() {
+      updateLayoutDimensions();
+    });
+
+    setTimeout(function() {
+      updateLayoutDimensions();
+    }, 100);
   </script>
 </body>
 </html>
