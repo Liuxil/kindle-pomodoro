@@ -30,13 +30,32 @@
       -webkit-box-direction: normal;
       -webkit-flex-direction: column;
       flex-direction: column;
-      -webkit-box-pack: center;
-      -webkit-justify-content: center;
-      justify-content: center;
+      -webkit-box-pack: justify;
+      -webkit-justify-content: space-between;
+      justify-content: space-between;
       -webkit-box-align: center;
       -webkit-align-items: center;
       align-items: center;
-      padding: 20px;
+      padding: 0 20px 40px 20px;
+    }
+    .main-section {
+      width: 100%;
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: flex;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+      -webkit-flex-direction: column;
+      flex-direction: column;
+      -webkit-box-align: center;
+      -webkit-align-items: center;
+      align-items: center;
+      -webkit-box-pack: center;
+      -webkit-justify-content: center;
+      justify-content: center;
+      -webkit-box-flex: 1;
+      -webkit-flex: 1;
+      flex: 1;
     }
     .timer {
       font-size: 110px;
@@ -44,14 +63,13 @@
       font-family: monospace, sans-serif;
       line-height: 1;
       text-align: center;
-      margin-bottom: 24px;
+      margin-bottom: 30px;
     }
     .progress-bar-container {
-      width: 82%;
+      width: 84%;
       height: 16px;
       border: 3px solid #000000;
       padding: 2px;
-      margin-bottom: 70px;
     }
     .progress-bar {
       height: 100%;
@@ -70,13 +88,13 @@
       -webkit-box-align: center;
       -webkit-align-items: center;
       align-items: center;
-      gap: 28px;
+      gap: 22px;
     }
     .btn-row {
       display: -webkit-box;
       display: -webkit-flex;
       display: flex;
-      gap: 36px;
+      gap: 28px;
       -webkit-box-pack: center;
       -webkit-justify-content: center;
       justify-content: center;
@@ -95,21 +113,22 @@
     }
     .btn-adjust {
       font-size: 24px;
-      padding: 10px 28px;
+      padding: 10px 30px;
     }
     .btn-start {
-      font-size: 28px;
-      padding: 14px 44px;
+      font-size: 34px;
+      padding: 16px 64px;
     }
   </style>
 </head>
 <body>
 
   <div class="container">
-    <div class="timer" id="timer-display">00:25</div>
-
-    <div class="progress-bar-container">
-      <div class="progress-bar" id="progress-bar"></div>
+    <div class="main-section">
+      <div class="timer" id="timer-display">00:25</div>
+      <div class="progress-bar-container">
+        <div class="progress-bar" id="progress-bar"></div>
+      </div>
     </div>
 
     <div class="footer">
