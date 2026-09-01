@@ -381,29 +381,6 @@
   </div>
 
   <script>
-    /* ================= 移动端陀螺仪与重力感应屏蔽锁 ================= */
-    (function blockOrientationAndSensors() {
-      if (screen && screen.orientation && typeof screen.orientation.lock === 'function') {
-        try {
-          var saved = localStorage.getItem('kindle_pomodoro_orient');
-          var targetMode = (saved === 'portrait') ? 'portrait-primary' : 'landscape-primary';
-          screen.orientation.lock(targetMode).catch(function() {});
-        } catch (e) {}
-      }
-
-      var nullHandler = function(e) {
-        if (e.stopPropagation) e.stopPropagation();
-        if (e.stopImmediatePropagation) e.stopImmediatePropagation();
-        if (e.preventDefault) e.preventDefault();
-        return false;
-      };
-
-      window.addEventListener('deviceorientation', nullHandler, true);
-      window.addEventListener('devicemotion', nullHandler, true);
-      window.addEventListener('MozOrientation', nullHandler, true);
-    })();
-    /* ============================================================== */
-
     var ANIMALS = [
       {
         name: 'cat',
