@@ -13,20 +13,33 @@
       user-select: none;
       touch-action: manipulation;
     }
-    html, body {
+    /* 彻底杜绝滑动与滚动条出现 */
+    html {
+      height: 100%;
+      width: 100%;
+      overflow: hidden !important;
+    }
+    body {
+      position: fixed;
+      top: 0;
+      left: 0;
       height: 100%;
       width: 100%;
       overflow: hidden !important;
       background-color: #ffffff;
       color: #000000;
       font-family: sans-serif;
+      margin: 0;
+      padding: 0;
     }
     ::-webkit-scrollbar {
       display: none !important;
       width: 0 !important;
       height: 0 !important;
+      background: transparent !important;
     }
 
+    /* 默认横屏模式：精简版旧式 Flex 语法，防止 Kindle 解析溢出乱码 */
     .container {
       position: absolute;
       top: 50%;
@@ -35,24 +48,25 @@
       transform: translate(-50%, -50%) rotate(90deg);
       
       display: -webkit-box;
-      display: -webkit-flex;
       display: flex;
+      
       -webkit-box-orient: vertical;
-      -webkit-box-direction: normal;
-      -webkit-flex-direction: column;
       flex-direction: column;
+      
       -webkit-box-pack: justify;
-      -webkit-justify-content: space-between;
       justify-content: space-between;
+      
       -webkit-box-align: center;
-      -webkit-align-items: center;
       align-items: center;
+      
       padding: 6px 4px 10px 4px;
       overflow: hidden !important;
     }
 
     body.portrait-mode .container {
-      position: static !important;
+      position: absolute !important;
+      top: 0 !important;
+      left: 0 !important;
       width: 100% !important;
       height: 100% !important;
       -webkit-transform: none !important;
@@ -65,7 +79,6 @@
       height: 60px;
       position: relative;
       cursor: pointer;
-      -webkit-flex-shrink: 0;
       flex-shrink: 0;
     }
     .sun-box, .moon-box {
@@ -96,13 +109,10 @@
       border-radius: 50%;
       
       display: -webkit-box;
-      display: -webkit-flex;
       display: flex;
       -webkit-box-align: center;
-      -webkit-align-items: center;
       align-items: center;
       -webkit-box-pack: center;
-      -webkit-justify-content: center;
       justify-content: center;
     }
     .moon-star {
@@ -118,33 +128,24 @@
     .main-section {
       width: 100%;
       -webkit-box-flex: 1;
-      -webkit-flex: 1;
       flex: 1;
       display: -webkit-box;
-      display: -webkit-flex;
       display: flex;
       -webkit-box-orient: vertical;
-      -webkit-box-direction: normal;
-      -webkit-flex-direction: column;
       flex-direction: column;
       -webkit-box-align: center;
-      -webkit-align-items: center;
       align-items: center;
       -webkit-box-pack: center;
-      -webkit-justify-content: center;
       justify-content: center;
     }
 
     .timer-container {
       width: 100%;
       display: -webkit-box;
-      display: -webkit-flex;
       display: flex;
       -webkit-box-pack: center;
-      -webkit-justify-content: center;
       justify-content: center;
       -webkit-box-align: center;
-      -webkit-align-items: center;
       align-items: center;
       cursor: pointer;
     }
@@ -189,13 +190,10 @@
       width: 96%;
       height: 26px;
       display: -webkit-box;
-      display: -webkit-flex;
       display: flex;
       -webkit-box-pack: justify;
-      -webkit-justify-content: space-between;
       justify-content: space-between;
       -webkit-box-align: center;
-      -webkit-align-items: center;
       align-items: center;
       margin-top: 6px;
     }
@@ -206,13 +204,10 @@
       width: 20px;
       height: 20px;
       display: -webkit-box;
-      display: -webkit-flex;
       display: flex;
       -webkit-box-pack: center;
-      -webkit-justify-content: center;
       justify-content: center;
       -webkit-box-align: center;
-      -webkit-align-items: center;
       align-items: center;
     }
     .track-slot svg {
@@ -238,20 +233,15 @@
     .footer {
       width: 94%;
       display: -webkit-box;
-      display: -webkit-flex;
       display: flex;
       -webkit-box-pack: justify;
-      -webkit-justify-content: space-between;
       justify-content: space-between;
       -webkit-box-align: center;
-      -webkit-align-items: center;
       align-items: center;
-      -webkit-flex-shrink: 0;
       flex-shrink: 0;
     }
     .btn-adjust-group {
       display: -webkit-box;
-      display: -webkit-flex;
       display: flex;
       gap: 10px;
     }
@@ -272,7 +262,6 @@
       padding: 5px 14px;
     }
 
-    /* 播放/暂停按钮专属重置：去除方框、居中对齐 */
     .btn-start {
       background: transparent !important;
       border: none !important;
@@ -280,13 +269,10 @@
       width: 48px;
       height: 48px;
       display: -webkit-box;
-      display: -webkit-flex;
       display: flex;
       -webkit-box-pack: center;
-      -webkit-justify-content: center;
       justify-content: center;
       -webkit-box-align: center;
-      -webkit-align-items: center;
       align-items: center;
     }
     .btn-start:active {
@@ -308,17 +294,14 @@
       height: 100%;
       background: #ffffff;
       -webkit-box-pack: center;
-      -webkit-justify-content: center;
       justify-content: center;
       -webkit-box-align: center;
-      -webkit-align-items: center;
       align-items: center;
       cursor: pointer;
       z-index: 100;
     }
     .rest-screen.active {
       display: -webkit-box;
-      display: -webkit-flex;
       display: flex;
     }
     .rest-panel {
@@ -326,15 +309,12 @@
       width: 100%;
       height: 100%;
       -webkit-box-pack: center;
-      -webkit-justify-content: center;
       justify-content: center;
       -webkit-box-align: center;
-      -webkit-align-items: center;
       align-items: center;
     }
     .rest-panel.active {
       display: -webkit-box;
-      display: -webkit-flex;
       display: flex;
     }
     .coffee-icon { width: 160px; height: 160px; }
@@ -446,7 +426,6 @@
   </div>
 
   <script>
-    // 定义像素风格的矢量图标
     var ICON_PLAY = '<svg viewBox="0 0 16 16" style="shape-rendering: crispEdges;"><rect x="4" y="2" width="2" height="12" fill="#000"/><rect x="6" y="3" width="2" height="10" fill="#000"/><rect x="8" y="4" width="2" height="8" fill="#000"/><rect x="10" y="5" width="2" height="6" fill="#000"/><rect x="12" y="6" width="2" height="4" fill="#000"/><rect x="14" y="7" width="2" height="2" fill="#000"/></svg>';
     var ICON_PAUSE = '<svg viewBox="0 0 16 16" style="shape-rendering: crispEdges;"><rect x="3" y="2" width="4" height="12" fill="#000"/><rect x="9" y="2" width="4" height="12" fill="#000"/></svg>';
 
@@ -539,7 +518,6 @@
         fwFrames.push(fwNodes[k]);
       }
       
-      // 初始注入播放图标
       els.btnToggle.innerHTML = ICON_PLAY;
     }
 
@@ -550,7 +528,9 @@
       els.btnToggle.addEventListener('click', handleToggleClick);
       els.restScreen.addEventListener('click', hideRestScreen);
       
-      window.addEventListener('resize', updateLayoutDimensions);
+      window.addEventListener('resize', function() {
+        updateLayoutDimensions();
+      });
       
       var adjustBtns = document.querySelectorAll('.btn-adjust');
       for (var m = 0; m < adjustBtns.length; m++) {
@@ -586,17 +566,27 @@
 
     function updateLayoutDimensions() {
       var isPortrait = document.body.className.indexOf('portrait-mode') !== -1;
+      
+      // 使用 documentElement 的 client 尺寸，彻底排除由于滚动条或系统栏引起的尺寸计算误差
+      var w = document.documentElement.clientWidth || window.innerWidth;
+      var h = document.documentElement.clientHeight || window.innerHeight;
+
       if (isPortrait) {
-        els.container.style.width = '';
-        els.container.style.height = '';
-        return;
+        els.container.style.width = '100%';
+        els.container.style.height = '100%';
+      } else {
+        var maxDim = Math.max(w, h);
+        var minDim = Math.min(w, h);
+        els.container.style.width = maxDim + 'px';
+        els.container.style.height = minDim + 'px';
       }
-      var w = window.innerWidth || document.documentElement.clientWidth || 600;
-      var h = window.innerHeight || document.documentElement.clientHeight || 800;
-      var maxDim = Math.max(w, h);
-      var minDim = Math.min(w, h);
-      els.container.style.width = (maxDim - 6) + 'px';
-      els.container.style.height = (minDim - 14) + 'px';
+
+      // 核心修补 3：强制 WebKit 重绘，彻底解决暂停时横竖屏切换由于没有 DOM 更新引起的“画面缩小”Bug
+      if (els.timerText) {
+        els.timerText.style.paddingRight = '1px';
+        var _dummy = els.timerText.offsetWidth; // 触发引擎的样式和布局回流计算
+        els.timerText.style.paddingRight = '0px';
+      }
     }
 
     function toggleOrientation() {
@@ -606,12 +596,11 @@
       
       if (nextMode === 'portrait') {
         document.body.className = 'portrait-mode';
-        els.container.style.width = '';
-        els.container.style.height = '';
       } else {
         document.body.className = '';
-        updateLayoutDimensions();
       }
+      
+      updateLayoutDimensions();
     }
 
     function initSavedSettings() {
