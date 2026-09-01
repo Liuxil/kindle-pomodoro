@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Pomodoro</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+    body {
+      background-color: #ffffff;
+      color: #000000;
+      font-family: sans-serif;
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: flex;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+      -webkit-flex-direction: column;
+      flex-direction: column;
+      -webkit-box-align: center;
+      -webkit-align-items: center;
+      align-items: center;
+      -webkit-box-pack: center;
+      -webkit-justify-content: center;
+      justify-content: center;
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+    }
+    .status {
+      font-size: 32px;
+      font-weight: bold;
+      letter-spacing: 4px;
+      margin-bottom: 20px;
+    }
+    .timer {
+      font-size: 110px;
+      font-weight: 900;
+      font-family: monospace;
+      line-height: 1;
+      margin-bottom: 30px;
+    }
+    .progress-bar-container {
+      width: 80%;
+      height: 16px;
+      border: 3px solid #000000;
+      padding: 2px;
+      margin-bottom: 40px;
+    }
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background-color: #000000;
+    }
+    .controls {
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: flex;
+      gap: 15px;
+    }
+    button {
+      background: #ffffff;
+      color: #000000;
+      border: 3px solid #000000;
+      font-size: 24px;
+      font-weight: bold;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button:active {
+      background: #000000;
+      color: #ffffff;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="status" id="mode-text">专注中</div>
+  <div class="timer" id="timer-display">25:00</div>
+  
+  <div class="progress-bar-container">
+    <div class="progress-bar" id="progress-bar"></div>
+  </div>
+
+  <div class="controls">
+    <button id="btn-toggle" onclick="toggleTimer()">开始</button>
+    <button id="btn-reset" onclick="resetTimer()">重置</button>
+    <button id="btn-switch" onclick="switchMode()">切换</button>
+  </div>
+
+  <script>
+    var WORK_TIME = 25 * 60;
+    var BREAK_TIME = 5 * 60;
+
+    var isWorkMode = true;
+    var totalTime = WORK_TIME;
+    var timeLeft = WORK_TIME;
+    var timerId = null;
+
+    var modeEl = document.getElementById('mode-text');
+    var timerEl = document.getElementById('timer-display');
+    var progressEl = document.getElementById('progress-bar');
+    var toggleBtn = document.getElementById('btn-toggle');
+
+    function updateDisplay() {
+      var minutes = Math.floor(timeLeft / 60);
+      var seconds = timeLeft % 60;
+      var strM = (minutes < 10 ? '0' : '') + minutes;
+      var strS = (seconds < 10 ? '0' : '') + seconds;
+      timerEl.innerText = strM + ':' + strS;
+
+      var progressPercent = ((totalTime - timeLeft) / totalTime) * 100;
+      progressEl.style.width = progressPercent + '%';
+    }
+
+    function toggleTimer() {
+      if (timerId) {
+        clearInterval(timerId);
+        timerId = null;
+        toggleBtn.innerText = '开始';
+      } else {
+        timerId = setInterval(tick, 1000);
+        toggleBtn.innerText = '暂停';
+      }
+    }
+
+    function tick() {
+      if (timeLeft > 0) {
+        timeLeft--;
+        updateDisplay();
+      } else {
+        clearInterval(timerId);
+        timerId = null;
+        toggleBtn.innerText = '开始';
+        // 模式自动切换
+        isWorkMode = !isWorkMode;
+        totalTime = isWorkMode ? WORK_TIME : BREAK_TIME;
+        timeLeft = totalTime;
+        modeEl.innerText = isWorkMode ? '专注中' : '休息中';
+        updateDisplay();
+      }
+    }
+
+    function resetTimer() {
+      if (timerId) {
+        clearInterval(timerId);
+        timerId = null;
+        toggleBtn.innerText = '开始';
+      }
+      timeLeft = totalTime;
+      updateDisplay();
+    }
+
+    function switchMode() {
+      if (timerId) {
+        clearInterval(timerId);
+        timerId = null;
+        toggleBtn.innerText = '开始';
+      }
+      isWorkMode = !isWorkMode;
+      totalTime = isWorkMode ? WORK_TIME : BREAK_TIME;
+      timeLeft = totalTime;
+      modeEl.innerText = isWorkMode ? '专注中' : '休息中';
+      updateDisplay();
+    }
+
+    updateDisplay();
+  </script>
+</body>
+</html>
