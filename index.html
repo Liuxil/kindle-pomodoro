@@ -229,7 +229,7 @@
     var starToggled = false;
     var currentAnimal = null;
     var currentFontIndex = 1; 
-    var isPortraitMode = false;
+    var isPortraitMode = false; // 默认横屏
 
     var easterEggStep = 0;
     var SCREEN_LONG = 0;
@@ -353,7 +353,6 @@
         els.appContainer.style.webkitTransform = 'translate(-50%, -50%) rotate(90deg) scale(0.98)';
         els.appContainer.style.transform = 'translate(-50%, -50%) rotate(90deg) scale(0.98)';
         
-        // 恢复回与竖屏相同的字号 (210px)，保持横竖屏两边的空白视觉留白完全一致
         els.timerText.style.fontSize = '210px';
         els.timerText.style.margin = '-10px 0';
       }
@@ -368,8 +367,15 @@
     function initSavedSettings() {
       try {
         var savedOrient = localStorage.getItem('kindle_pomodoro_orient');
+        // 默认若无记录，则初始强制横屏 (landscape)
+        if (savedOrient === null) {
+          savedOrient = 'landscape';
+          localStorage.setItem('kindle_pomodoro_orient', 'landscape');
+        }
         isPortraitMode = (savedOrient === 'portrait');
-      } catch (e) {}
+      } catch (e) {
+        isPortraitMode = false; // 异常兜底默认横屏
+      }
       
       applyOrientationLogic();
 
@@ -555,7 +561,7 @@
       els.restScreen.className = 'rest-screen active';
 
       if (restAnimState.timer) clearInterval(restAnimState.timer);
-      restAnimState.timer = setInterval(animateRestPanel, 1400); // 帧率由 800ms 降低至 1400ms，动作更舒缓
+      restAnimState.timer = setInterval(animateRestPanel, 1400);
     }
 
     function hideRestScreen(e) {
