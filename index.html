@@ -2,7 +2,8 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <!-- 核心修复1：增加 minimum-scale=1.0 和 shrink-to-fit=no 强行阻止自动缩小 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, shrink-to-fit=no">
   <title>Pomodoro</title>
   <style>
     * {
@@ -35,7 +36,6 @@
       -webkit-transform: translate(-50%, -50%) rotate(90deg);
       transform: translate(-50%, -50%) rotate(90deg);
       
-      /* 恢复 Kindle 必需的老式 Flexbox 前缀 */
       display: -webkit-box;
       display: -webkit-flex;
       display: flex;
@@ -427,7 +427,6 @@
   </div>
 
   <script>
-    /* 全面回退至 ES5 以兼容 Kindle 浏览器 */
     var ANIMALS = [
       { name: 'cat', feetCount: 4, svg: '<svg viewBox="0 0 24 24"><ellipse cx="9" cy="12" rx="4.5" ry="5.5"/><circle cx="16" cy="7" r="2"/><circle cx="19" cy="12" r="2.2"/><circle cx="16" cy="17" r="2"/></svg>' },
       { name: 'pig_hoof', feetCount: 4, svg: '<svg viewBox="0 0 24 24"><ellipse cx="12" cy="7.5" rx="6" ry="3.2" transform="rotate(10 12 7.5)" fill="#000"/><ellipse cx="12" cy="16.5" rx="6" ry="3.2" transform="rotate(-10 12 16.5)" fill="#000"/></svg>' },
@@ -562,7 +561,8 @@
     function updateLayoutDimensions() {
       var isPortrait = document.body.className.indexOf('portrait-mode') !== -1;
       if (isPortrait) {
-        els.container.style.cssText = '';
+        els.container.style.width = '';
+        els.container.style.height = '';
         return;
       }
       var w = window.innerWidth || document.documentElement.clientWidth || 600;
@@ -573,11 +573,20 @@
       els.container.style.height = (minDim - 14) + 'px';
     }
 
+    /* 核心修复2：通过动态切换 className 和触发重绘来改变方向，废弃会导致视口重算的 reload() */
     function toggleOrientation() {
-      var current = document.body.className.indexOf('portrait-mode') !== -1 ? 'portrait' : 'landscape';
-      var next = current === 'portrait' ? 'landscape' : 'portrait';
-      try { localStorage.setItem('kindle_pomodoro_orient', next); } catch(e) {}
-      window.location.reload(); 
+      var currentIsPortrait = document.body.className.indexOf('portrait-mode') !== -1;
+      var nextMode = currentIsPortrait ? 'landscape' : 'portrait';
+      try { localStorage.setItem('kindle_pomodoro_orient', nextMode); } catch(e) {}
+      
+      if (nextMode === 'portrait') {
+        document.body.className = 'portrait-mode';
+        els.container.style.width = '';
+        els.container.style.height = '';
+      } else {
+        document.body.className = '';
+        updateLayoutDimensions();
+      }
     }
 
     function initSavedSettings() {
@@ -774,9 +783,10 @@
       }
     }
 
-    // 延迟初始化确保DOM就绪
+    // 延迟初始化并提供双重安全校验以应对旧内核
     window.addEventListener('load', function() {
         setTimeout(init, 50);
+        setTimeout(updateLayoutDimensions, 300);
     });
 
   </script>
