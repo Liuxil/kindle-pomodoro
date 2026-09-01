@@ -58,12 +58,13 @@
       flex: 1;
     }
 
-    /* 顶部昼夜天象容器 */
+    /* 顶部昼夜天象容器（支持点击切换） */
     .sky-badge {
       width: 68px;
       height: 68px;
       position: relative;
       margin-bottom: 8px;
+      cursor: pointer;
     }
 
     /* 1. 太阳部件 */
@@ -226,8 +227,8 @@
   <div class="container">
     <div class="main-section">
       
-      <!-- 顶部根据时间自动展示太阳或月亮 -->
-      <div class="sky-badge">
+      <!-- 顶部根据时间自动展示太阳或月亮（支持点击快速切换） -->
+      <div class="sky-badge" onclick="toggleManualSky()">
         <!-- 白天：太阳 -->
         <div class="sun-box" id="sun-box">
           <div class="sun-rays" id="sun-rays">
@@ -349,10 +350,25 @@
     var moonStarEl = document.getElementById('moon-star');
     var trackSlots = document.querySelectorAll('.track-slot');
 
-    function updateDayNightMode() {
-      var hour = new Date().getHours();
-      isDayTime = (hour >= 6 && hour < 18);
+    // 智能获取本地真实小时数（自动纠正 Kindle 浏览器的 UTC 时区偏移）
+    function getLocalHour() {
+      var d = new Date();
+      var tzOffset = d.getTimezoneOffset(); // 正常东八区为 -480 分钟
+      
+      // 如果 Kindle 内核将时区锁死在 0 (UTC)，强制按 +8 小时修正
+      if (tzOffset === 0) {
+        return (d.getUTCHours() + 8) % 24;
+      }
+      return d.getHours();
+    }
 
+    function updateDayNightMode() {
+      var hour = getLocalHour();
+      isDayTime = (hour >= 6 && hour < 18);
+      renderSkyIcon();
+    }
+
+    function renderSkyIcon() {
       if (isDayTime) {
         sunBoxEl.style.display = 'block';
         moonBoxEl.style.display = 'none';
@@ -360,6 +376,12 @@
         sunBoxEl.style.display = 'none';
         moonBoxEl.style.display = 'block';
       }
+    }
+
+    // 点击顶部图标手动切换昼夜
+    function toggleManualSky() {
+      isDayTime = !isDayTime;
+      renderSkyIcon();
     }
 
     function initAnimalTracks() {
@@ -436,17 +458,14 @@
 
         var elapsed = totalTime - timeLeft;
 
-        // 太阳/月亮：每 2 秒跳动一次
         if (elapsed % SKY_INTERVAL === 0) {
           tickSkyBadge();
         }
 
-        // 动物脚印：每 3 秒迈进一步
         if (elapsed % STEP_INTERVAL === 0) {
           stepForward();
         }
 
-        // 大时间：整分钟刷新
         if (timeLeft % 60 === 0 || timeLeft === 0) {
           updateDisplay();
         }
