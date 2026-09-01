@@ -50,17 +50,17 @@
       overflow: hidden !important;
     }
 
-    /* 竖屏模式 */
+    /* 竖屏模式：吃满左右边距以容纳极限大字 */
     body.portrait-mode .container {
       position: static;
       width: 100% !important;
       height: 100% !important;
       -webkit-transform: none !important;
       transform: none !important;
-      padding: 12px 16px 24px 16px;
+      padding: 4px 6px 18px 6px;
     }
 
-    /* 顶部天象部件（放大 1.5 倍：60px） */
+    /* 顶部天象部件（60px 大图标） */
     .sky-badge {
       width: 60px;
       height: 60px;
@@ -164,9 +164,14 @@
       text-align: center;
       width: 100%;
       display: block;
+      white-space: nowrap;
     }
+
+    /* 竖屏字号极限放大至 178px */
     body.portrait-mode .timer-text {
-      font-size: 145px;
+      font-size: 178px;
+      line-height: 0.82;
+      letter-spacing: -6px;
     }
 
     /* 方案 0: 极细物理描边字（1.5px 极细镂空线条） */
@@ -178,6 +183,9 @@
       -webkit-text-fill-color: transparent !important;
       -webkit-text-stroke: 1.5px #000000;
     }
+    body.portrait-mode .font-style-0 {
+      letter-spacing: -6px;
+    }
 
     /* 方案 1: 胶囊几何细圆（端点圆润治愈） */
     .font-style-1 {
@@ -188,6 +196,9 @@
       -webkit-text-fill-color: #000000;
       -webkit-text-stroke: 0;
     }
+    body.portrait-mode .font-style-1 {
+      letter-spacing: -8px;
+    }
 
     /* 方案 2: Kindle 官方古典雅致细体（Baskerville） */
     .font-style-2 {
@@ -197,6 +208,9 @@
       color: #000000;
       -webkit-text-fill-color: #000000;
       -webkit-text-stroke: 0;
+    }
+    body.portrait-mode .font-style-2 {
+      letter-spacing: -4px;
     }
 
     /* 脚印宽幅长轨道 (16 档卡槽) */
@@ -213,6 +227,10 @@
       -webkit-align-items: center;
       align-items: center;
       margin-top: 6px;
+    }
+    body.portrait-mode .tracks-container {
+      width: 96%;
+      margin-top: 14px;
     }
     .track-slot {
       width: 20px;
@@ -262,11 +280,14 @@
       -webkit-flex-shrink: 0;
       flex-shrink: 0;
     }
+    body.portrait-mode .footer {
+      width: 98%;
+    }
     .btn-adjust-group {
       display: -webkit-box;
       display: -webkit-flex;
       display: flex;
-      gap: 10px;
+      gap: 8px;
     }
     button {
       background: #ffffff;
@@ -282,11 +303,11 @@
     }
     .btn-adjust {
       font-size: 18px;
-      padding: 5px 14px;
+      padding: 5px 12px;
     }
     .btn-start {
       font-size: 26px;
-      padding: 5px 44px;
+      padding: 5px 40px;
     }
   </style>
 </head>
@@ -358,7 +379,7 @@
       </div>
     </div>
 
-    <!-- 底部按钮栏（增加 -5m 选项） -->
+    <!-- 底部按钮栏 -->
     <div class="footer">
       <div class="btn-adjust-group">
         <button class="btn-adjust" onclick="addMinutes(5)">+5m</button>
