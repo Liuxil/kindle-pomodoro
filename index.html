@@ -20,9 +20,16 @@
       color: #000000;
       font-family: sans-serif;
     }
+
+    /* 1. 默认横屏模式 (Landscape) */
     .container {
-      height: 100%;
-      width: 100%;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100vh;
+      height: 100vw;
+      -webkit-transform: translate(-50%, -50%) rotate(90deg);
+      transform: translate(-50%, -50%) rotate(90deg);
       display: -webkit-box;
       display: -webkit-flex;
       display: flex;
@@ -36,35 +43,26 @@
       -webkit-box-align: center;
       -webkit-align-items: center;
       align-items: center;
-      padding: 0 16px 36px 16px;
-    }
-    .main-section {
-      width: 100%;
-      display: -webkit-box;
-      display: -webkit-flex;
-      display: flex;
-      -webkit-box-orient: vertical;
-      -webkit-box-direction: normal;
-      -webkit-flex-direction: column;
-      flex-direction: column;
-      -webkit-box-align: center;
-      -webkit-align-items: center;
-      align-items: center;
-      -webkit-box-pack: center;
-      -webkit-justify-content: center;
-      justify-content: center;
-      -webkit-box-flex: 1;
-      -webkit-flex: 1;
-      flex: 1;
+      padding: 12px 24px 20px 24px;
     }
 
-    /* 顶部昼夜天象 */
+    /* 2. 竖屏模式 (Portrait) */
+    body.portrait-mode .container {
+      position: static;
+      width: 100%;
+      height: 100%;
+      -webkit-transform: none !important;
+      transform: none !important;
+      padding: 10px 16px 36px 16px;
+    }
+
+    /* 顶部天象部件（点击切换横竖屏） */
     .sky-badge {
-      width: 64px;
-      height: 64px;
+      width: 52px;
+      height: 52px;
       position: relative;
-      margin-bottom: 6px;
       cursor: pointer;
+      margin-bottom: 4px;
     }
     .sun-box {
       width: 100%;
@@ -85,12 +83,12 @@
       position: absolute;
       top: 50%;
       left: 50%;
-      width: 32px;
-      height: 32px;
-      margin-top: -16px;
-      margin-left: -16px;
+      width: 26px;
+      height: 26px;
+      margin-top: -13px;
+      margin-left: -13px;
       background: #ffffff;
-      border: 2.5px solid #000000;
+      border: 2.2px solid #000000;
       border-radius: 50%;
       box-sizing: border-box;
       display: -webkit-box;
@@ -111,18 +109,38 @@
     }
     .moon-star {
       position: absolute;
-      top: 12px;
-      right: 8px;
-      width: 18px;
-      height: 18px;
+      top: 8px;
+      right: 6px;
+      width: 15px;
+      height: 15px;
       -webkit-transition: none;
       transition: none;
     }
 
-    /* 倒计时主容器 */
+    .main-section {
+      width: 100%;
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: flex;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+      -webkit-flex-direction: column;
+      flex-direction: column;
+      -webkit-box-align: center;
+      -webkit-align-items: center;
+      align-items: center;
+      -webkit-box-pack: center;
+      -webkit-justify-content: center;
+      justify-content: center;
+      -webkit-box-flex: 1;
+      -webkit-flex: 1;
+      flex: 1;
+    }
+
+    /* 倒计时主容器（点击切换字体，等比放大） */
     .timer-container {
       width: 100%;
-      height: 150px;
+      height: 140px;
       display: -webkit-box;
       display: -webkit-flex;
       display: flex;
@@ -132,23 +150,22 @@
       -webkit-box-align: center;
       -webkit-align-items: center;
       align-items: center;
-      margin-bottom: 24px;
+      margin-bottom: 12px;
       cursor: pointer;
     }
 
-    /* 常规文本字形 */
     .timer-text {
-      font-size: 145px;
+      font-size: 165px;
       line-height: 1;
       text-align: center;
-      display: none;
+      width: 100%;
     }
 
     /* 字体 0: 柔和胶囊圆角体 */
     .font-style-0 {
       font-family: "Avenir Next Rounded Pro", "Varela Round", "Nunito", "Arial Rounded MT Bold", sans-serif;
       font-weight: 300;
-      letter-spacing: 0px;
+      letter-spacing: 2px;
     }
 
     /* 字体 1: 极简超细极幼体 */
@@ -162,57 +179,20 @@
     .font-style-2 {
       font-family: "Baskerville", "Garamond", "Georgia", serif;
       font-weight: 300;
-      letter-spacing: 2px;
+      letter-spacing: 4px;
     }
 
     /* 字体 3: 复古等宽打字机体 */
     .font-style-3 {
       font-family: "Courier New", "Menlo", "Lucida Console", monospace;
       font-weight: 900;
-      letter-spacing: 4px;
+      letter-spacing: 6px;
     }
 
-    /* 字体 4: 七段数码管液晶结构 */
-    .timer-segment {
-      display: none;
-      -webkit-box-align: center;
-      -webkit-align-items: center;
-      align-items: center;
-      -webkit-box-pack: center;
-      -webkit-justify-content: center;
-      justify-content: center;
-      height: 130px;
-    }
-    .seg-digit {
-      width: 60px;
-      height: 120px;
-      margin: 0 4px;
-    }
-    .seg-colon {
-      display: -webkit-box;
-      display: -webkit-flex;
-      display: flex;
-      -webkit-box-orient: vertical;
-      -webkit-box-direction: normal;
-      -webkit-flex-direction: column;
-      flex-direction: column;
-      -webkit-box-pack: center;
-      -webkit-justify-content: center;
-      justify-content: center;
-      gap: 18px;
-      margin: 0 6px;
-    }
-    .seg-colon span {
-      width: 10px;
-      height: 10px;
-      background: #000000;
-      border-radius: 1px;
-    }
-
-    /* 脚印全幅进度滑槽 */
+    /* 脚印宽幅进度轨道 (16 档卡槽) */
     .tracks-container {
-      width: 90%;
-      height: 32px;
+      width: 92%;
+      height: 30px;
       display: -webkit-box;
       display: -webkit-flex;
       display: flex;
@@ -222,11 +202,11 @@
       -webkit-box-align: center;
       -webkit-align-items: center;
       align-items: center;
-      margin-bottom: 12px;
+      margin-bottom: 8px;
     }
     .track-slot {
-      width: 22px;
-      height: 22px;
+      width: 20px;
+      height: 20px;
       display: -webkit-box;
       display: -webkit-flex;
       display: flex;
@@ -238,18 +218,18 @@
       align-items: center;
     }
     .track-slot svg {
-      width: 20px;
-      height: 20px;
+      width: 18px;
+      height: 18px;
       fill: #000000;
       display: none;
     }
     .track-slot:nth-child(even) svg {
-      margin-top: 5px;
+      margin-top: 4px;
       -webkit-transform: rotate(6deg);
       transform: rotate(6deg);
     }
     .track-slot:nth-child(odd) svg {
-      margin-top: -5px;
+      margin-top: -4px;
       -webkit-transform: rotate(-6deg);
       transform: rotate(-6deg);
     }
@@ -262,14 +242,14 @@
       text-align: center;
     }
     .btn-row {
-      margin-bottom: 24px;
+      margin-bottom: 12px;
     }
     button {
       background: #ffffff;
       color: #000000;
-      border: 3px solid #000000;
+      border: 2.5px solid #000000;
       font-weight: bold;
-      border-radius: 8px;
+      border-radius: 7px;
       cursor: pointer;
     }
     button:active {
@@ -277,13 +257,13 @@
       color: #ffffff;
     }
     .btn-adjust {
-      font-size: 24px;
-      padding: 8px 24px;
-      margin: 0 10px;
+      font-size: 20px;
+      padding: 5px 20px;
+      margin: 0 8px;
     }
     .btn-start {
-      font-size: 34px;
-      padding: 14px 64px;
+      font-size: 28px;
+      padding: 10px 56px;
       display: inline-block;
     }
   </style>
@@ -291,100 +271,51 @@
 <body>
 
   <div class="container">
+    
+    <!-- 顶部天象图标（点击切换横/竖屏） -->
+    <div class="sky-badge" onclick="toggleScreenOrientation()" title="点击切换横/竖屏">
+      <div class="sun-box" id="sun-box">
+        <div class="sun-rays" id="sun-rays">
+          <svg viewBox="0 0 100 100" stroke="#000" stroke-linecap="round">
+            <path d="M50 4 L50 16" stroke-width="4.5"/>
+            <path d="M50 84 L50 96" stroke-width="4.5"/>
+            <path d="M4 50 L16 50" stroke-width="4.5"/>
+            <path d="M84 50 L96 50" stroke-width="4.5"/>
+            <path d="M17 17 L26 26" stroke-width="4"/>
+            <path d="M74 74 L83 83" stroke-width="4"/>
+            <path d="M17 83 L26 74" stroke-width="4"/>
+            <path d="M74 26 L83 17" stroke-width="4"/>
+          </svg>
+        </div>
+        <div class="sun-face">
+          <svg viewBox="0 0 34 34">
+            <circle cx="12" cy="14" r="1.8" fill="#000"/>
+            <circle cx="22" cy="14" r="1.8" fill="#000"/>
+            <path d="M12 19 Q 17 24 22 19" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="moon-box" id="moon-box">
+        <svg viewBox="0 0 68 68" style="width:100%;height:100%;">
+          <path d="M38 12 C24 12 12 24 12 38 C12 48 18 56 26 59 C23 54 22 48 22 42 C22 28 32 17 46 16 C43 13 40 12 38 12 Z" fill="#000"/>
+        </svg>
+        <div class="moon-star" id="moon-star">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 2 Q 12 12 2 12 Q 12 12 12 22 Q 12 12 22 12 Q 12 12 12 2 Z" fill="#000"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- 主体区域 -->
     <div class="main-section">
-      
-      <!-- 顶部昼夜天象 -->
-      <div class="sky-badge" onclick="toggleManualSky()">
-        <!-- 太阳 -->
-        <div class="sun-box" id="sun-box">
-          <div class="sun-rays" id="sun-rays">
-            <svg viewBox="0 0 100 100" stroke="#000" stroke-linecap="round">
-              <path d="M50 4 L50 16" stroke-width="4.5"/>
-              <path d="M50 84 L50 96" stroke-width="4.5"/>
-              <path d="M4 50 L16 50" stroke-width="4.5"/>
-              <path d="M84 50 L96 50" stroke-width="4.5"/>
-              <path d="M17 17 L26 26" stroke-width="4"/>
-              <path d="M74 74 L83 83" stroke-width="4"/>
-              <path d="M17 83 L26 74" stroke-width="4"/>
-              <path d="M74 26 L83 17" stroke-width="4"/>
-            </svg>
-          </div>
-          <div class="sun-face">
-            <svg viewBox="0 0 34 34">
-              <circle cx="12" cy="14" r="1.8" fill="#000"/>
-              <circle cx="22" cy="14" r="1.8" fill="#000"/>
-              <path d="M12 19 Q 17 24 22 19" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-          </div>
-        </div>
-
-        <!-- 月亮 -->
-        <div class="moon-box" id="moon-box">
-          <svg viewBox="0 0 68 68" style="width:100%;height:100%;">
-            <path d="M38 12 C24 12 12 24 12 38 C12 48 18 56 26 59 C23 54 22 48 22 42 C22 28 32 17 46 16 C43 13 40 12 38 12 Z" fill="#000"/>
-          </svg>
-          <div class="moon-star" id="moon-star">
-            <svg viewBox="0 0 24 24">
-              <path d="M12 2 Q 12 12 2 12 Q 12 12 12 22 Q 12 12 22 12 Q 12 12 12 2 Z" fill="#000"/>
-            </svg>
-          </div>
-        </div>
-      </div>
-
-      <!-- 倒计时区域（点击任意位置切换 5 套字体） -->
+      <!-- 倒计时区域（点击切换 4 种精选字体） -->
       <div class="timer-container" onclick="switchFont()">
-        <!-- 文本字体容器 -->
-        <div class="timer-text" id="timer-text">00:25</div>
-
-        <!-- 七段数码管容器（每个段采用独立 ID + 属性渲染） -->
-        <div class="timer-segment" id="timer-segment">
-          <!-- 第 1 位 -->
-          <svg class="seg-digit" viewBox="0 0 54 90">
-            <polygon id="s0-a" points="6,6 12,2 42,2 48,6 42,10 12,10" fill="#000"/>
-            <polygon id="s0-b" points="48,6 52,12 52,40 48,44 44,40 44,12" fill="#000"/>
-            <polygon id="s0-c" points="48,46 52,50 52,80 48,84 44,80 44,50" fill="#000"/>
-            <polygon id="s0-d" points="6,84 12,88 42,88 48,84 42,80 12,80" fill="#000"/>
-            <polygon id="s0-e" points="6,46 10,50 10,80 6,84 2,80 2,50" fill="#000"/>
-            <polygon id="s0-f" points="6,6 10,12 10,40 6,44 2,40 2,12" fill="#000"/>
-            <polygon id="s0-g" points="6,45 12,41 42,41 48,45 42,49 12,49" fill="#000"/>
-          </svg>
-          <!-- 第 2 位 -->
-          <svg class="seg-digit" viewBox="0 0 54 90">
-            <polygon id="s1-a" points="6,6 12,2 42,2 48,6 42,10 12,10" fill="#000"/>
-            <polygon id="s1-b" points="48,6 52,12 52,40 48,44 44,40 44,12" fill="#000"/>
-            <polygon id="s1-c" points="48,46 52,50 52,80 48,84 44,80 44,50" fill="#000"/>
-            <polygon id="s1-d" points="6,84 12,88 42,88 48,84 42,80 12,80" fill="#000"/>
-            <polygon id="s1-e" points="6,46 10,50 10,80 6,84 2,80 2,50" fill="#000"/>
-            <polygon id="s1-f" points="6,6 10,12 10,40 6,44 2,40 2,12" fill="#000"/>
-            <polygon id="s1-g" points="6,45 12,41 42,41 48,45 42,49 12,49" fill="#000"/>
-          </svg>
-          
-          <div class="seg-colon"><span></span><span></span></div>
-
-          <!-- 第 3 位 -->
-          <svg class="seg-digit" viewBox="0 0 54 90">
-            <polygon id="s2-a" points="6,6 12,2 42,2 48,6 42,10 12,10" fill="#000"/>
-            <polygon id="s2-b" points="48,6 52,12 52,40 48,44 44,40 44,12" fill="#000"/>
-            <polygon id="s2-c" points="48,46 52,50 52,80 48,84 44,80 44,50" fill="#000"/>
-            <polygon id="s2-d" points="6,84 12,88 42,88 48,84 42,80 12,80" fill="#000"/>
-            <polygon id="s2-e" points="6,46 10,50 10,80 6,84 2,80 2,50" fill="#000"/>
-            <polygon id="s2-f" points="6,6 10,12 10,40 6,44 2,40 2,12" fill="#000"/>
-            <polygon id="s2-g" points="6,45 12,41 42,41 48,45 42,49 12,49" fill="#000"/>
-          </svg>
-          <!-- 第 4 位 -->
-          <svg class="seg-digit" viewBox="0 0 54 90">
-            <polygon id="s3-a" points="6,6 12,2 42,2 48,6 42,10 12,10" fill="#000"/>
-            <polygon id="s3-b" points="48,6 52,12 52,40 48,44 44,40 44,12" fill="#000"/>
-            <polygon id="s3-c" points="48,46 52,50 52,80 48,84 44,80 44,50" fill="#000"/>
-            <polygon id="s3-d" points="6,84 12,88 42,88 48,84 42,80 12,80" fill="#000"/>
-            <polygon id="s3-e" points="6,46 10,50 10,80 6,84 2,80 2,50" fill="#000"/>
-            <polygon id="s3-f" points="6,6 10,12 10,40 6,44 2,40 2,12" fill="#000"/>
-            <polygon id="s3-g" points="6,45 12,41 42,41 48,45 42,49 12,49" fill="#000"/>
-          </svg>
-        </div>
+        <div class="timer-text font-style-0" id="timer-text">00:25</div>
       </div>
       
-      <!-- 脚印全幅进度滑槽 -->
+      <!-- 脚印全幅进度滑槽（16 档宽屏点位） -->
       <div class="tracks-container" id="tracks-bottom">
         <div class="track-slot"></div>
         <div class="track-slot"></div>
@@ -398,9 +329,14 @@
         <div class="track-slot"></div>
         <div class="track-slot"></div>
         <div class="track-slot"></div>
+        <div class="track-slot"></div>
+        <div class="track-slot"></div>
+        <div class="track-slot"></div>
+        <div class="track-slot"></div>
       </div>
     </div>
 
+    <!-- 底部按键 -->
     <div class="footer">
       <div class="btn-row">
         <button class="btn-adjust" onclick="addMinutes(5)">+5m</button>
@@ -414,51 +350,32 @@
 
   <script>
     var ANIMALS = [
-      // 1. 猫科 4 趾
       {
         name: 'cat',
         feetCount: 4,
         svg: '<svg viewBox="0 0 24 24"><ellipse cx="9" cy="12" rx="4.5" ry="5.5"/><circle cx="16" cy="7" r="2"/><circle cx="19" cy="12" r="2.2"/><circle cx="16" cy="17" r="2"/></svg>'
       },
-      // 2. 胖偶蹄（小猪/小牛）
       {
         name: 'pig_hoof',
         feetCount: 4,
         svg: '<svg viewBox="0 0 24 24"><ellipse cx="12" cy="7.5" rx="6" ry="3.2" transform="rotate(10 12 7.5)" fill="#000"/><ellipse cx="12" cy="16.5" rx="6" ry="3.2" transform="rotate(-10 12 16.5)" fill="#000"/></svg>'
       },
-      // 3. 奇蹄（马蹄铁）
       {
         name: 'horse_hoof',
         feetCount: 4,
         svg: '<svg viewBox="0 0 24 24"><path d="M5 6 C15 5 19 9 19 12 C19 15 15 19 5 18 L5 14.5 C12 15 14 13.5 14 12 C14 10.5 12 9 5 9.5 Z" fill="#000"/></svg>'
       },
-      // 4. 细鸟爪（小鸡/麻雀）
       {
         name: 'bird',
         feetCount: 2,
         svg: '<svg viewBox="0 0 24 24"><path d="M5 12 L19 12 M13 12 L19 6 M13 12 L19 18" stroke="#000" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>'
       },
-      // 5. 鸭鹅蹼
       {
         name: 'duck',
         feetCount: 2,
         svg: '<svg viewBox="0 0 24 24"><path d="M4 12 L9 12 M9 12 L17 4 C14 8 13 10 9 12 C13 14 14 16 17 20 Z" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="#000"/></svg>'
       }
     ];
-
-    // 0~9 对应的段亮起定义
-    var DIGIT_MAP = {
-      '0': {a:1, b:1, c:1, d:1, e:1, f:1, g:0},
-      '1': {a:0, b:1, c:1, d:0, e:0, f:0, g:0},
-      '2': {a:1, b:1, c:0, d:1, e:1, f:0, g:1},
-      '3': {a:1, b:1, c:1, d:1, e:0, f:0, g:1},
-      '4': {a:0, b:1, c:1, d:0, e:0, f:1, g:1},
-      '5': {a:1, b:0, c:1, d:1, e:0, f:1, g:1},
-      '6': {a:1, b:0, c:1, d:1, e:1, f:1, g:1},
-      '7': {a:1, b:1, c:1, d:0, e:0, f:0, g:0},
-      '8': {a:1, b:1, c:1, d:1, e:1, f:1, g:1},
-      '9': {a:1, b:1, c:1, d:1, e:0, f:1, g:1}
-    };
 
     var totalTime = 25 * 60;
     var timeLeft = totalTime;
@@ -470,20 +387,34 @@
     var starToggled = false;
 
     var currentAnimal = null;
-    var TOTAL_SLOTS = 12;
+    var TOTAL_SLOTS = 16;
     var SKY_INTERVAL = 2;
 
     var currentFontIndex = 0;
-    var TOTAL_FONTS = 5;
+    var TOTAL_FONTS = 4; // 0:圆角, 1:极细, 2:古典, 3:复古等宽
 
     var timerTextEl = document.getElementById('timer-text');
-    var timerSegmentEl = document.getElementById('timer-segment');
     var toggleBtn = document.getElementById('btn-toggle');
     var sunBoxEl = document.getElementById('sun-box');
     var moonBoxEl = document.getElementById('moon-box');
     var sunRaysEl = document.getElementById('sun-rays');
     var moonStarEl = document.getElementById('moon-star');
     var trackSlots = document.querySelectorAll('.track-slot');
+
+    function toggleScreenOrientation() {
+      document.body.classList.toggle('portrait-mode');
+      var isPortrait = document.body.classList.contains('portrait-mode');
+      try {
+        localStorage.setItem('kindle_pomodoro_orient', isPortrait ? 'portrait' : 'landscape');
+      } catch(e) {}
+    }
+
+    function initSavedOrientation() {
+      var saved = localStorage.getItem('kindle_pomodoro_orient');
+      if (saved === 'portrait') {
+        document.body.classList.add('portrait-mode');
+      }
+    }
 
     function initSavedFont() {
       var saved = localStorage.getItem('kindle_pomodoro_font');
@@ -502,19 +433,10 @@
         localStorage.setItem('kindle_pomodoro_font', currentFontIndex);
       } catch(e) {}
       applyFont();
-      updateDisplay();
     }
 
     function applyFont() {
-      if (currentFontIndex === 4) {
-        timerTextEl.style.display = 'none';
-        timerSegmentEl.style.display = '-webkit-flex';
-        timerSegmentEl.style.display = 'flex';
-      } else {
-        timerSegmentEl.style.display = 'none';
-        timerTextEl.style.display = 'block';
-        timerTextEl.className = 'timer-text font-style-' + currentFontIndex;
-      }
+      timerTextEl.className = 'timer-text font-style-' + currentFontIndex;
     }
 
     function getLocalHour() {
@@ -540,11 +462,6 @@
         sunBoxEl.style.display = 'none';
         moonBoxEl.style.display = 'block';
       }
-    }
-
-    function toggleManualSky() {
-      isDayTime = !isDayTime;
-      renderSkyIcon();
     }
 
     function clearTracks() {
@@ -600,44 +517,20 @@
       }
     }
 
-    function formatTimeStrings(seconds) {
+    function formatTime(seconds) {
       var totalMinutes = Math.ceil(seconds / 60);
-      if (totalMinutes <= 0) return ['00', '00'];
+      if (totalMinutes <= 0) return '00:00';
 
       var hours = Math.floor(totalMinutes / 60);
       var mins = totalMinutes % 60;
 
       var strH = (hours < 10 ? '0' : '') + hours;
       var strM = (mins < 10 ? '0' : '') + mins;
-      return [strH, strM];
-    }
-
-    // 通过直接修改 fill 属性（100% 兼容 Kindle WebKit，零渲染故障）
-    function renderDigit(prefix, char) {
-      var map = DIGIT_MAP[char] || DIGIT_MAP['0'];
-      var segs = ['a', 'b', 'c', 'd', 'e', 'f', 'g'];
-      for (var i = 0; i < segs.length; i++) {
-        var s = segs[i];
-        var el = document.getElementById(prefix + '-' + s);
-        if (el) {
-          el.setAttribute('fill', map[s] ? '#000000' : 'transparent');
-        }
-      }
+      return strH + ':' + strM;
     }
 
     function updateDisplay() {
-      var parts = formatTimeStrings(timeLeft);
-      var timeStr = parts[0] + ':' + parts[1];
-
-      if (currentFontIndex === 4) {
-        renderDigit('s0', parts[0].charAt(0));
-        renderDigit('s1', parts[0].charAt(1));
-        renderDigit('s2', parts[1].charAt(0));
-        renderDigit('s3', parts[1].charAt(1));
-      } else {
-        timerTextEl.innerText = timeStr;
-      }
-
+      timerTextEl.innerText = formatTime(timeLeft);
       updateProgressTracks();
     }
 
@@ -703,6 +596,7 @@
       updateDisplay();
     }
 
+    initSavedOrientation();
     initSavedFont();
     updateDayNightMode();
     clearTracks();
