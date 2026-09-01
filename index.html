@@ -26,7 +26,7 @@
       height: 0 !important;
     }
 
-    /* 默认横屏模式：90度旋转全屏流式排版 */
+    /* 默认横屏模式：保持不变 */
     .container {
       position: absolute;
       top: 50%;
@@ -50,17 +50,17 @@
       overflow: hidden !important;
     }
 
-    /* 竖屏模式：同源流式自适应排版，左右留出极细物理边距 */
+    /* 竖屏模式：两侧内边距极限收缩至 4px，彻底释放横向宽度 */
     body.portrait-mode .container {
       position: static;
       width: 100% !important;
       height: 100% !important;
       -webkit-transform: none !important;
       transform: none !important;
-      padding: 6px 8px 16px 8px;
+      padding: 16px 4px 28px 4px;
     }
 
-    /* 顶部天象部件（60px 大图标） */
+    /* 顶部天象部件（60px） */
     .sky-badge {
       width: 60px;
       height: 60px;
@@ -122,7 +122,7 @@
       transition: none;
     }
 
-    /* 中间主体区：自动填满垂直可用空间并居中 */
+    /* 中间主体区 */
     .main-section {
       width: 100%;
       -webkit-box-flex: 1;
@@ -158,46 +158,39 @@
       cursor: pointer;
     }
 
-    /* 横屏单行大字：撑满屏幕横向空间 */
     .timer-text {
-      font-size: 215px;
+      font-size: 195px;
       line-height: 0.88;
       text-align: center;
       width: 100%;
       display: block;
-      white-space: nowrap;
     }
 
-    /* 竖屏单行大字：紧凑字间距吃满可用宽度 */
+    /* 竖屏模式：大幅放大时间字号至 215px，紧贴屏幕左右边缘 */
     body.portrait-mode .timer-text {
-      font-size: 168px;
-      line-height: 0.85;
+      font-size: 215px;
+      line-height: 0.82;
+      letter-spacing: -6px;
     }
 
-    /* 方案 0: 极细物理描边字（1.5px 极细镂空线条） */
+    /* 方案 0: 极细物理描边字 */
     .font-style-0 {
       font-family: "Helvetica Neue Light", "Helvetica Neue", "Arial Narrow", sans-serif;
       font-weight: 200;
-      letter-spacing: -3px;
+      letter-spacing: -2px;
       color: transparent !important;
       -webkit-text-fill-color: transparent !important;
       -webkit-text-stroke: 1.5px #000000;
     }
-    body.portrait-mode .font-style-0 {
-      letter-spacing: -6px;
-    }
 
-    /* 方案 1: 胶囊几何细圆（端点圆润治愈） */
+    /* 方案 1: 胶囊几何细圆 */
     .font-style-1 {
       font-family: "Century Gothic", "Apple Gothic", "Arial Rounded MT Bold", sans-serif;
       font-weight: 200;
-      letter-spacing: -4px;
+      letter-spacing: -3px;
       color: #000000;
       -webkit-text-fill-color: #000000;
       -webkit-text-stroke: 0;
-    }
-    body.portrait-mode .font-style-1 {
-      letter-spacing: -7px;
     }
 
     /* 方案 2: Kindle 官方古典雅致细体（Baskerville） */
@@ -208,9 +201,6 @@
       color: #000000;
       -webkit-text-fill-color: #000000;
       -webkit-text-stroke: 0;
-    }
-    body.portrait-mode .font-style-2 {
-      letter-spacing: -3px;
     }
 
     /* 脚印宽幅长轨道 (16 档卡槽) */
@@ -230,7 +220,7 @@
     }
     body.portrait-mode .tracks-container {
       width: 96%;
-      margin-top: 12px;
+      margin-top: 14px;
     }
     .track-slot {
       width: 20px;
@@ -281,13 +271,13 @@
       flex-shrink: 0;
     }
     body.portrait-mode .footer {
-      width: 98%;
+      width: 94%;
     }
     .btn-adjust-group {
       display: -webkit-box;
       display: -webkit-flex;
       display: flex;
-      gap: 12px;
+      gap: 10px;
     }
     button {
       background: #ffffff;
@@ -302,8 +292,8 @@
       color: #ffffff;
     }
     .btn-adjust {
-      font-size: 20px;
-      padding: 5px 18px;
+      font-size: 18px;
+      padding: 5px 14px;
     }
     .btn-start {
       font-size: 26px;
@@ -353,7 +343,7 @@
 
     <!-- 中间主体区 -->
     <div class="main-section">
-      <!-- 倒计时区域（单行大字，点击循环切换 3 套字体） -->
+      <!-- 倒计时区域（点击循环切换 3 套字体） -->
       <div class="timer-container" onclick="switchFont()">
         <div class="timer-text font-style-0" id="timer-text">00:25</div>
       </div>
@@ -384,6 +374,7 @@
       <div class="btn-adjust-group">
         <button class="btn-adjust" onclick="addMinutes(5)">+5m</button>
         <button class="btn-adjust" onclick="addMinutes(10)">+10m</button>
+        <button class="btn-adjust" onclick="addMinutes(-5)">-5m</button>
       </div>
       <div>
         <button id="btn-toggle" class="btn-start" onclick="toggleTimer()">开始</button>
@@ -646,8 +637,10 @@
       var currentMins = Math.round(totalTime / 60);
       currentMins += mins;
 
-      if (currentMins > 120) {
+      if (currentMins < 5) {
         currentMins = 5;
+      } else if (currentMins > 120) {
+        currentMins = 120;
       }
 
       totalTime = currentMins * 60;
