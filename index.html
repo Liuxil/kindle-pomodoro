@@ -229,8 +229,6 @@
     var starToggled = false;
     var currentAnimal = null;
     var currentFontIndex = 1; 
-    
-    // 每次刷新强制为横屏（isPortraitMode = false），不读取也不记忆状态
     var isPortraitMode = false;
 
     var easterEggStep = 0;
@@ -337,11 +335,10 @@
       return false;
     }
 
-    /* 核心修改：移除 scale(0.98)，改用安全减去固定像素边距来彻底杜绝滑块 */
+    /* 恢复 250px 字号，并彻底清除了所有 scale(0.98) 缩放代码 */
     function applyOrientationLogic() {
-      var MARGIN = 14; 
-      var SAFE_LONG = SCREEN_LONG - MARGIN;
-      var SAFE_SHORT = SCREEN_SHORT - MARGIN;
+      var SAFE_LONG = SCREEN_LONG - 8;
+      var SAFE_SHORT = SCREEN_SHORT - 8;
 
       if (isPortraitMode) {
         els.appContainer.style.width = SAFE_SHORT + 'px';
@@ -352,7 +349,6 @@
         els.timerText.style.fontSize = '215px';
         els.timerText.style.margin = '-10px 0';
       } else {
-        // 横屏模式：使用 250px 字号版，并用精准尺寸限制
         els.appContainer.style.width = SAFE_LONG + 'px';
         els.appContainer.style.height = SAFE_SHORT + 'px';
         els.appContainer.style.webkitTransform = 'translate(-50%, -50%) rotate(90deg)';
@@ -369,7 +365,6 @@
     }
 
     function initSavedSettings() {
-      // 强制每次刷新后默认为横屏
       isPortraitMode = false;
       applyOrientationLogic();
 
