@@ -36,7 +36,7 @@
       -webkit-box-align: center;
       -webkit-align-items: center;
       align-items: center;
-      padding: 0 16px 36px 16px;
+      padding: 0 10px 36px 10px;
     }
     .main-section {
       width: 100%;
@@ -60,10 +60,10 @@
 
     /* 顶部昼夜天象 */
     .sky-badge {
-      width: 64px;
-      height: 64px;
+      width: 60px;
+      height: 60px;
       position: relative;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
       cursor: pointer;
     }
     .sun-box {
@@ -85,10 +85,10 @@
       position: absolute;
       top: 50%;
       left: 50%;
-      width: 32px;
-      height: 32px;
-      margin-top: -16px;
-      margin-left: -16px;
+      width: 30px;
+      height: 30px;
+      margin-top: -15px;
+      margin-left: -15px;
       background: #ffffff;
       border: 2.5px solid #000000;
       border-radius: 50%;
@@ -111,29 +111,33 @@
     }
     .moon-star {
       position: absolute;
-      top: 12px;
-      right: 8px;
+      top: 10px;
+      right: 6px;
       width: 18px;
       height: 18px;
       -webkit-transition: none;
       transition: none;
     }
 
-    /* iPhone 锁屏风格全屏大字体 */
-    .timer {
-      font-size: 140px;
-      font-weight: 300;
-      font-family: "SF Pro Display", "Helvetica Neue", "Arial Narrow", "Nimbus Sans L", sans-serif-condensed, sans-serif;
-      letter-spacing: -3px;
-      line-height: 0.92;
-      text-align: center;
+    /* 满屏拉伸超大时间容器 */
+    .timer-svg-box {
+      width: 96%;
+      height: 180px;
       margin-bottom: 24px;
+    }
+    .timer-svg-box svg {
       width: 100%;
+      height: 100%;
+    }
+    .timer-svg-text {
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-weight: 300;
+      fill: #000000;
     }
 
-    /* 脚印全幅进度轨道（替代原进度条） */
+    /* 脚印全幅进度滑槽 */
     .tracks-container {
-      width: 90%;
+      width: 92%;
       height: 32px;
       display: -webkit-box;
       display: -webkit-flex;
@@ -144,11 +148,11 @@
       -webkit-box-align: center;
       -webkit-align-items: center;
       align-items: center;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
     }
     .track-slot {
-      width: 20px;
-      height: 20px;
+      width: 22px;
+      height: 22px;
       display: -webkit-box;
       display: -webkit-flex;
       display: flex;
@@ -160,8 +164,8 @@
       align-items: center;
     }
     .track-slot svg {
-      width: 18px;
-      height: 18px;
+      width: 20px;
+      height: 20px;
       fill: #000000;
       display: none;
     }
@@ -215,7 +219,7 @@
   <div class="container">
     <div class="main-section">
       
-      <!-- 顶部昼夜天象（点击可手动切换） -->
+      <!-- 顶部昼夜天象 -->
       <div class="sky-badge" onclick="toggleManualSky()">
         <!-- 太阳 -->
         <div class="sun-box" id="sun-box">
@@ -253,10 +257,14 @@
         </div>
       </div>
 
-      <!-- iPhone 锁屏风格全屏大时间 -->
-      <div class="timer" id="timer-display">00:25</div>
+      <!-- 满屏拉伸超大时间 -->
+      <div class="timer-svg-box">
+        <svg viewBox="0 0 500 200" preserveAspectRatio="none">
+          <text id="timer-text" class="timer-svg-text" x="250" y="165" font-size="200" text-anchor="middle" textLength="480" lengthAdjust="spacingAndGlyphs">00:25</text>
+        </svg>
+      </div>
       
-      <!-- 脚印进度滑槽（12 档点位） -->
+      <!-- 脚印进度轨道 -->
       <div class="tracks-container" id="tracks-bottom">
         <div class="track-slot"></div>
         <div class="track-slot"></div>
@@ -321,16 +329,17 @@
     var totalTime = 25 * 60;
     var timeLeft = totalTime;
     var timerId = null;
+    var hasStarted = false; // 标记是否已开始计时
 
     var isDayTime = true;
     var sunAngle = 0;
     var starToggled = false;
 
-    var currentAnimal = ANIMALS[0];
-    var TOTAL_SLOTS = 12; // 12 档全幅进度点位
-    var SKY_INTERVAL = 2; // 太阳/星星每 2 秒跳动一次
+    var currentAnimal = null;
+    var TOTAL_SLOTS = 12;
+    var SKY_INTERVAL = 2;
 
-    var timerEl = document.getElementById('timer-display');
+    var timerTextEl = document.getElementById('timer-text');
     var toggleBtn = document.getElementById('btn-toggle');
     var sunBoxEl = document.getElementById('sun-box');
     var moonBoxEl = document.getElementById('moon-box');
@@ -338,7 +347,6 @@
     var moonStarEl = document.getElementById('moon-star');
     var trackSlots = document.querySelectorAll('.track-slot');
 
-    // 智能时区判断（纠正 Kindle 浏览器 UTC 时区偏移）
     function getLocalHour() {
       var d = new Date();
       var tzOffset = d.getTimezoneOffset();
@@ -369,30 +377,41 @@
       renderSkyIcon();
     }
 
-    // 随机重置脚印
-    function initAnimalTracks() {
+    // 清空并隐藏所有脚印槽
+    function clearTracks() {
+      for (var i = 0; i < TOTAL_SLOTS; i++) {
+        trackSlots[i].innerHTML = '';
+        trackSlots[i].className = 'track-slot';
+      }
+      hasStarted = false;
+    }
+
+    // 开始时初始化随机动物
+    function startAnimalTracks() {
       var randIndex = Math.floor(Math.random() * ANIMALS.length);
       currentAnimal = ANIMALS[randIndex];
-      for (var i = 0; i < trackSlots.length; i++) {
+      for (var i = 0; i < TOTAL_SLOTS; i++) {
         trackSlots[i].innerHTML = currentAnimal.svg;
         trackSlots[i].className = 'track-slot';
       }
+      hasStarted = true;
       updateProgressTracks();
     }
 
-    // 根据当前真实时间进度（0% ~ 100%），更新脚印队伍在轨道上的位置
+    // 根据进度推进脚印滑块
     function updateProgressTracks() {
-      var progressRatio = (totalTime - timeLeft) / totalTime; // 0.0 ~ 1.0
-      // 计算当前领头脚印所在的卡槽索引（0 ~ 11）
-      var leadIndex = Math.min(TOTAL_SLOTS - 1, Math.floor(progressRatio * TOTAL_SLOTS));
-      var count = currentAnimal.feetCount; // 2 或 4
+      if (!hasStarted || !currentAnimal) {
+        return;
+      }
 
-      // 先清空所有卡槽
+      var progressRatio = (totalTime - timeLeft) / totalTime;
+      var leadIndex = Math.min(TOTAL_SLOTS - 1, Math.floor(progressRatio * TOTAL_SLOTS));
+      var count = currentAnimal.feetCount;
+
       for (var i = 0; i < TOTAL_SLOTS; i++) {
         trackSlots[i].className = 'track-slot';
       }
 
-      // 仅激活领头及其身后对应数量的脚印
       for (var k = 0; k < count; k++) {
         var pos = leadIndex - k;
         if (pos >= 0 && pos < TOTAL_SLOTS) {
@@ -427,7 +446,7 @@
     }
 
     function updateDisplay() {
-      timerEl.innerText = formatTime(timeLeft);
+      timerTextEl.textContent = formatTime(timeLeft);
       updateProgressTracks();
     }
 
@@ -437,11 +456,11 @@
         timerId = null;
         toggleBtn.innerText = '开始';
       } else {
-        if (timeLeft <= 0) {
+        if (timeLeft <= 0 || !hasStarted) {
           timeLeft = totalTime;
+          startAnimalTracks(); // 首次点击开始时才生成动物
         }
         updateDayNightMode();
-        initAnimalTracks();
         timerId = setInterval(tick, 1000);
         toggleBtn.innerText = '暂停';
       }
@@ -453,15 +472,12 @@
 
         var elapsed = totalTime - timeLeft;
 
-        // 太阳/星星跳帧
         if (elapsed % SKY_INTERVAL === 0) {
           tickSkyBadge();
         }
 
-        // 脚印进度更新（每过一定进度自然推进，同时随分钟刷新）
         updateProgressTracks();
 
-        // 大时间整分钟刷新
         if (timeLeft % 60 === 0 || timeLeft === 0) {
           updateDisplay();
         }
@@ -470,6 +486,7 @@
         timerId = null;
         toggleBtn.innerText = '开始';
         timeLeft = totalTime;
+        clearTracks(); // 倒计时结束恢复隐藏
         updateDisplay();
       }
     }
@@ -490,13 +507,14 @@
 
       totalTime = currentMins * 60;
       timeLeft = totalTime;
+      clearTracks(); // 调节时长重置为待机隐藏
       updateDayNightMode();
-      initAnimalTracks();
       updateDisplay();
     }
 
+    // 初始状态：仅显示天象与时间，脚印隐藏
     updateDayNightMode();
-    initAnimalTracks();
+    clearTracks();
     updateDisplay();
   </script>
 </body>
