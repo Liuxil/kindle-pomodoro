@@ -173,7 +173,6 @@
           <button class="btn-adjust" data-adj="-5">-5</button>
         </div>
         <div>
-          <!-- 默认留空，由JS注入 -->
           <button id="btn-toggle" class="btn-start"></button>
         </div>
       </div>
@@ -200,7 +199,6 @@
   </div>
 
   <script>
-    /* 像素矢量图恢复 */
     var ICON_PLAY = '<svg viewBox="0 0 16 16" style="shape-rendering: crispEdges;"><rect x="4" y="2" width="2" height="12" fill="#000"/><rect x="6" y="3" width="2" height="10" fill="#000"/><rect x="8" y="4" width="2" height="8" fill="#000"/><rect x="10" y="5" width="2" height="6" fill="#000"/><rect x="12" y="6" width="2" height="4" fill="#000"/><rect x="14" y="7" width="2" height="2" fill="#000"/></svg>';
     var ICON_PAUSE = '<svg viewBox="0 0 16 16" style="shape-rendering: crispEdges;"><rect x="3" y="2" width="4" height="12" fill="#000"/><rect x="9" y="2" width="4" height="12" fill="#000"/></svg>';
 
@@ -242,8 +240,8 @@
     var currentFontIndex = 1; 
     var isPortraitMode = false;
 
-    var toggleClickCount = 0;
-    var lastToggleClickTime = 0;
+    // 新的彩蛋状态机变量
+    var easterEggStep = 0;
 
     var SCREEN_LONG = 0;
     var SCREEN_SHORT = 0;
@@ -300,14 +298,17 @@
       var fwNodes = els.fwStage.querySelectorAll('.fw-frame');
       for (var k = 0; k < fwNodes.length; k++) { fwFrames.push(fwNodes[k]); }
       
-      // 初始化状态设为 SVG 的播放按钮
       els.btnToggle.innerHTML = ICON_PLAY;
     }
 
     function bindEvents() {
       document.getElementById('btn-orientation').addEventListener('click', toggleOrientation);
       document.getElementById('btn-font-switch').addEventListener('click', switchFont);
-      els.btnToggle.addEventListener('click', handleToggleClick);
+      
+      els.btnToggle.addEventListener('click', function(e) {
+        if (e) e.preventDefault();
+        toggleTimer();
+      });
       els.restScreen.addEventListener('click', hideRestScreen);
       
       var adjustBtns = document.querySelectorAll('.btn-adjust');
@@ -318,23 +319,22 @@
       }
     }
 
-    function handleToggleClick(e) {
-      if (e) e.preventDefault();
-      var now = new Date().getTime();
-      if (now - lastToggleClickTime <= 1000) { toggleClickCount++; } else { toggleClickCount = 1; }
-      lastToggleClickTime = now;
-
-      if (toggleClickCount === 6) {
-        toggleClickCount = 0; 
-        if (timerId) {
-          clearInterval(timerId);
-          timerId = null;
-          els.btnToggle.innerHTML = ICON_PLAY;
-        }
-        showRestScreen();
-      } else {
-        toggleTimer();
+    // 新的彩蛋验证逻辑 (目标序列: 5, -5, 5, -5, 5, -5)
+    function checkEasterEgg(mins) {
+      if (easterEggStep === 0 && mins === 5) { easterEggStep = 1; }
+      else if (easterEggStep === 1 && mins === -5) { easterEggStep = 2; }
+      else if (easterEggStep === 2 && mins === 5) { easterEggStep = 3; }
+      else if (easterEggStep === 3 && mins === -5) { easterEggStep = 4; }
+      else if (easterEggStep === 4 && mins === 5) { easterEggStep = 5; }
+      else if (easterEggStep === 5 && mins === -5) { 
+        easterEggStep = 0; 
+        return true; 
       }
+      else { 
+        // 允许误触或者重新开始
+        easterEggStep = (mins === 5) ? 1 : 0; 
+      }
+      return false;
     }
 
     function applyOrientationLogic() {
@@ -437,6 +437,9 @@
     }
 
     function addMinutes(mins) {
+      // 验证最新的彩蛋逻辑
+      var isEggTriggered = checkEasterEgg(mins);
+
       if (timerId) {
         clearInterval(timerId);
         timerId = null;
@@ -452,6 +455,11 @@
       clearTracks();
       updateDayNightMode();
       updateDisplay();
+
+      // 如果正好触发了彩蛋，则展示休息页
+      if (isEggTriggered) {
+        showRestScreen();
+      }
     }
 
     function updateDisplay() {
