@@ -3,123 +3,742 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>金梅细圆实机效果测试</title>
+  <title>Pomodoro</title>
   <style>
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+      -webkit-user-select: none;
+      user-select: none;
     }
-    body {
+    html, body {
+      height: 100%;
+      width: 100%;
+      overflow: hidden !important;
       background-color: #ffffff;
       color: #000000;
-      padding: 16px 12px 40px 12px;
       font-family: sans-serif;
     }
-    h1 {
-      font-size: 18px;
-      text-align: center;
-      margin-bottom: 4px;
-    }
-    p.intro {
-      font-size: 12px;
-      text-align: center;
-      margin-bottom: 20px;
-      color: #333;
-    }
-    .test-item {
-      border-bottom: 2px solid #000000;
-      padding: 14px 0 12px 0;
-      text-align: center;
-    }
-    .label {
-      font-size: 13px;
-      font-weight: bold;
-      margin-bottom: 4px;
-      display: block;
-    }
-    .desc {
-      font-size: 11px;
-      color: #555;
-      margin-bottom: 8px;
+    ::-webkit-scrollbar {
+      display: none !important;
+      width: 0 !important;
+      height: 0 !important;
     }
 
-    /* 方案 A: 标准 CSS 调用金梅字体别名 */
-    .sample-css {
-      font-size: 80px;
-      line-height: 1;
-      margin: 6px 0;
-      font-family: "金梅新细圆", "KingType New Thin Round", "KingNewThinRound", "KingType", "Yuanti SC", "Hiragino Round Gothic Pro", "圆体-简", sans-serif;
-      font-weight: 200;
-    }
-
-    /* 矢量容器 */
-    .svg-box {
-      height: 90px;
-      width: 100%;
+    /* 默认横屏模式：90度旋转自适应流式排版 */
+    .container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      -webkit-transform: translate(-50%, -50%) rotate(90deg);
+      transform: translate(-50%, -50%) rotate(90deg);
+      display: -webkit-box;
+      display: -webkit-flex;
       display: flex;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+      -webkit-flex-direction: column;
+      flex-direction: column;
+      -webkit-box-pack: justify;
+      -webkit-justify-content: space-between;
+      justify-content: space-between;
+      -webkit-box-align: center;
+      -webkit-align-items: center;
+      align-items: center;
+      padding: 6px 20px 10px 20px;
+      overflow: hidden !important;
+    }
+
+    /* 竖屏模式 */
+    body.portrait-mode .container {
+      position: static;
+      width: 100% !important;
+      height: 100% !important;
+      -webkit-transform: none !important;
+      transform: none !important;
+      padding: 12px 16px 24px 16px;
+    }
+
+    /* 顶部天象图标部件（点击切换横/竖屏） */
+    .sky-badge {
+      width: 40px;
+      height: 40px;
+      position: relative;
+      cursor: pointer;
+      -webkit-flex-shrink: 0;
+      flex-shrink: 0;
+    }
+    .sun-box {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      display: none;
+    }
+    .sun-rays {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      -webkit-transition: none;
+      transition: none;
+    }
+    .sun-face {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 20px;
+      height: 20px;
+      margin-top: -10px;
+      margin-left: -10px;
+      background: #ffffff;
+      border: 2px solid #000000;
+      border-radius: 50%;
+      box-sizing: border-box;
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: flex;
+      -webkit-box-align: center;
+      -webkit-align-items: center;
+      align-items: center;
+      -webkit-box-pack: center;
+      -webkit-justify-content: center;
       justify-content: center;
+    }
+    .moon-box {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      display: none;
+    }
+    .moon-star {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      width: 12px;
+      height: 12px;
+      -webkit-transition: none;
+      transition: none;
+    }
+
+    /* 中间主体区 */
+    .main-section {
+      width: 100%;
+      -webkit-box-flex: 1;
+      -webkit-flex: 1;
+      flex: 1;
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: flex;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+      -webkit-flex-direction: column;
+      flex-direction: column;
+      -webkit-box-align: center;
+      -webkit-align-items: center;
+      align-items: center;
+      -webkit-box-pack: center;
+      -webkit-justify-content: center;
+      justify-content: center;
+    }
+
+    /* 倒计时主容器 */
+    .timer-container {
+      width: 100%;
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: flex;
+      -webkit-box-pack: center;
+      -webkit-justify-content: center;
+      justify-content: center;
+      -webkit-box-align: center;
+      -webkit-align-items: center;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    /* 方案 0：极细物理描边字（编号 10） */
+    .svg-outline-box {
+      width: 100%;
+      height: 175px;
+      display: none;
+      -webkit-box-pack: center;
+      -webkit-justify-content: center;
+      justify-content: center;
+      -webkit-box-align: center;
+      -webkit-align-items: center;
       align-items: center;
     }
-    .svg-box svg {
-      height: 80px;
-      width: 280px;
+    .svg-outline-box svg {
+      width: 96%;
+      height: 100%;
+    }
+
+    /* 方案 1：金梅新细圆仿真矢量字（方案 2） */
+    .svg-round-box {
+      width: 100%;
+      height: 175px;
+      display: none;
+      -webkit-box-pack: center;
+      -webkit-justify-content: center;
+      justify-content: center;
+      -webkit-box-align: center;
+      -webkit-align-items: center;
+      align-items: center;
+    }
+    .svg-round-box svg {
+      width: 92%;
+      height: 100%;
+    }
+
+    /* 方案 2 & 3：文本字形容器 */
+    .timer-text {
+      font-size: 195px;
+      line-height: 0.88;
+      text-align: center;
+      width: 100%;
+      display: none;
+    }
+    body.portrait-mode .timer-text {
+      font-size: 145px;
+    }
+
+    /* 方案 2: Kindle 官方古典雅致细体 */
+    .font-style-2 {
+      font-family: "Baskerville", "Bookerly Light", "Georgia", serif;
+      font-weight: 200;
+      letter-spacing: 0px;
+    }
+
+    /* 方案 3: 极简等宽机械细体 */
+    .font-style-3 {
+      font-family: "Courier New", "Courier", monospace;
+      font-weight: 200;
+      letter-spacing: 2px;
+    }
+
+    /* 脚印宽幅长轨道 (16 档卡槽) */
+    .tracks-container {
+      width: 92%;
+      height: 26px;
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: flex;
+      -webkit-box-pack: justify;
+      -webkit-justify-content: space-between;
+      justify-content: space-between;
+      -webkit-box-align: center;
+      -webkit-align-items: center;
+      align-items: center;
+      margin-top: 6px;
+    }
+    .track-slot {
+      width: 20px;
+      height: 20px;
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: flex;
+      -webkit-box-pack: center;
+      -webkit-justify-content: center;
+      justify-content: center;
+      -webkit-box-align: center;
+      -webkit-align-items: center;
+      align-items: center;
+    }
+    .track-slot svg {
+      width: 18px;
+      height: 18px;
+      fill: #000000;
+      display: none;
+    }
+    .track-slot:nth-child(even) svg {
+      margin-top: 4px;
+      -webkit-transform: rotate(6deg);
+      transform: rotate(6deg);
+    }
+    .track-slot:nth-child(odd) svg {
+      margin-top: -4px;
+      -webkit-transform: rotate(-6deg);
+      transform: rotate(-6deg);
+    }
+    .track-slot.active svg {
+      display: block;
+    }
+
+    /* 底部按钮栏：流式分离贴底 */
+    .footer {
+      width: 96%;
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: flex;
+      -webkit-box-pack: justify;
+      -webkit-justify-content: space-between;
+      justify-content: space-between;
+      -webkit-box-align: center;
+      -webkit-align-items: center;
+      align-items: center;
+      -webkit-flex-shrink: 0;
+      flex-shrink: 0;
+    }
+    .btn-adjust-group {
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: flex;
+      gap: 12px;
+    }
+    button {
+      background: #ffffff;
+      color: #000000;
+      border: 3px solid #000000;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button:active {
+      background: #000000;
+      color: #ffffff;
+    }
+    .btn-adjust {
+      font-size: 20px;
+      padding: 5px 18px;
+    }
+    .btn-start {
+      font-size: 26px;
+      padding: 5px 44px;
     }
   </style>
 </head>
 <body>
 
-  <h1>金梅新细圆风格实机对比</h1>
-  <p class="intro">请在 Kindle 上查看以下哪套极细圆角字形最清晰耐看：</p>
+  <div class="container" id="main-container">
+    
+    <!-- 顶部天象图标（点击切换横/竖屏） -->
+    <div class="sky-badge" onclick="toggleScreenOrientation()" title="点击切换横/竖屏">
+      <div class="sun-box" id="sun-box">
+        <div class="sun-rays" id="sun-rays">
+          <svg viewBox="0 0 100 100" stroke="#000" stroke-linecap="round">
+            <path d="M50 4 L50 16" stroke-width="4.5"/>
+            <path d="M50 84 L50 96" stroke-width="4.5"/>
+            <path d="M4 50 L16 50" stroke-width="4.5"/>
+            <path d="M84 50 L96 50" stroke-width="4.5"/>
+            <path d="M17 17 L26 26" stroke-width="4"/>
+            <path d="M74 74 L83 83" stroke-width="4"/>
+            <path d="M17 83 L26 74" stroke-width="4"/>
+            <path d="M74 26 L83 17" stroke-width="4"/>
+          </svg>
+        </div>
+        <div class="sun-face">
+          <svg viewBox="0 0 34 34">
+            <circle cx="12" cy="14" r="1.8" fill="#000"/>
+            <circle cx="22" cy="14" r="1.8" fill="#000"/>
+            <path d="M12 19 Q 17 24 22 19" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
 
-  <!-- 1. CSS 直接声明 -->
-  <div class="test-item">
-    <span class="label">【方案 1】CSS 原生金梅新细圆别名声明</span>
-    <div class="desc">依赖系统是否内置该字库，未内置时会回退为默认字体</div>
-    <div class="sample-css">00:25</div>
-  </div>
+      <div class="moon-box" id="moon-box">
+        <svg viewBox="0 0 68 68" style="width:100%;height:100%;">
+          <path d="M38 12 C24 12 12 24 12 38 C12 48 18 56 26 59 C23 54 22 48 22 42 C22 28 32 17 46 16 C43 13 40 12 38 12 Z" fill="#000"/>
+        </svg>
+        <div class="moon-star" id="moon-star">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 2 Q 12 12 2 12 Q 12 12 12 22 Q 12 12 22 12 Q 12 12 12 2 Z" fill="#000"/>
+          </svg>
+        </div>
+      </div>
+    </div>
 
-  <!-- 2. 矢量仿真：超细圆角（1.5px 极幼圆角） -->
-  <div class="test-item">
-    <span class="label">【方案 2】矢量仿真 · 超细胶囊圆角（1.5px 线条）</span>
-    <div class="desc">纯矢量圆角生成，线条极其纤细，端点柔和圆润</div>
-    <div class="svg-box">
-      <svg viewBox="0 0 280 80">
-        <!-- 0 -->
-        <rect x="10" y="5" width="46" height="70" rx="23" ry="23" fill="none" stroke="#000" stroke-width="1.8"/>
-        <!-- 0 -->
-        <rect x="70" y="5" width="46" height="70" rx="23" ry="23" fill="none" stroke="#000" stroke-width="1.8"/>
-        <!-- : -->
-        <circle cx="132" cy="28" r="2.5" fill="#000"/>
-        <circle cx="132" cy="52" r="2.5" fill="#000"/>
-        <!-- 2 -->
-        <path d="M 150 25 C 150 8, 190 8, 190 26 C 190 44, 150 54, 150 74 L 192 74" fill="none" stroke="#000" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-        <!-- 5 -->
-        <path d="M 248 8 L 214 8 L 210 38 C 215 34, 252 32, 250 58 C 248 76, 212 76, 210 64" fill="none" stroke="#000" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
+    <!-- 中间主体区 -->
+    <div class="main-section">
+      <!-- 倒计时区域（点击循环切换 4 套方案） -->
+      <div class="timer-container" onclick="switchFont()">
+        
+        <!-- 方案 0: 极细物理描边字（编号 10） -->
+        <div class="svg-outline-box" id="view-outline">
+          <svg viewBox="0 0 320 85">
+            <text id="outline-text-node" x="160" y="70" font-size="82" text-anchor="middle" font-family="sans-serif" fill="none" stroke="#000" stroke-width="1.6" letter-spacing="2">00:25</text>
+          </svg>
+        </div>
+
+        <!-- 方案 1: 金梅新细圆仿真矢量字（方案 2） -->
+        <div class="svg-round-box" id="view-round">
+          <svg viewBox="0 0 300 80">
+            <g id="rnd-g0" transform="translate(10, 0)"></g>
+            <g id="rnd-g1" transform="translate(70, 0)"></g>
+            <g id="rnd-colon" transform="translate(136, 0)">
+              <circle cx="6" cy="28" r="2.2" fill="#000"/>
+              <circle cx="6" cy="52" r="2.2" fill="#000"/>
+            </g>
+            <g id="rnd-g2" transform="translate(160, 0)"></g>
+            <g id="rnd-g3" transform="translate(220, 0)"></g>
+          </svg>
+        </div>
+
+        <!-- 方案 2 & 3: 常规文本字体 -->
+        <div class="timer-text" id="view-text">00:25</div>
+
+      </div>
+      
+      <!-- 脚印进度滑槽（16 档宽轨，未开始前保持隐藏） -->
+      <div class="tracks-container" id="tracks-bottom">
+        <div class="track-slot"></div>
+        <div class="track-slot"></div>
+        <div class="track-slot"></div>
+        <div class="track-slot"></div>
+        <div class="track-slot"></div>
+        <div class="track-slot"></div>
+        <div class="track-slot"></div>
+        <div class="track-slot"></div>
+        <div class="track-slot"></div>
+        <div class="track-slot"></div>
+        <div class="track-slot"></div>
+        <div class="track-slot"></div>
+        <div class="track-slot"></div>
+        <div class="track-slot"></div>
+        <div class="track-slot"></div>
+        <div class="track-slot"></div>
+      </div>
+    </div>
+
+    <!-- 底部按钮栏 -->
+    <div class="footer">
+      <div class="btn-adjust-group">
+        <button class="btn-adjust" onclick="addMinutes(5)">+5m</button>
+        <button class="btn-adjust" onclick="addMinutes(10)">+10m</button>
+      </div>
+      <div>
+        <button id="btn-toggle" class="btn-start" onclick="toggleTimer()">开始</button>
+      </div>
     </div>
   </div>
 
-  <!-- 3. 矢量仿真：舒展微圆角（2.2px 线条） -->
-  <div class="test-item">
-    <span class="label">【方案 3】矢量仿真 · 金梅新细圆标准骨架（2.2px 线条）</span>
-    <div class="desc">黑度适中，圆角弧度更饱满，墨水屏阅读清晰度最高</div>
-    <div class="svg-box">
-      <svg viewBox="0 0 280 80">
-        <!-- 0 -->
-        <rect x="10" y="5" width="46" height="70" rx="23" ry="23" fill="none" stroke="#000" stroke-width="2.4"/>
-        <!-- 0 -->
-        <rect x="70" y="5" width="46" height="70" rx="23" ry="23" fill="none" stroke="#000" stroke-width="2.4"/>
-        <!-- : -->
-        <circle cx="132" cy="28" r="3" fill="#000"/>
-        <circle cx="132" cy="52" r="3" fill="#000"/>
-        <!-- 2 -->
-        <path d="M 150 25 C 150 8, 190 8, 190 26 C 190 44, 150 54, 150 74 L 192 74" fill="none" stroke="#000" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
-        <!-- 5 -->
-        <path d="M 248 8 L 214 8 L 210 38 C 215 34, 252 32, 250 58 C 248 76, 212 76, 210 64" fill="none" stroke="#000" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </div>
-  </div>
+  <script>
+    var ANIMALS = [
+      {
+        name: 'cat',
+        feetCount: 4,
+        svg: '<svg viewBox="0 0 24 24"><ellipse cx="9" cy="12" rx="4.5" ry="5.5"/><circle cx="16" cy="7" r="2"/><circle cx="19" cy="12" r="2.2"/><circle cx="16" cy="17" r="2"/></svg>'
+      },
+      {
+        name: 'pig_hoof',
+        feetCount: 4,
+        svg: '<svg viewBox="0 0 24 24"><ellipse cx="12" cy="7.5" rx="6" ry="3.2" transform="rotate(10 12 7.5)" fill="#000"/><ellipse cx="12" cy="16.5" rx="6" ry="3.2" transform="rotate(-10 12 16.5)" fill="#000"/></svg>'
+      },
+      {
+        name: 'horse_hoof',
+        feetCount: 4,
+        svg: '<svg viewBox="0 0 24 24"><path d="M5 6 C15 5 19 9 19 12 C19 15 15 19 5 18 L5 14.5 C12 15 14 13.5 14 12 C14 10.5 12 9 5 9.5 Z" fill="#000"/></svg>'
+      },
+      {
+        name: 'bird',
+        feetCount: 2,
+        svg: '<svg viewBox="0 0 24 24"><path d="M5 12 L19 12 M13 12 L19 6 M13 12 L19 18" stroke="#000" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+      },
+      {
+        name: 'duck',
+        feetCount: 2,
+        svg: '<svg viewBox="0 0 24 24"><path d="M4 12 L9 12 M9 12 L17 4 C14 8 13 10 9 12 C13 14 14 16 17 20 Z" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="#000"/></svg>'
+      }
+    ];
 
+    var ROUND_GLYPHS = {
+      '0': '<rect x="0" y="5" width="46" height="70" rx="23" ry="23" fill="none" stroke="#000" stroke-width="1.8"/>',
+      '1': '<path d="M 12 18 L 26 5 L 26 75 M 10 75 L 42 75" fill="none" stroke="#000" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
+      '2': '<path d="M 4 24 C 4 6, 44 6, 44 26 C 44 44, 4 54, 4 75 L 46 75" fill="none" stroke="#000" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
+      '3': '<path d="M 4 8 L 42 8 L 22 34 C 38 34, 46 44, 46 56 C 46 68, 34 76, 18 76 C 8 76, 2 70, 2 64" fill="none" stroke="#000" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
+      '4': '<path d="M 34 75 L 34 5 L 4 50 L 46 50" fill="none" stroke="#000" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
+      '5': '<path d="M 42 8 L 8 8 L 4 38 C 10 34, 46 32, 44 58 C 42 76, 6 76, 4 64" fill="none" stroke="#000" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
+      '6': '<path d="M 40 12 C 28 6, 6 24, 6 48 C 6 66, 20 76, 32 76 C 42 76, 46 64, 46 50 C 46 36, 32 30, 18 34" fill="none" stroke="#000" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
+      '7': '<path d="M 4 8 L 44 8 L 16 75" fill="none" stroke="#000" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
+      '8': '<rect x="6" y="5" width="34" height="34" rx="17" ry="17" fill="none" stroke="#000" stroke-width="1.8"/><rect x="4" y="37" width="38" height="38" rx="19" ry="19" fill="none" stroke="#000" stroke-width="1.8"/>',
+      '9': '<path d="M 6 68 C 18 74, 40 56, 40 32 C 40 14, 26 4, 14 4 C 4 4, 0 16, 0 30 C 0 44, 14 50, 28 46" fill="none" stroke="#000" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>'
+    };
+
+    var totalTime = 25 * 60;
+    var timeLeft = totalTime;
+    var timerId = null;
+    var hasStarted = false;
+
+    var isDayTime = true;
+    var sunAngle = 0;
+    var starToggled = false;
+
+    var currentAnimal = null;
+    var TOTAL_SLOTS = 16;
+    var SKY_INTERVAL = 2;
+
+    var currentFontIndex = 0;
+    var TOTAL_FONTS = 4;
+
+    var containerEl = document.getElementById('main-container');
+    var viewOutlineEl = document.getElementById('view-outline');
+    var viewRoundEl = document.getElementById('view-round');
+    var viewTextEl = document.getElementById('view-text');
+    var outlineTextNode = document.getElementById('outline-text-node');
+
+    var toggleBtn = document.getElementById('btn-toggle');
+    var sunBoxEl = document.getElementById('sun-box');
+    var moonBoxEl = document.getElementById('moon-box');
+    var sunRaysEl = document.getElementById('sun-rays');
+    var moonStarEl = document.getElementById('moon-star');
+    var trackSlots = document.querySelectorAll('.track-slot');
+
+    // 精准扣除安全边距，彻底杜绝顶部/侧面微溢出滚动条
+    function updateLayoutDimensions() {
+      var isPortrait = document.body.classList.contains('portrait-mode');
+      if (isPortrait) {
+        containerEl.style.width = '100%';
+        containerEl.style.height = '100%';
+      } else {
+        var w = window.innerWidth || document.documentElement.clientWidth || 600;
+        var h = window.innerHeight || document.documentElement.clientHeight || 800;
+        var screenLong = Math.max(w, h);
+        var screenShort = Math.min(w, h);
+        // 扣除 6px/12px 安全余量，确保永远小于物理可视高度
+        containerEl.style.width = (screenLong - 6) + 'px';
+        containerEl.style.height = (screenShort - 12) + 'px';
+      }
+    }
+
+    function toggleScreenOrientation() {
+      var current = localStorage.getItem('kindle_pomodoro_orient');
+      var next = (current === 'portrait') ? 'landscape' : 'portrait';
+      try {
+        localStorage.setItem('kindle_pomodoro_orient', next);
+      } catch(e) {}
+      window.location.reload();
+    }
+
+    function initSavedOrientation() {
+      var saved = localStorage.getItem('kindle_pomodoro_orient');
+      if (saved === 'portrait') {
+        document.body.classList.add('portrait-mode');
+      }
+      updateLayoutDimensions();
+    }
+
+    function initSavedFont() {
+      var saved = localStorage.getItem('kindle_pomodoro_font');
+      if (saved !== null) {
+        currentFontIndex = parseInt(saved, 10) || 0;
+        if (currentFontIndex >= TOTAL_FONTS) {
+          currentFontIndex = 0;
+        }
+      }
+      applyFontView();
+    }
+
+    function switchFont() {
+      currentFontIndex = (currentFontIndex + 1) % TOTAL_FONTS;
+      try {
+        localStorage.setItem('kindle_pomodoro_font', currentFontIndex);
+      } catch(e) {}
+      applyFontView();
+      updateDisplay();
+    }
+
+    function applyFontView() {
+      viewOutlineEl.style.display = 'none';
+      viewRoundEl.style.display = 'none';
+      viewTextEl.style.display = 'none';
+
+      if (currentFontIndex === 0) {
+        viewOutlineEl.style.display = '-webkit-flex';
+        viewOutlineEl.style.display = 'flex';
+      } else if (currentFontIndex === 1) {
+        viewRoundEl.style.display = '-webkit-flex';
+        viewRoundEl.style.display = 'flex';
+      } else {
+        viewTextEl.style.display = 'block';
+        viewTextEl.className = 'timer-text font-style-' + currentFontIndex;
+      }
+    }
+
+    function getLocalHour() {
+      var d = new Date();
+      var tzOffset = d.getTimezoneOffset();
+      if (tzOffset === 0) {
+        return (d.getUTCHours() + 8) % 24;
+      }
+      return d.getHours();
+    }
+
+    function updateDayNightMode() {
+      var hour = getLocalHour();
+      isDayTime = (hour >= 6 && hour < 18);
+      renderSkyIcon();
+    }
+
+    function renderSkyIcon() {
+      if (isDayTime) {
+        sunBoxEl.style.display = 'block';
+        moonBoxEl.style.display = 'none';
+      } else {
+        sunBoxEl.style.display = 'none';
+        moonBoxEl.style.display = 'block';
+      }
+    }
+
+    function clearTracks() {
+      for (var i = 0; i < TOTAL_SLOTS; i++) {
+        trackSlots[i].innerHTML = '';
+        trackSlots[i].className = 'track-slot';
+      }
+      hasStarted = false;
+    }
+
+    function startAnimalTracks() {
+      var randIndex = Math.floor(Math.random() * ANIMALS.length);
+      currentAnimal = ANIMALS[randIndex];
+      for (var i = 0; i < TOTAL_SLOTS; i++) {
+        trackSlots[i].innerHTML = currentAnimal.svg;
+        trackSlots[i].className = 'track-slot';
+      }
+      hasStarted = true;
+      updateProgressTracks();
+    }
+
+    function updateProgressTracks() {
+      if (!hasStarted || !currentAnimal) {
+        return;
+      }
+
+      var progressRatio = (totalTime - timeLeft) / totalTime;
+      var leadIndex = Math.min(TOTAL_SLOTS - 1, Math.floor(progressRatio * TOTAL_SLOTS));
+      var count = currentAnimal.feetCount;
+
+      for (var i = 0; i < TOTAL_SLOTS; i++) {
+        trackSlots[i].className = 'track-slot';
+      }
+
+      for (var k = 0; k < count; k++) {
+        var pos = leadIndex - k;
+        if (pos >= 0 && pos < TOTAL_SLOTS) {
+          trackSlots[pos].className = 'track-slot active';
+        }
+      }
+    }
+
+    function tickSkyBadge() {
+      if (isDayTime) {
+        sunAngle = (sunAngle + 15) % 360;
+        sunRaysEl.style.webkitTransform = 'rotate(' + sunAngle + 'deg)';
+        sunRaysEl.style.transform = 'rotate(' + sunAngle + 'deg)';
+      } else {
+        starToggled = !starToggled;
+        var starAngle = starToggled ? 20 : 0;
+        moonStarEl.style.webkitTransform = 'rotate(' + starAngle + 'deg)';
+        moonStarEl.style.transform = 'rotate(' + starAngle + 'deg)';
+      }
+    }
+
+    function formatTimeStrings(seconds) {
+      var totalMinutes = Math.ceil(seconds / 60);
+      if (totalMinutes <= 0) return ['00', '00'];
+
+      var hours = Math.floor(totalMinutes / 60);
+      var mins = totalMinutes % 60;
+
+      var strH = (hours < 10 ? '0' : '') + hours;
+      var strM = (mins < 10 ? '0' : '') + mins;
+      return [strH, strM];
+    }
+
+    function renderRoundDigit(groupId, char) {
+      var gEl = document.getElementById(groupId);
+      if (gEl) {
+        gEl.innerHTML = ROUND_GLYPHS[char] || ROUND_GLYPHS['0'];
+      }
+    }
+
+    function updateDisplay() {
+      var parts = formatTimeStrings(timeLeft);
+      var timeStr = parts[0] + ':' + parts[1];
+
+      if (currentFontIndex === 0) {
+        outlineTextNode.textContent = timeStr;
+      } else if (currentFontIndex === 1) {
+        renderRoundDigit('rnd-g0', parts[0].charAt(0));
+        renderRoundDigit('rnd-g1', parts[0].charAt(1));
+        renderRoundDigit('rnd-g2', parts[1].charAt(0));
+        renderRoundDigit('rnd-g3', parts[1].charAt(1));
+      } else {
+        viewTextEl.innerText = timeStr;
+      }
+
+      updateProgressTracks();
+    }
+
+    function toggleTimer() {
+      if (timerId) {
+        clearInterval(timerId);
+        timerId = null;
+        toggleBtn.innerText = '开始';
+      } else {
+        if (timeLeft <= 0 || !hasStarted) {
+          timeLeft = totalTime;
+          startAnimalTracks();
+        }
+        updateDayNightMode();
+        timerId = setInterval(tick, 1000);
+        toggleBtn.innerText = '暂停';
+      }
+    }
+
+    function tick() {
+      if (timeLeft > 0) {
+        timeLeft--;
+
+        var elapsed = totalTime - timeLeft;
+
+        if (elapsed % SKY_INTERVAL === 0) {
+          tickSkyBadge();
+        }
+
+        updateProgressTracks();
+
+        if (timeLeft % 60 === 0 || timeLeft === 0) {
+          updateDisplay();
+        }
+      } else {
+        clearInterval(timerId);
+        timerId = null;
+        toggleBtn.innerText = '开始';
+        timeLeft = totalTime;
+        clearTracks();
+        updateDisplay();
+      }
+    }
+
+    function addMinutes(mins) {
+      if (timerId) {
+        clearInterval(timerId);
+        timerId = null;
+        toggleBtn.innerText = '开始';
+      }
+
+      var currentMins = Math.round(totalTime / 60);
+      currentMins += mins;
+
+      if (currentMins > 120) {
+        currentMins = 5;
+      }
+
+      totalTime = currentMins * 60;
+      timeLeft = totalTime;
+      clearTracks();
+      updateDayNightMode();
+      updateDisplay();
+    }
+
+    window.onresize = updateLayoutDimensions;
+
+    initSavedOrientation();
+    initSavedFont();
+    updateDayNightMode();
+    clearTracks();
+    updateDisplay();
+  </script>
 </body>
 </html>
