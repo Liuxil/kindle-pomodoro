@@ -231,12 +231,9 @@
     var currentFontIndex = 1; 
     var isPortraitMode = false;
 
-    // 彩蛋状态机步数追踪
     var easterEggStep = 0;
-
     var SCREEN_LONG = 0;
     var SCREEN_SHORT = 0;
-
     var REFRESH_INTERVAL_SEC = 300;
     var secondsSinceRefresh = 0;
 
@@ -310,14 +307,11 @@
       }
     }
 
-    // 全局彩蛋控制逻辑 
-    // 目标序列：FONT, FONT, +10, +10, +5, -5, +5, -5
     function handleEasterEgg(action) {
       if (action === 'FONT') {
         if (easterEggStep === 0 || easterEggStep === 1) {
           easterEggStep++;
         } else {
-          // 容错处理：如果狂点字体，状态保持在就绪状态(第2步完成)
           easterEggStep = 2;
         }
       } else if (action === '+10') {
@@ -332,7 +326,7 @@
         if (easterEggStep === 5) { easterEggStep = 6; }
         else if (easterEggStep === 7) { 
           easterEggStep = 0; 
-          return true; // 成功触发！
+          return true; 
         }
         else { easterEggStep = 0; }
       } else {
@@ -350,14 +344,20 @@
         els.appContainer.style.height = SAFE_LONG + 'px';
         els.appContainer.style.webkitTransform = 'translate(-50%, -50%)';
         els.appContainer.style.transform = 'translate(-50%, -50%)';
+        
+        els.timerText.style.fontSize = '215px';
+        els.timerText.style.margin = '-10px 0';
       } else {
         els.appContainer.style.width = SAFE_LONG + 'px';
         els.appContainer.style.height = SAFE_SHORT + 'px';
         els.appContainer.style.webkitTransform = 'translate(-50%, -50%) rotate(90deg)';
         els.appContainer.style.transform = 'translate(-50%, -50%) rotate(90deg)';
+        
+        // 横屏模式下增大字体尺寸，从而有效缩减两侧60%的空白区域
+        els.timerText.style.fontSize = '285px';
+        // 同步增大负边距防止垂直方向溢出
+        els.timerText.style.margin = '-30px 0';
       }
-      
-      els.timerText.style.fontSize = isPortraitMode ? '215px' : '210px';
     }
 
     function toggleOrientation() {
@@ -389,7 +389,6 @@
       try { localStorage.setItem('kindle_pomodoro_font', currentFontIndex); } catch(e) {}
       applyFont();
       
-      // 触发彩蛋序列第一环
       handleEasterEgg('FONT');
     }
 
