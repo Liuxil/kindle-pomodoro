@@ -128,6 +128,9 @@
 </head>
 <body>
   
+  <!-- 专门用于墨水屏全局黑闪清屏的遮罩层 -->
+  <div id="eink-flash-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:#000000; z-index:9999;"></div>
+
   <div id="screen-bounds">
     <div id="app-container">
       <div class="sky-badge" id="btn-orientation" title="点击切换横/竖屏">
@@ -353,13 +356,13 @@
         els.appContainer.style.webkitTransform = 'translate(-50%, -50%) rotate(90deg)';
         els.appContainer.style.transform = 'translate(-50%, -50%) rotate(90deg)';
         
-        // 修正横屏字号：回调至 250px 以平衡视觉边距
         els.timerText.style.fontSize = '250px';
         els.timerText.style.margin = '-15px 0';
       }
     }
 
     function toggleOrientation() {
+      forceScreenRefresh();
       isPortraitMode = !isPortraitMode;
       try { localStorage.setItem('kindle_pomodoro_orient', isPortraitMode ? 'portrait' : 'landscape'); } catch(e) {}
       applyOrientationLogic();
@@ -500,10 +503,13 @@
     }
 
     function forceScreenRefresh() {
-      document.body.style.backgroundColor = '#000000';
-      setTimeout(function() {
-        document.body.style.backgroundColor = '#ffffff';
-      }, 120);
+      var flashEl = document.getElementById('eink-flash-overlay');
+      if (flashEl) {
+        flashEl.style.display = 'block';
+        setTimeout(function() {
+          flashEl.style.display = 'none';
+        }, 150);
+      }
     }
 
     function updateDayNightMode() {
@@ -550,6 +556,7 @@
     }
 
     function showRestScreen() {
+      forceScreenRefresh();
       restAnimState.index = Math.floor(Math.random() * els.restPanels.length);
       updateActiveRestPanel();
       els.restScreen.className = 'rest-screen active';
@@ -560,6 +567,7 @@
 
     function hideRestScreen(e) {
       if (e) e.stopPropagation();
+      forceScreenRefresh();
       els.restScreen.className = 'rest-screen';
       if (restAnimState.timer) clearInterval(restAnimState.timer);
     }
