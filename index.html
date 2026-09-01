@@ -2,7 +2,6 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <!-- 核心修复1：增加 minimum-scale=1.0 和 shrink-to-fit=no 强行阻止自动缩小 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, shrink-to-fit=no">
   <title>Pomodoro</title>
   <style>
@@ -28,7 +27,6 @@
       height: 0 !important;
     }
 
-    /* 默认横屏模式 */
     .container {
       position: absolute;
       top: 50%;
@@ -273,11 +271,32 @@
       font-size: 18px;
       padding: 5px 14px;
     }
+
+    /* 播放/暂停按钮专属重置：去除方框、居中对齐 */
     .btn-start {
-      font-size: 24px;
-      padding: 5px 32px;
-      line-height: 1.2;
-      letter-spacing: 2px;
+      background: transparent !important;
+      border: none !important;
+      padding: 5px;
+      width: 48px;
+      height: 48px;
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: flex;
+      -webkit-box-pack: center;
+      -webkit-justify-content: center;
+      justify-content: center;
+      -webkit-box-align: center;
+      -webkit-align-items: center;
+      align-items: center;
+    }
+    .btn-start:active {
+      background: transparent !important;
+      color: #000000 !important;
+      opacity: 0.4;
+    }
+    .btn-start svg {
+      width: 28px;
+      height: 28px;
     }
 
     .rest-screen {
@@ -377,7 +396,7 @@
         <button class="btn-adjust" data-adj="-5">-5</button>
       </div>
       <div>
-        <button id="btn-toggle" class="btn-start">▶</button>
+        <button id="btn-toggle" class="btn-start"></button>
       </div>
     </div>
 
@@ -427,6 +446,10 @@
   </div>
 
   <script>
+    // 定义像素风格的矢量图标
+    var ICON_PLAY = '<svg viewBox="0 0 16 16" style="shape-rendering: crispEdges;"><rect x="4" y="2" width="2" height="12" fill="#000"/><rect x="6" y="3" width="2" height="10" fill="#000"/><rect x="8" y="4" width="2" height="8" fill="#000"/><rect x="10" y="5" width="2" height="6" fill="#000"/><rect x="12" y="6" width="2" height="4" fill="#000"/><rect x="14" y="7" width="2" height="2" fill="#000"/></svg>';
+    var ICON_PAUSE = '<svg viewBox="0 0 16 16" style="shape-rendering: crispEdges;"><rect x="3" y="2" width="4" height="12" fill="#000"/><rect x="9" y="2" width="4" height="12" fill="#000"/></svg>';
+
     var ANIMALS = [
       { name: 'cat', feetCount: 4, svg: '<svg viewBox="0 0 24 24"><ellipse cx="9" cy="12" rx="4.5" ry="5.5"/><circle cx="16" cy="7" r="2"/><circle cx="19" cy="12" r="2.2"/><circle cx="16" cy="17" r="2"/></svg>' },
       { name: 'pig_hoof', feetCount: 4, svg: '<svg viewBox="0 0 24 24"><ellipse cx="12" cy="7.5" rx="6" ry="3.2" transform="rotate(10 12 7.5)" fill="#000"/><ellipse cx="12" cy="16.5" rx="6" ry="3.2" transform="rotate(-10 12 16.5)" fill="#000"/></svg>' },
@@ -515,6 +538,9 @@
       for (var k = 0; k < fwNodes.length; k++) {
         fwFrames.push(fwNodes[k]);
       }
+      
+      // 初始注入播放图标
+      els.btnToggle.innerHTML = ICON_PLAY;
     }
 
     function bindEvents() {
@@ -550,7 +576,7 @@
         if (timerId) {
           clearInterval(timerId);
           timerId = null;
-          els.btnToggle.innerText = '▶';
+          els.btnToggle.innerHTML = ICON_PLAY;
         }
         showRestScreen();
       } else {
@@ -573,7 +599,6 @@
       els.container.style.height = (minDim - 14) + 'px';
     }
 
-    /* 核心修复2：通过动态切换 className 和触发重绘来改变方向，废弃会导致视口重算的 reload() */
     function toggleOrientation() {
       var currentIsPortrait = document.body.className.indexOf('portrait-mode') !== -1;
       var nextMode = currentIsPortrait ? 'landscape' : 'portrait';
@@ -616,7 +641,7 @@
       if (timerId) { 
         clearInterval(timerId);
         timerId = null;
-        els.btnToggle.innerText = '▶';
+        els.btnToggle.innerHTML = ICON_PLAY;
       } else { 
         if (timeLeft <= 0 || !hasStarted) {
           timeLeft = totalTime;
@@ -625,7 +650,7 @@
         updateDayNightMode();
         targetEndTime = new Date().getTime() + (timeLeft * 1000);
         timerId = setInterval(tick, 200);
-        els.btnToggle.innerText = '⏸';
+        els.btnToggle.innerHTML = ICON_PAUSE;
       }
     }
 
@@ -643,7 +668,7 @@
         if (timeLeft <= 0) {
           clearInterval(timerId);
           timerId = null;
-          els.btnToggle.innerText = '▶';
+          els.btnToggle.innerHTML = ICON_PLAY;
           timeLeft = totalTime;
           clearTracks();
           updateDisplay();
@@ -656,7 +681,7 @@
       if (timerId) {
         clearInterval(timerId);
         timerId = null;
-        els.btnToggle.innerText = '▶';
+        els.btnToggle.innerHTML = ICON_PLAY;
       }
       
       var currentMins = Math.round(totalTime / 60) + mins;
@@ -783,7 +808,6 @@
       }
     }
 
-    // 延迟初始化并提供双重安全校验以应对旧内核
     window.addEventListener('load', function() {
         setTimeout(init, 50);
         setTimeout(updateLayoutDimensions, 300);
