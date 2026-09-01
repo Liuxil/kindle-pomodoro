@@ -335,7 +335,6 @@
       return false;
     }
 
-    /* 核心调整：整体缩放 2%（scale(0.98)），横屏字号维持 210px 完美对齐竖屏留白 */
     function applyOrientationLogic() {
       var SAFE_LONG = SCREEN_LONG - 8;
       var SAFE_SHORT = SCREEN_SHORT - 8;
@@ -354,7 +353,7 @@
         els.appContainer.style.webkitTransform = 'translate(-50%, -50%) rotate(90deg) scale(0.98)';
         els.appContainer.style.transform = 'translate(-50%, -50%) rotate(90deg) scale(0.98)';
         
-        // 恢复原版横屏字号，确保留白与竖屏完全一致
+        // 恢复回与竖屏相同的字号 (210px)，保持横竖屏两边的空白视觉留白完全一致
         els.timerText.style.fontSize = '210px';
         els.timerText.style.margin = '-10px 0';
       }
@@ -556,7 +555,7 @@
       els.restScreen.className = 'rest-screen active';
 
       if (restAnimState.timer) clearInterval(restAnimState.timer);
-      restAnimState.timer = setInterval(animateRestPanel, 800);
+      restAnimState.timer = setInterval(animateRestPanel, 1400); // 帧率由 800ms 降低至 1400ms，动作更舒缓
     }
 
     function hideRestScreen(e) {
