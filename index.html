@@ -229,6 +229,8 @@
     var starToggled = false;
     var currentAnimal = null;
     var currentFontIndex = 1; 
+    
+    // 每次刷新强制为横屏（isPortraitMode = false），不读取也不记忆状态
     var isPortraitMode = false;
 
     var easterEggStep = 0;
@@ -260,20 +262,17 @@
     var restAnimState = { timer: null, index: 0, steamStep: 0, fwStep: 0, catStep: 0 };
 
     function init() {
-      updateDimensions();
+      var w = document.documentElement.clientWidth || window.innerWidth;
+      var h = document.documentElement.clientHeight || window.innerHeight;
+      SCREEN_LONG = Math.max(w, h);
+      SCREEN_SHORT = Math.min(w, h);
+
       initDOM();
       initSavedSettings();
       updateDayNightMode();
       clearTracks();
       updateDisplay();
       bindEvents();
-    }
-
-    function updateDimensions() {
-      var w = document.documentElement.clientWidth || window.innerWidth;
-      var h = document.documentElement.clientHeight || window.innerHeight;
-      SCREEN_LONG = Math.max(w, h);
-      SCREEN_SHORT = Math.min(w, h);
     }
 
     function initDOM() {
@@ -338,11 +337,11 @@
       return false;
     }
 
-    /* 恢复正确的横屏尺寸计算：宽设为长边(800)，高设为短边(600)，字号回调至 250px */
+    /* 核心修改：移除 scale(0.98)，改用安全减去固定像素边距来彻底杜绝滑块 */
     function applyOrientationLogic() {
-      updateDimensions();
-      var SAFE_LONG = SCREEN_LONG - 6;
-      var SAFE_SHORT = SCREEN_SHORT - 6;
+      var MARGIN = 14; 
+      var SAFE_LONG = SCREEN_LONG - MARGIN;
+      var SAFE_SHORT = SCREEN_SHORT - MARGIN;
 
       if (isPortraitMode) {
         els.appContainer.style.width = SAFE_SHORT + 'px';
@@ -353,12 +352,12 @@
         els.timerText.style.fontSize = '215px';
         els.timerText.style.margin = '-10px 0';
       } else {
+        // 横屏模式：使用 250px 字号版，并用精准尺寸限制
         els.appContainer.style.width = SAFE_LONG + 'px';
         els.appContainer.style.height = SAFE_SHORT + 'px';
         els.appContainer.style.webkitTransform = 'translate(-50%, -50%) rotate(90deg)';
         els.appContainer.style.transform = 'translate(-50%, -50%) rotate(90deg)';
         
-        // 横屏字号设回 250px，左右两侧空白完美还原
         els.timerText.style.fontSize = '250px';
         els.timerText.style.margin = '-15px 0';
       }
@@ -370,6 +369,7 @@
     }
 
     function initSavedSettings() {
+      // 强制每次刷新后默认为横屏
       isPortraitMode = false;
       applyOrientationLogic();
 
