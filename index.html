@@ -26,7 +26,7 @@
       height: 0 !important;
     }
 
-    /* 默认横屏模式：左右两侧内边距极限收缩至 4px，彻底释放横向宽度 */
+    /* 默认横屏模式：极限贴边排版 */
     .container {
       position: absolute;
       top: 50%;
@@ -46,7 +46,7 @@
       -webkit-box-align: center;
       -webkit-align-items: center;
       align-items: center;
-      padding: 6px 4px 10px 4px;
+      padding: 4px 2px 8px 2px;
       overflow: hidden !important;
     }
 
@@ -158,10 +158,10 @@
       cursor: pointer;
     }
 
-    /* 横屏模式：大幅放大时间字号至 240px，紧贴屏幕左右两侧 */
+    /* 横屏模式：超大字号 285px，左右满幅贴边 */
     .timer-text {
-      font-size: 240px;
-      line-height: 0.85;
+      font-size: 285px;
+      line-height: 0.82;
       text-align: center;
       width: 100%;
       display: block;
@@ -179,7 +179,7 @@
     .font-style-0 {
       font-family: "Helvetica Neue Light", "Helvetica Neue", "Arial Narrow", sans-serif;
       font-weight: 200;
-      letter-spacing: -3px;
+      letter-spacing: -4px;
       color: transparent !important;
       -webkit-text-fill-color: transparent !important;
       -webkit-text-stroke: 1.5px #000000;
@@ -189,7 +189,7 @@
     .font-style-1 {
       font-family: "Century Gothic", "Apple Gothic", "Arial Rounded MT Bold", sans-serif;
       font-weight: 200;
-      letter-spacing: -4px;
+      letter-spacing: -6px;
       color: #000000;
       -webkit-text-fill-color: #000000;
       -webkit-text-stroke: 0;
@@ -199,7 +199,7 @@
     .font-style-2 {
       font-family: "Baskerville", "Bookerly Light", "Georgia", serif;
       font-weight: 200;
-      letter-spacing: -1px;
+      letter-spacing: -2px;
       color: #000000;
       -webkit-text-fill-color: #000000;
       -webkit-text-stroke: 0;
@@ -218,7 +218,7 @@
       -webkit-box-align: center;
       -webkit-align-items: center;
       align-items: center;
-      margin-top: 6px;
+      margin-top: 4px;
     }
     body.portrait-mode .tracks-container {
       margin-top: 14px;
@@ -258,7 +258,7 @@
 
     /* 底部按钮栏：流式分离贴底 */
     .footer {
-      width: 94%;
+      width: 96%;
       display: -webkit-box;
       display: -webkit-flex;
       display: flex;
@@ -270,6 +270,9 @@
       align-items: center;
       -webkit-flex-shrink: 0;
       flex-shrink: 0;
+    }
+    body.portrait-mode .footer {
+      width: 94%;
     }
     .btn-adjust-group {
       display: -webkit-box;
