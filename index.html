@@ -297,33 +297,27 @@
   </div>
 
   <script>
-    // 精选 5 种足迹池
     var ANIMALS = [
-      // 1. 猫科 4 趾
       {
         name: 'cat',
         feetCount: 4,
         svg: '<svg viewBox="0 0 24 24"><ellipse cx="9" cy="12" rx="4.5" ry="5.5"/><circle cx="16" cy="7" r="2"/><circle cx="19" cy="12" r="2.2"/><circle cx="16" cy="17" r="2"/></svg>'
       },
-      // 2. 胖偶蹄（小猪/小牛）
       {
         name: 'pig_hoof',
         feetCount: 4,
         svg: '<svg viewBox="0 0 24 24"><ellipse cx="12" cy="7.5" rx="6" ry="3.2" transform="rotate(10 12 7.5)" fill="#000"/><ellipse cx="12" cy="16.5" rx="6" ry="3.2" transform="rotate(-10 12 16.5)" fill="#000"/></svg>'
       },
-      // 3. 奇蹄（马蹄铁）
       {
         name: 'horse_hoof',
         feetCount: 4,
         svg: '<svg viewBox="0 0 24 24"><path d="M5 6 C15 5 19 9 19 12 C19 15 15 19 5 18 L5 14.5 C12 15 14 13.5 14 12 C14 10.5 12 9 5 9.5 Z" fill="#000"/></svg>'
       },
-      // 4. 细鸟爪（小鸡/麻雀）
       {
         name: 'bird',
         feetCount: 2,
         svg: '<svg viewBox="0 0 24 24"><path d="M5 12 L19 12 M13 12 L19 6 M13 12 L19 18" stroke="#000" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>'
       },
-      // 5. 鸭鹅蹼
       {
         name: 'duck',
         feetCount: 2,
@@ -342,7 +336,8 @@
     var currentAnimal = ANIMALS[0];
     var activeQueue = [];
     var currentStepPos = 0;
-    var STEP_INTERVAL = 3;
+    var STEP_INTERVAL = 3;    // 脚印每 3 秒迈出一步
+    var SKY_INTERVAL = 2;     // 太阳/月亮每 2 秒跳动一次
     var TOTAL_SLOTS = 8;
 
     var timerEl = document.getElementById('timer-display');
@@ -354,7 +349,6 @@
     var moonStarEl = document.getElementById('moon-star');
     var trackSlots = document.querySelectorAll('.track-slot');
 
-    // 检测时间并更新天象图标 (6:00 ~ 18:00 白天太阳，其余时间为夜晚月亮)
     function updateDayNightMode() {
       var hour = new Date().getHours();
       isDayTime = (hour >= 6 && hour < 18);
@@ -368,7 +362,6 @@
       }
     }
 
-    // 随机选择 5 类足迹之一
     function initAnimalTracks() {
       var randIndex = Math.floor(Math.random() * ANIMALS.length);
       currentAnimal = ANIMALS[randIndex];
@@ -441,13 +434,19 @@
       if (timeLeft > 0) {
         timeLeft--;
 
-        tickSkyBadge();
-
         var elapsed = totalTime - timeLeft;
+
+        // 太阳/月亮：每 2 秒跳动一次
+        if (elapsed % SKY_INTERVAL === 0) {
+          tickSkyBadge();
+        }
+
+        // 动物脚印：每 3 秒迈进一步
         if (elapsed % STEP_INTERVAL === 0) {
           stepForward();
         }
 
+        // 大时间：整分钟刷新
         if (timeLeft % 60 === 0 || timeLeft === 0) {
           updateDisplay();
         }
