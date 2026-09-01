@@ -13,311 +13,119 @@
       user-select: none;
       touch-action: manipulation;
     }
+    
+    /* 第一层：死锁视口，禁绝一切原生滚动 */
     html, body {
-      height: 100%;
-      width: 100%;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      width: 100%; height: 100%;
       overflow: hidden !important;
       background-color: #ffffff;
       color: #000000;
       font-family: sans-serif;
     }
-    ::-webkit-scrollbar {
-      display: none !important;
-      width: 0 !important;
-      height: 0 !important;
-    }
+    ::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
 
-    /* 默认横屏模式 */
-    .container {
+    /* 第二层：物理屏幕隔离层 */
+    #screen-bounds {
       position: absolute;
-      top: 50%;
-      left: 50%;
-      -webkit-transform: translate(-50%, -50%) rotate(90deg);
-      transform: translate(-50%, -50%) rotate(90deg);
-      
-      /* 恢复 Kindle 必需的老式 Flexbox 前缀 */
-      display: -webkit-box;
-      display: -webkit-flex;
-      display: flex;
-      -webkit-box-orient: vertical;
-      -webkit-box-direction: normal;
-      -webkit-flex-direction: column;
-      flex-direction: column;
-      -webkit-box-pack: justify;
-      -webkit-justify-content: space-between;
-      justify-content: space-between;
-      -webkit-box-align: center;
-      -webkit-align-items: center;
-      align-items: center;
-      padding: 6px 4px 10px 4px;
+      top: 0; left: 0; width: 100%; height: 100%;
       overflow: hidden !important;
     }
 
-    body.portrait-mode .container {
-      position: static !important;
-      width: 100% !important;
-      height: 100% !important;
-      -webkit-transform: none !important;
-      transform: none !important;
-      padding: 16px 4px 28px 4px !important;
+    /* 第三层：应用主容器（无论怎么转都在正中间） */
+    #app-container {
+      position: absolute;
+      top: 50%; left: 50%;
+      display: -webkit-box; display: flex;
+      -webkit-box-orient: vertical; flex-direction: column;
+      -webkit-box-pack: justify; justify-content: space-between;
+      -webkit-box-align: center; align-items: center;
+      padding: 12px 8px;
     }
 
-    .sky-badge {
-      width: 60px;
-      height: 60px;
-      position: relative;
-      cursor: pointer;
-      -webkit-flex-shrink: 0;
-      flex-shrink: 0;
-    }
-    .sun-box, .moon-box {
-      width: 100%;
-      height: 100%;
-      position: relative;
-      display: none;
-    }
-    .sun-rays {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      -webkit-transition: none;
-      transition: none;
-    }
+    /* 顶部区域 */
+    .sky-badge { width: 60px; height: 60px; position: relative; cursor: pointer; flex-shrink: 0; }
+    .sun-box, .moon-box { width: 100%; height: 100%; position: relative; display: none; }
+    .sun-rays { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
     .sun-face {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 30px;
-      height: 30px;
-      margin-top: -15px;
-      margin-left: -15px;
-      background: #ffffff;
-      border: 2.5px solid #000000;
-      border-radius: 50%;
-      
-      display: -webkit-box;
-      display: -webkit-flex;
-      display: flex;
-      -webkit-box-align: center;
-      -webkit-align-items: center;
-      align-items: center;
-      -webkit-box-pack: center;
-      -webkit-justify-content: center;
-      justify-content: center;
+      position: absolute; top: 50%; left: 50%; width: 30px; height: 30px; margin: -15px 0 0 -15px;
+      background: #ffffff; border: 2.5px solid #000000; border-radius: 50%;
+      display: -webkit-box; display: flex; -webkit-box-align: center; align-items: center; -webkit-box-pack: center; justify-content: center;
     }
-    .moon-star {
-      position: absolute;
-      top: 6px;
-      right: 6px;
-      width: 18px;
-      height: 18px;
-      -webkit-transition: none;
-      transition: none;
-    }
+    .moon-star { position: absolute; top: 6px; right: 6px; width: 18px; height: 18px; }
 
+    /* 中间大字区域 */
     .main-section {
-      width: 100%;
-      -webkit-box-flex: 1;
-      -webkit-flex: 1;
-      flex: 1;
-      display: -webkit-box;
-      display: -webkit-flex;
-      display: flex;
-      -webkit-box-orient: vertical;
-      -webkit-box-direction: normal;
-      -webkit-flex-direction: column;
-      flex-direction: column;
-      -webkit-box-align: center;
-      -webkit-align-items: center;
-      align-items: center;
-      -webkit-box-pack: center;
-      -webkit-justify-content: center;
-      justify-content: center;
+      width: 100%; -webkit-box-flex: 1; flex: 1;
+      display: -webkit-box; display: flex;
+      -webkit-box-orient: vertical; flex-direction: column;
+      -webkit-box-align: center; align-items: center;
+      -webkit-box-pack: center; justify-content: center;
     }
-
     .timer-container {
-      width: 100%;
-      display: -webkit-box;
-      display: -webkit-flex;
-      display: flex;
-      -webkit-box-pack: center;
-      -webkit-justify-content: center;
-      justify-content: center;
-      -webkit-box-align: center;
-      -webkit-align-items: center;
-      align-items: center;
-      cursor: pointer;
+      width: 100%; cursor: pointer;
+      display: -webkit-box; display: flex;
+      -webkit-box-pack: center; justify-content: center;
+      -webkit-box-align: center; align-items: center;
     }
-
+    
     .timer-text {
-      font-size: 240px;
-      line-height: 0.85;
+      font-size: 210px;
+      line-height: 1;
+      margin: -10px 0; 
       text-align: center;
       width: 100%;
       display: block;
       letter-spacing: -6px;
-    }
-    body.portrait-mode .timer-text {
-      font-size: 215px;
-      line-height: 0.82;
+      white-space: nowrap;
     }
 
-    .font-style-0 {
-      font-family: "Helvetica Neue Light", "Helvetica Neue", "Arial Narrow", sans-serif;
-      font-weight: 200;
-      color: transparent !important;
-      -webkit-text-fill-color: transparent !important;
-      -webkit-text-stroke: 1.5px #000000;
-    }
-    .font-style-1 {
-      font-family: "Helvetica Neue Light", "Helvetica Neue", "Arial Narrow", sans-serif;
-      font-weight: 200;
-      color: #000000 !important;
-      -webkit-text-fill-color: #000000 !important;
-      -webkit-text-stroke: 0 !important;
-    }
-    .font-style-2 {
-      font-family: "Baskerville", "Bookerly Light", "Georgia", serif;
-      font-weight: 200;
-      letter-spacing: -1px;
-      color: #000000;
-      -webkit-text-fill-color: #000000;
-      -webkit-text-stroke: 0;
-    }
+    .font-style-0 { font-family: "Helvetica Neue Light", "Helvetica Neue", "Arial Narrow", sans-serif; font-weight: 200; color: transparent !important; -webkit-text-fill-color: transparent !important; -webkit-text-stroke: 1.5px #000000; }
+    .font-style-1 { font-family: "Helvetica Neue Light", "Helvetica Neue", "Arial Narrow", sans-serif; font-weight: 200; color: #000000 !important; -webkit-text-fill-color: #000000 !important; -webkit-text-stroke: 0 !important; }
+    .font-style-2 { font-family: "Baskerville", "Bookerly Light", "Georgia", serif; font-weight: 200; letter-spacing: -1px; color: #000000; -webkit-text-fill-color: #000000; -webkit-text-stroke: 0; }
 
+    /* 动物脚印槽 */
     .tracks-container {
-      width: 96%;
-      height: 26px;
-      display: -webkit-box;
-      display: -webkit-flex;
-      display: flex;
-      -webkit-box-pack: justify;
-      -webkit-justify-content: space-between;
-      justify-content: space-between;
-      -webkit-box-align: center;
-      -webkit-align-items: center;
-      align-items: center;
-      margin-top: 6px;
+      width: 96%; height: 26px; margin-top: 10px;
+      display: -webkit-box; display: flex;
+      -webkit-box-pack: justify; justify-content: space-between;
+      -webkit-box-align: center; align-items: center;
     }
-    body.portrait-mode .tracks-container {
-      margin-top: 14px;
-    }
-    .track-slot {
-      width: 20px;
-      height: 20px;
-      display: -webkit-box;
-      display: -webkit-flex;
-      display: flex;
-      -webkit-box-pack: center;
-      -webkit-justify-content: center;
-      justify-content: center;
-      -webkit-box-align: center;
-      -webkit-align-items: center;
-      align-items: center;
-    }
-    .track-slot svg {
-      width: 18px;
-      height: 18px;
-      fill: #000000;
-      display: none;
-    }
-    .track-slot:nth-child(even) svg {
-      margin-top: 4px;
-      -webkit-transform: rotate(6deg);
-      transform: rotate(6deg);
-    }
-    .track-slot:nth-child(odd) svg {
-      margin-top: -4px;
-      -webkit-transform: rotate(-6deg);
-      transform: rotate(-6deg);
-    }
-    .track-slot.active svg {
-      display: block;
-    }
+    .track-slot { width: 20px; height: 20px; display: -webkit-box; display: flex; -webkit-box-pack: center; justify-content: center; -webkit-box-align: center; align-items: center; }
+    .track-slot svg { width: 18px; height: 18px; fill: #000000; display: none; }
+    .track-slot:nth-child(even) svg { margin-top: 4px; -webkit-transform: rotate(6deg); transform: rotate(6deg); }
+    .track-slot:nth-child(odd) svg { margin-top: -4px; -webkit-transform: rotate(-6deg); transform: rotate(-6deg); }
+    .track-slot.active svg { display: block; }
 
+    /* 底部按钮 */
     .footer {
-      width: 94%;
-      display: -webkit-box;
-      display: -webkit-flex;
-      display: flex;
-      -webkit-box-pack: justify;
-      -webkit-justify-content: space-between;
-      justify-content: space-between;
-      -webkit-box-align: center;
-      -webkit-align-items: center;
-      align-items: center;
-      -webkit-flex-shrink: 0;
-      flex-shrink: 0;
+      width: 94%; flex-shrink: 0;
+      display: -webkit-box; display: flex;
+      -webkit-box-pack: justify; justify-content: space-between;
+      -webkit-box-align: center; align-items: center;
     }
-    .btn-adjust-group {
-      display: -webkit-box;
-      display: -webkit-flex;
-      display: flex;
-      gap: 10px;
-    }
-    button {
-      background: #ffffff;
-      color: #000000;
-      border: 3px solid #000000;
-      font-weight: bold;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    button:active {
-      background: #000000;
-      color: #ffffff;
-    }
-    .btn-adjust {
-      font-size: 18px;
-      padding: 5px 14px;
-    }
+    .btn-adjust-group { display: -webkit-box; display: flex; gap: 10px; }
+    button { background: #ffffff; color: #000000; border: 3px solid #000000; font-weight: bold; border-radius: 8px; cursor: pointer; }
+    button:active { background: #000000; color: #ffffff; }
+    .btn-adjust { font-size: 18px; padding: 5px 14px; }
+    
+    /* 播放/暂停按钮专属重置：去除方框 */
     .btn-start {
-      font-size: 24px;
-      padding: 5px 32px;
-      line-height: 1.2;
-      letter-spacing: 2px;
+      background: transparent !important; border: none !important; padding: 5px; width: 48px; height: 48px;
+      display: -webkit-box; display: flex; -webkit-box-pack: center; justify-content: center; -webkit-box-align: center; align-items: center;
     }
+    .btn-start:active { background: transparent !important; color: #000000 !important; opacity: 0.4; }
+    .btn-start svg { width: 28px; height: 28px; }
 
+    /* 休息层全屏覆盖 */
     .rest-screen {
-      display: none;
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: #ffffff;
-      -webkit-box-pack: center;
-      -webkit-justify-content: center;
-      justify-content: center;
-      -webkit-box-align: center;
-      -webkit-align-items: center;
-      align-items: center;
-      cursor: pointer;
-      z-index: 100;
+      display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #ffffff; z-index: 100; cursor: pointer;
+      -webkit-box-pack: center; justify-content: center; -webkit-box-align: center; align-items: center;
     }
-    .rest-screen.active {
-      display: -webkit-box;
-      display: -webkit-flex;
-      display: flex;
-    }
-    .rest-panel {
-      display: none;
-      width: 100%;
-      height: 100%;
-      -webkit-box-pack: center;
-      -webkit-justify-content: center;
-      justify-content: center;
-      -webkit-box-align: center;
-      -webkit-align-items: center;
-      align-items: center;
-    }
-    .rest-panel.active {
-      display: -webkit-box;
-      display: -webkit-flex;
-      display: flex;
-    }
+    .rest-screen.active { display: -webkit-box; display: flex; }
+    .rest-panel { display: none; width: 100%; height: 100%; -webkit-box-pack: center; justify-content: center; -webkit-box-align: center; align-items: center; }
+    .rest-panel.active { display: -webkit-box; display: flex; }
     .coffee-icon { width: 160px; height: 160px; }
     .firework-stage { width: 320px; height: 420px; position: relative; }
     .fw-frame { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; }
@@ -328,112 +136,80 @@
   </style>
 </head>
 <body>
-  <div class="container" id="main-container">
-    <div class="sky-badge" id="btn-orientation" title="点击切换横/竖屏">
-      <div class="sun-box" id="sun-box">
-        <div class="sun-rays" id="sun-rays">
-          <svg viewBox="0 0 100 100" stroke="#000" stroke-linecap="round">
-            <path d="M50 4 L50 16" stroke-width="4.5"/>
-            <path d="M50 84 L50 96" stroke-width="4.5"/>
-            <path d="M4 50 L16 50" stroke-width="4.5"/>
-            <path d="M84 50 L96 50" stroke-width="4.5"/>
-            <path d="M17 17 L26 26" stroke-width="4"/>
-            <path d="M74 74 L83 83" stroke-width="4"/>
-            <path d="M17 83 L26 74" stroke-width="4"/>
-            <path d="M74 26 L83 17" stroke-width="4"/>
-          </svg>
+  
+  <div id="screen-bounds">
+    <div id="app-container">
+      <div class="sky-badge" id="btn-orientation" title="点击切换横/竖屏">
+        <div class="sun-box" id="sun-box">
+          <div class="sun-rays" id="sun-rays">
+            <svg viewBox="0 0 100 100" stroke="#000" stroke-linecap="round">
+              <path d="M50 4 L50 16" stroke-width="4.5"/><path d="M50 84 L50 96" stroke-width="4.5"/><path d="M4 50 L16 50" stroke-width="4.5"/><path d="M84 50 L96 50" stroke-width="4.5"/>
+              <path d="M17 17 L26 26" stroke-width="4"/><path d="M74 74 L83 83" stroke-width="4"/><path d="M17 83 L26 74" stroke-width="4"/><path d="M74 26 L83 17" stroke-width="4"/>
+            </svg>
+          </div>
+          <div class="sun-face">
+            <svg viewBox="0 0 34 34"><circle cx="12" cy="14" r="1.8" fill="#000"/><circle cx="22" cy="14" r="1.8" fill="#000"/><path d="M12 19 Q 17 24 22 19" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round"/></svg>
+          </div>
         </div>
-        <div class="sun-face">
-          <svg viewBox="0 0 34 34">
-            <circle cx="12" cy="14" r="1.8" fill="#000"/>
-            <circle cx="22" cy="14" r="1.8" fill="#000"/>
-            <path d="M12 19 Q 17 24 22 19" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round"/>
-          </svg>
+        <div class="moon-box" id="moon-box">
+          <svg viewBox="0 0 68 68" style="width:100%;height:100%;"><path d="M38 12 C24 12 12 24 12 38 C12 48 18 56 26 59 C23 54 22 48 22 42 C22 28 32 17 46 16 C43 13 40 12 38 12 Z" fill="#000"/></svg>
+          <div class="moon-star" id="moon-star">
+            <svg viewBox="0 0 24 24"><path d="M12 2 Q 12 12 2 12 Q 12 12 12 22 Q 12 12 22 12 Q 12 12 12 2 Z" fill="#000"/></svg>
+          </div>
         </div>
       </div>
-      <div class="moon-box" id="moon-box">
-        <svg viewBox="0 0 68 68" style="width:100%;height:100%;">
-          <path d="M38 12 C24 12 12 24 12 38 C12 48 18 56 26 59 C23 54 22 48 22 42 C22 28 32 17 46 16 C43 13 40 12 38 12 Z" fill="#000"/>
-        </svg>
-        <div class="moon-star" id="moon-star">
-          <svg viewBox="0 0 24 24">
-            <path d="M12 2 Q 12 12 2 12 Q 12 12 12 22 Q 12 12 22 12 Q 12 12 12 2 Z" fill="#000"/>
-          </svg>
+
+      <div class="main-section">
+        <div class="timer-container" id="btn-font-switch">
+          <div class="timer-text font-style-1" id="timer-text">00:25</div>
+        </div>
+        <div class="tracks-container" id="tracks-bottom"></div>
+      </div>
+
+      <div class="footer">
+        <div class="btn-adjust-group">
+          <button class="btn-adjust" data-adj="5">+5</button>
+          <button class="btn-adjust" data-adj="10">+10</button>
+          <button class="btn-adjust" data-adj="-5">-5</button>
+        </div>
+        <div>
+          <!-- 默认留空，由JS注入 -->
+          <button id="btn-toggle" class="btn-start"></button>
         </div>
       </div>
     </div>
 
-    <div class="main-section">
-      <div class="timer-container" id="btn-font-switch">
-        <div class="timer-text font-style-1" id="timer-text">00:25</div>
-      </div>
-      <div class="tracks-container" id="tracks-bottom"></div>
-    </div>
-
-    <div class="footer">
-      <div class="btn-adjust-group">
-        <button class="btn-adjust" data-adj="5">+5</button>
-        <button class="btn-adjust" data-adj="10">+10</button>
-        <button class="btn-adjust" data-adj="-5">-5</button>
-      </div>
-      <div>
-        <button id="btn-toggle" class="btn-start">▶</button>
-      </div>
-    </div>
-
+    <!-- 休息面板层 -->
     <div class="rest-screen" id="rest-screen">
       <div class="rest-panel" id="rest-panel-0">
         <div class="coffee-icon">
           <svg viewBox="0 0 100 100" style="width:100%;height:100%;">
-            <path id="steam-1" d="M36 22 Q 32 14 36 6" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round"/>
-            <path id="steam-2" d="M48 22 Q 44 14 48 6" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round"/>
-            <path id="steam-3" d="M60 22 Q 56 14 60 6" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round"/>
-            <path d="M22 30 L74 30 L68 76 C68 82 62 86 54 86 L42 86 C34 86 28 82 28 76 Z" fill="none" stroke="#000" stroke-width="3.5" stroke-linejoin="round"/>
-            <path d="M72 38 C84 38 88 46 88 56 C88 66 82 70 70 70" fill="none" stroke="#000" stroke-width="3.5" stroke-linecap="round"/>
-            <path d="M16 92 L80 92" stroke="#000" stroke-width="3.5" stroke-linecap="round"/>
+            <path id="steam-1" d="M36 22 Q 32 14 36 6" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round"/><path id="steam-2" d="M48 22 Q 44 14 48 6" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round"/><path id="steam-3" d="M60 22 Q 56 14 60 6" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round"/>
+            <path d="M22 30 L74 30 L68 76 C68 82 62 86 54 86 L42 86 C34 86 28 82 28 76 Z" fill="none" stroke="#000" stroke-width="3.5" stroke-linejoin="round"/><path d="M72 38 C84 38 88 46 88 56 C88 66 82 70 70 70" fill="none" stroke="#000" stroke-width="3.5" stroke-linecap="round"/><path d="M16 92 L80 92" stroke="#000" stroke-width="3.5" stroke-linecap="round"/>
           </svg>
         </div>
       </div>
-
-      <div class="rest-panel" id="rest-panel-1">
-        <div class="firework-stage" id="fw-stage"></div>
-      </div>
-
+      <div class="rest-panel" id="rest-panel-1"><div class="firework-stage" id="fw-stage"></div></div>
       <div class="rest-panel" id="rest-panel-2">
         <div class="pixel-cat-stage">
-          <div class="cat-frame active" id="cat-p0">
-            <svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000">
-              <rect x="145" y="65" width="6" height="2"/><rect x="149" y="67" width="2" height="2"/><rect x="147" y="69" width="2" height="2"/><rect x="143" y="71" width="6" height="2"/>
-              <rect x="160" y="48" width="8" height="2"/><rect x="164" y="50" width="2" height="2"/><rect x="162" y="52" width="2" height="2"/><rect x="158" y="54" width="8" height="2"/>
-              <rect x="70" y="100" width="70" height="30"/><rect x="60" y="110" width="80" height="20"/><rect x="80" y="90" width="50" height="10"/>
-              <rect x="80" y="80" width="10" height="10"/><rect x="110" y="80" width="10" height="10"/>
-              <rect x="92" y="108" width="8" height="3" fill="#fff"/><rect x="116" y="108" width="8" height="3" fill="#fff"/>
-              <rect x="50" y="120" width="10" height="10"/><rect x="40" y="125" width="10" height="10"/><rect x="35" y="135" width="10" height="10"/><rect x="35" y="145" width="10" height="10"/>
-            </svg>
-          </div>
-          <div class="cat-frame" id="cat-p1">
-            <svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000">
-              <rect x="152" y="52" width="8" height="2"/><rect x="156" y="54" width="2" height="2"/><rect x="154" y="56" width="2" height="2"/><rect x="150" y="58" width="8" height="2"/>
-              <rect x="170" y="32" width="10" height="2"/><rect x="176" y="34" width="2" height="2"/><rect x="173" y="36" width="2" height="2"/><rect x="168" y="38" width="10" height="2"/>
-              <rect x="70" y="100" width="70" height="30"/><rect x="60" y="110" width="80" height="20"/><rect x="80" y="90" width="50" height="10"/>
-              <rect x="80" y="80" width="10" height="10"/><rect x="110" y="80" width="10" height="10"/>
-              <rect x="92" y="108" width="8" height="3" fill="#fff"/><rect x="116" y="108" width="8" height="3" fill="#fff"/>
-              <rect x="50" y="120" width="10" height="10"/><rect x="42" y="130" width="10" height="10"/><rect x="42" y="140" width="10" height="10"/><rect x="45" y="150" width="10" height="10"/>
-            </svg>
-          </div>
+          <div class="cat-frame active" id="cat-p0"><svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="145" y="65" width="6" height="2"/><rect x="149" y="67" width="2" height="2"/><rect x="147" y="69" width="2" height="2"/><rect x="143" y="71" width="6" height="2"/><rect x="160" y="48" width="8" height="2"/><rect x="164" y="50" width="2" height="2"/><rect x="162" y="52" width="2" height="2"/><rect x="158" y="54" width="8" height="2"/><rect x="70" y="100" width="70" height="30"/><rect x="60" y="110" width="80" height="20"/><rect x="80" y="90" width="50" height="10"/><rect x="80" y="80" width="10" height="10"/><rect x="110" y="80" width="10" height="10"/><rect x="92" y="108" width="8" height="3" fill="#fff"/><rect x="116" y="108" width="8" height="3" fill="#fff"/><rect x="50" y="120" width="10" height="10"/><rect x="40" y="125" width="10" height="10"/><rect x="35" y="135" width="10" height="10"/><rect x="35" y="145" width="10" height="10"/></svg></div>
+          <div class="cat-frame" id="cat-p1"><svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="152" y="52" width="8" height="2"/><rect x="156" y="54" width="2" height="2"/><rect x="154" y="56" width="2" height="2"/><rect x="150" y="58" width="8" height="2"/><rect x="170" y="32" width="10" height="2"/><rect x="176" y="34" width="2" height="2"/><rect x="173" y="36" width="2" height="2"/><rect x="168" y="38" width="10" height="2"/><rect x="70" y="100" width="70" height="30"/><rect x="60" y="110" width="80" height="20"/><rect x="80" y="90" width="50" height="10"/><rect x="80" y="80" width="10" height="10"/><rect x="110" y="80" width="10" height="10"/><rect x="92" y="108" width="8" height="3" fill="#fff"/><rect x="116" y="108" width="8" height="3" fill="#fff"/><rect x="50" y="120" width="10" height="10"/><rect x="42" y="130" width="10" height="10"/><rect x="42" y="140" width="10" height="10"/><rect x="45" y="150" width="10" height="10"/></svg></div>
         </div>
       </div>
     </div>
   </div>
 
   <script>
-    /* 全面回退至 ES5 以兼容 Kindle 浏览器 */
+    /* 像素矢量图恢复 */
+    var ICON_PLAY = '<svg viewBox="0 0 16 16" style="shape-rendering: crispEdges;"><rect x="4" y="2" width="2" height="12" fill="#000"/><rect x="6" y="3" width="2" height="10" fill="#000"/><rect x="8" y="4" width="2" height="8" fill="#000"/><rect x="10" y="5" width="2" height="6" fill="#000"/><rect x="12" y="6" width="2" height="4" fill="#000"/><rect x="14" y="7" width="2" height="2" fill="#000"/></svg>';
+    var ICON_PAUSE = '<svg viewBox="0 0 16 16" style="shape-rendering: crispEdges;"><rect x="3" y="2" width="4" height="12" fill="#000"/><rect x="9" y="2" width="4" height="12" fill="#000"/></svg>';
+
     var ANIMALS = [
-      { name: 'cat', feetCount: 4, svg: '<svg viewBox="0 0 24 24"><ellipse cx="9" cy="12" rx="4.5" ry="5.5"/><circle cx="16" cy="7" r="2"/><circle cx="19" cy="12" r="2.2"/><circle cx="16" cy="17" r="2"/></svg>' },
-      { name: 'pig_hoof', feetCount: 4, svg: '<svg viewBox="0 0 24 24"><ellipse cx="12" cy="7.5" rx="6" ry="3.2" transform="rotate(10 12 7.5)" fill="#000"/><ellipse cx="12" cy="16.5" rx="6" ry="3.2" transform="rotate(-10 12 16.5)" fill="#000"/></svg>' },
-      { name: 'horse_hoof', feetCount: 4, svg: '<svg viewBox="0 0 24 24"><path d="M5 6 C15 5 19 9 19 12 C19 15 15 19 5 18 L5 14.5 C12 15 14 13.5 14 12 C14 10.5 12 9 5 9.5 Z" fill="#000"/></svg>' },
-      { name: 'bird', feetCount: 2, svg: '<svg viewBox="0 0 24 24"><path d="M5 12 L19 12 M13 12 L19 6 M13 12 L19 18" stroke="#000" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>' },
-      { name: 'duck', feetCount: 2, svg: '<svg viewBox="0 0 24 24"><path d="M4 12 L9 12 M9 12 L17 4 C14 8 13 10 9 12 C13 14 14 16 17 20 Z" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="#000"/></svg>' }
+      { feetCount: 4, svg: '<svg viewBox="0 0 24 24"><ellipse cx="9" cy="12" rx="4.5" ry="5.5"/><circle cx="16" cy="7" r="2"/><circle cx="19" cy="12" r="2.2"/><circle cx="16" cy="17" r="2"/></svg>' },
+      { feetCount: 4, svg: '<svg viewBox="0 0 24 24"><ellipse cx="12" cy="7.5" rx="6" ry="3.2" transform="rotate(10 12 7.5)" fill="#000"/><ellipse cx="12" cy="16.5" rx="6" ry="3.2" transform="rotate(-10 12 16.5)" fill="#000"/></svg>' },
+      { feetCount: 4, svg: '<svg viewBox="0 0 24 24"><path d="M5 6 C15 5 19 9 19 12 C19 15 15 19 5 18 L5 14.5 C12 15 14 13.5 14 12 C14 10.5 12 9 5 9.5 Z" fill="#000"/></svg>' },
+      { feetCount: 2, svg: '<svg viewBox="0 0 24 24"><path d="M5 12 L19 12 M13 12 L19 6 M13 12 L19 18" stroke="#000" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>' },
+      { feetCount: 2, svg: '<svg viewBox="0 0 24 24"><path d="M4 12 L9 12 M9 12 L17 4 C14 8 13 10 9 12 C13 14 14 16 17 20 Z" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="#000"/></svg>' }
     ];
     
     var TOTAL_SLOTS = 16;
@@ -444,7 +220,6 @@
       { s1: 'M36 22 Q 40 14 36 6', s2: 'M48 22 Q 52 14 48 6', s3: 'M60 22 Q 64 14 60 6' },
       { s1: 'M36 22 Q 34 14 38 5', s2: 'M48 22 Q 46 14 50 5', s3: 'M60 22 Q 58 14 62 5' }
     ];
-    
     var FW_SVGS = [
       '<circle cx="90" cy="200" r="3" fill="#000"/><line x1="90" y1="205" x2="90" y2="235" stroke="#000" stroke-width="2" stroke-dasharray="3 4" stroke-linecap="round"/><rect x="60" y="60" width="8" height="3.5" rx="1" fill="#000" transform="rotate(25 60 60)"/><rect x="180" y="45" width="7" height="3.5" rx="1" fill="none" stroke="#000" stroke-width="1.2" transform="rotate(-30 180 45)"/><circle cx="270" cy="80" r="1.8" fill="#000"/>',
       '<g fill="none" stroke="#000" stroke-linecap="round"><line x1="90" y1="115" x2="90" y2="100" stroke-width="2.4"/><line x1="90" y1="145" x2="90" y2="160" stroke-width="2.4"/><line x1="75" y1="130" x2="60" y2="130" stroke-width="2.4"/><line x1="105" y1="130" x2="120" y2="130" stroke-width="2.4"/><circle cx="90" cy="130" r="2.5" fill="#000" stroke="none"/><rect x="62" y="140" width="8" height="3.5" rx="1" fill="#000" transform="rotate(15 62 140)" stroke="none"/><rect x="178" y="125" width="7" height="3.5" rx="1" fill="none" stroke="#000" stroke-width="1.2" transform="rotate(-15 178 125)"/><circle cx="268" cy="160" r="1.8" fill="#000" stroke="none"/></g>',
@@ -464,18 +239,20 @@
     var sunAngle = 0;
     var starToggled = false;
     var currentAnimal = null;
-    var currentFontIndex = 1; // 默认用实心黑字体(font-style-1)，避免空心描边字体(font-style-0)
-                               // 在不支持 -webkit-text-stroke 的老内核浏览器上完全不可见
+    var currentFontIndex = 1; 
+    var isPortraitMode = false;
 
     var toggleClickCount = 0;
     var lastToggleClickTime = 0;
 
-    // 防止e-ink长时间局部刷新导致重影：计时运行期间每隔一段时间强制闪一次黑屏清屏
-    var REFRESH_INTERVAL_SEC = 300; // 每5分钟
+    var SCREEN_LONG = 0;
+    var SCREEN_SHORT = 0;
+
+    var REFRESH_INTERVAL_SEC = 300;
     var secondsSinceRefresh = 0;
 
     var els = {
-      container: document.getElementById('main-container'),
+      appContainer: document.getElementById('app-container'),
       timerText: document.getElementById('timer-text'),
       btnToggle: document.getElementById('btn-toggle'),
       restScreen: document.getElementById('rest-screen'),
@@ -497,6 +274,11 @@
     var restAnimState = { timer: null, index: 0, steamStep: 0, fwStep: 0, catStep: 0 };
 
     function init() {
+      var w = document.documentElement.clientWidth || window.innerWidth;
+      var h = document.documentElement.clientHeight || window.innerHeight;
+      SCREEN_LONG = Math.max(w, h);
+      SCREEN_SHORT = Math.min(w, h);
+
       initDOM();
       initSavedSettings();
       updateDayNightMode();
@@ -507,32 +289,26 @@
 
     function initDOM() {
       var slotsHtml = '';
-      for (var i = 0; i < TOTAL_SLOTS; i++) {
-        slotsHtml += '<div class="track-slot"></div>';
-      }
+      for (var i = 0; i < TOTAL_SLOTS; i++) { slotsHtml += '<div class="track-slot"></div>'; }
       els.tracksBottom.innerHTML = slotsHtml;
       trackSlots = els.tracksBottom.querySelectorAll('.track-slot');
 
       var fwHtml = '';
-      for (var j = 0; j < FW_SVGS.length; j++) {
-        fwHtml += '<div class="fw-frame ' + (j === 0 ? 'active' : '') + '" id="fw-frame-' + j + '"><svg viewBox="0 0 320 420" style="width:100%;height:100%;">' + FW_SVGS[j] + '</svg></div>';
-      }
+      for (var j = 0; j < FW_SVGS.length; j++) { fwHtml += '<div class="fw-frame ' + (j === 0 ? 'active' : '') + '" id="fw-frame-' + j + '"><svg viewBox="0 0 320 420" style="width:100%;height:100%;">' + FW_SVGS[j] + '</svg></div>'; }
       els.fwStage.innerHTML = fwHtml;
       
       var fwNodes = els.fwStage.querySelectorAll('.fw-frame');
-      for (var k = 0; k < fwNodes.length; k++) {
-        fwFrames.push(fwNodes[k]);
-      }
+      for (var k = 0; k < fwNodes.length; k++) { fwFrames.push(fwNodes[k]); }
+      
+      // 初始化状态设为 SVG 的播放按钮
+      els.btnToggle.innerHTML = ICON_PLAY;
     }
 
     function bindEvents() {
       document.getElementById('btn-orientation').addEventListener('click', toggleOrientation);
       document.getElementById('btn-font-switch').addEventListener('click', switchFont);
-      
       els.btnToggle.addEventListener('click', handleToggleClick);
       els.restScreen.addEventListener('click', hideRestScreen);
-      
-      window.addEventListener('resize', updateLayoutDimensions);
       
       var adjustBtns = document.querySelectorAll('.btn-adjust');
       for (var m = 0; m < adjustBtns.length; m++) {
@@ -544,13 +320,8 @@
 
     function handleToggleClick(e) {
       if (e) e.preventDefault();
-      
       var now = new Date().getTime();
-      if (now - lastToggleClickTime <= 1000) {
-        toggleClickCount++;
-      } else {
-        toggleClickCount = 1;
-      }
+      if (now - lastToggleClickTime <= 1000) { toggleClickCount++; } else { toggleClickCount = 1; }
       lastToggleClickTime = now;
 
       if (toggleClickCount === 6) {
@@ -558,7 +329,7 @@
         if (timerId) {
           clearInterval(timerId);
           timerId = null;
-          els.btnToggle.innerText = '▶';
+          els.btnToggle.innerHTML = ICON_PLAY;
         }
         showRestScreen();
       } else {
@@ -566,40 +337,38 @@
       }
     }
 
-    function updateLayoutDimensions() {
-      var isPortrait = document.body.className.indexOf('portrait-mode') !== -1;
-      if (isPortrait) {
-        els.container.style.cssText = '';
-        return;
+    function applyOrientationLogic() {
+      var SAFE_LONG = SCREEN_LONG - 8;
+      var SAFE_SHORT = SCREEN_SHORT - 8;
+
+      if (isPortraitMode) {
+        els.appContainer.style.width = SAFE_SHORT + 'px';
+        els.appContainer.style.height = SAFE_LONG + 'px';
+        els.appContainer.style.webkitTransform = 'translate(-50%, -50%)';
+        els.appContainer.style.transform = 'translate(-50%, -50%)';
+      } else {
+        els.appContainer.style.width = SAFE_LONG + 'px';
+        els.appContainer.style.height = SAFE_SHORT + 'px';
+        els.appContainer.style.webkitTransform = 'translate(-50%, -50%) rotate(90deg)';
+        els.appContainer.style.transform = 'translate(-50%, -50%) rotate(90deg)';
       }
-      var w = window.innerWidth || document.documentElement.clientWidth || 600;
-      var h = window.innerHeight || document.documentElement.clientHeight || 800;
-      var maxDim = Math.max(w, h);
-      var minDim = Math.min(w, h);
-      els.container.style.width = (maxDim - 6) + 'px';
-      els.container.style.height = (minDim - 14) + 'px';
+      
+      els.timerText.style.fontSize = isPortraitMode ? '215px' : '210px';
     }
 
     function toggleOrientation() {
-      var current = document.body.className.indexOf('portrait-mode') !== -1 ? 'portrait' : 'landscape';
-      var next = current === 'portrait' ? 'landscape' : 'portrait';
-      try { localStorage.setItem('kindle_pomodoro_orient', next); } catch(e) {}
-
-      // 不再reload整个页面：直接切换className + 重算容器尺寸，
-      // 切换瞬间完成，也避开了刷新时浏览器重新加载/排版的抖动
-      document.body.className = (next === 'portrait') ? 'portrait-mode' : '';
-      updateLayoutDimensions();
+      isPortraitMode = !isPortraitMode;
+      try { localStorage.setItem('kindle_pomodoro_orient', isPortraitMode ? 'portrait' : 'landscape'); } catch(e) {}
+      applyOrientationLogic();
     }
 
     function initSavedSettings() {
-      // 读取 localStorage 可能在部分沙盒环境下抛异常，务必try/catch，
-      // 否则一旦这里报错，后面的 bindEvents() 不会执行，导致所有按钮失灵
       try {
         var savedOrient = localStorage.getItem('kindle_pomodoro_orient');
-        if (savedOrient === 'portrait') {
-          document.body.className = 'portrait-mode';
-        }
+        isPortraitMode = (savedOrient === 'portrait');
       } catch (e) {}
+      
+      applyOrientationLogic();
 
       try {
         var savedFont = localStorage.getItem('kindle_pomodoro_font');
@@ -609,7 +378,6 @@
       } catch (e) {}
 
       applyFont();
-      updateLayoutDimensions();
     }
 
     function switchFont() {
@@ -626,7 +394,7 @@
       if (timerId) { 
         clearInterval(timerId);
         timerId = null;
-        els.btnToggle.innerText = '▶';
+        els.btnToggle.innerHTML = ICON_PLAY;
       } else { 
         if (timeLeft <= 0 || !hasStarted) {
           timeLeft = totalTime;
@@ -634,10 +402,8 @@
         }
         updateDayNightMode();
         targetEndTime = new Date().getTime() + (timeLeft * 1000);
-        // 用200ms轮询对分钟级显示没有必要，改为1000ms可以减少唤醒次数、省电；
-        // 因为是用targetEndTime算时间差而不是简单递减计数，降低轮询频率不会影响计时准确性
         timerId = setInterval(tick, 1000);
-        els.btnToggle.innerText = '⏸';
+        els.btnToggle.innerHTML = ICON_PAUSE;
       }
     }
 
@@ -661,7 +427,7 @@
         if (timeLeft <= 0) {
           clearInterval(timerId);
           timerId = null;
-          els.btnToggle.innerText = '▶';
+          els.btnToggle.innerHTML = ICON_PLAY;
           timeLeft = totalTime;
           clearTracks();
           updateDisplay();
@@ -674,16 +440,12 @@
       if (timerId) {
         clearInterval(timerId);
         timerId = null;
-        els.btnToggle.innerText = '▶';
+        els.btnToggle.innerHTML = ICON_PLAY;
       }
       
       var currentMins = Math.round(totalTime / 60) + mins;
       
-      if (currentMins > 120) {
-        currentMins = 5;
-      } else if (currentMins < 5) {
-        currentMins = 120;
-      }
+      if (currentMins > 120) { currentMins = 5; } else if (currentMins < 5) { currentMins = 120; }
       
       totalTime = currentMins * 60;
       timeLeft = totalTime;
@@ -701,7 +463,6 @@
       var strM = (mins < 10 ? '0' : '') + mins;
       var newText = strH + ':' + strM;
 
-      // 只有显示文字真正变化时才写DOM，避免e-ink每秒都做无意义的局部刷新
       if (newText !== lastDisplayedText) {
         els.timerText.innerText = newText;
         lastDisplayedText = newText;
@@ -711,7 +472,6 @@
       var progressRatio = (totalTime - timeLeft) / totalTime;
       var leadIndex = Math.min(TOTAL_SLOTS - 1, Math.floor(progressRatio * TOTAL_SLOTS));
 
-      // 脚印前沿位置没变化就不用重设16个格子的class
       if (leadIndex === lastLeadIndex) return;
       lastLeadIndex = leadIndex;
 
@@ -728,7 +488,6 @@
     }
 
     function forceScreenRefresh() {
-      // 短暂闪黑再变回白色，触发一次全屏重绘，清除墨水屏局部刷新累积的重影
       document.body.style.backgroundColor = '#000000';
       setTimeout(function() {
         document.body.style.backgroundColor = '#ffffff';
@@ -821,7 +580,6 @@
       }
     }
 
-    // 延迟初始化确保DOM就绪
     window.addEventListener('load', function() {
         setTimeout(init, 50);
     });
