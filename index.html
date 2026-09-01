@@ -13,7 +13,6 @@
       user-select: none;
       touch-action: manipulation;
     }
-    /* 彻底杜绝滑动与滚动条出现 */
     html {
       height: 100%;
       width: 100%;
@@ -39,7 +38,6 @@
       background: transparent !important;
     }
 
-    /* 默认横屏模式：精简版旧式 Flex 语法，防止 Kindle 解析溢出乱码 */
     .container {
       position: absolute;
       top: 50%;
@@ -63,12 +61,11 @@
       overflow: hidden !important;
     }
 
+    /* 竖屏模式：由 JS 介入计算具体像素，CSS 仅负责定位补偿 */
     body.portrait-mode .container {
       position: absolute !important;
-      top: 0 !important;
-      left: 0 !important;
-      width: 100% !important;
-      height: 100% !important;
+      top: 4px !important;
+      left: 4px !important;
       -webkit-transform: none !important;
       transform: none !important;
       padding: 16px 4px 28px 4px !important;
@@ -564,27 +561,29 @@
       }
     }
 
+    /* 核心修改：统一计算安全边距，剥离所有 100% 的不可控计算 */
     function updateLayoutDimensions() {
       var isPortrait = document.body.className.indexOf('portrait-mode') !== -1;
       
-      // 使用 documentElement 的 client 尺寸，彻底排除由于滚动条或系统栏引起的尺寸计算误差
       var w = document.documentElement.clientWidth || window.innerWidth;
       var h = document.documentElement.clientHeight || window.innerHeight;
 
+      // 设置 8 像素的安全余量
+      var OFFSET = 8;
+
       if (isPortrait) {
-        els.container.style.width = '100%';
-        els.container.style.height = '100%';
+        els.container.style.width = (w - OFFSET) + 'px';
+        els.container.style.height = (h - OFFSET) + 'px';
       } else {
         var maxDim = Math.max(w, h);
         var minDim = Math.min(w, h);
-        els.container.style.width = maxDim + 'px';
-        els.container.style.height = minDim + 'px';
+        els.container.style.width = (maxDim - OFFSET) + 'px';
+        els.container.style.height = (minDim - OFFSET) + 'px';
       }
 
-      // 核心修补 3：强制 WebKit 重绘，彻底解决暂停时横竖屏切换由于没有 DOM 更新引起的“画面缩小”Bug
       if (els.timerText) {
         els.timerText.style.paddingRight = '1px';
-        var _dummy = els.timerText.offsetWidth; // 触发引擎的样式和布局回流计算
+        var _dummy = els.timerText.offsetWidth; 
         els.timerText.style.paddingRight = '0px';
       }
     }
