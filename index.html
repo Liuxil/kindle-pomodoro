@@ -78,26 +78,10 @@
     }
     .footer {
       width: 100%;
-      display: -webkit-box;
-      display: -webkit-flex;
-      display: flex;
-      -webkit-box-orient: vertical;
-      -webkit-box-direction: normal;
-      -webkit-flex-direction: column;
-      flex-direction: column;
-      -webkit-box-align: center;
-      -webkit-align-items: center;
-      align-items: center;
-      gap: 36px;
+      text-align: center;
     }
     .btn-row {
-      display: -webkit-box;
-      display: -webkit-flex;
-      display: flex;
-      gap: 16px;
-      -webkit-box-pack: center;
-      -webkit-justify-content: center;
-      justify-content: center;
+      margin-bottom: 28px; /* 彻底拉开上方调整按钮与下方开始按钮的垂直距离 */
     }
     button {
       background: #ffffff;
@@ -114,10 +98,12 @@
     .btn-adjust {
       font-size: 24px;
       padding: 8px 24px;
+      margin: 0 10px; /* 拉开 +5m 和 +10m 左右之间的水平间距 */
     }
     .btn-start {
       font-size: 34px;
-      padding: 16px 64px;
+      padding: 14px 64px;
+      display: inline-block;
     }
   </style>
 </head>
@@ -136,7 +122,9 @@
         <button class="btn-adjust" onclick="addMinutes(5)">+5m</button>
         <button class="btn-adjust" onclick="addMinutes(10)">+10m</button>
       </div>
-      <button id="btn-toggle" class="btn-start" onclick="toggleTimer()">开始</button>
+      <div>
+        <button id="btn-toggle" class="btn-start" onclick="toggleTimer()">开始</button>
+      </div>
     </div>
   </div>
 
