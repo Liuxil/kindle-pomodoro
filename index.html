@@ -26,7 +26,7 @@
       height: 0 !important;
     }
 
-    /* 默认横屏模式：90度旋转自适应流式排版 */
+    /* 默认横屏模式：90度旋转全屏流式排版 */
     .container {
       position: absolute;
       top: 50%;
@@ -60,7 +60,7 @@
       padding: 12px 16px 24px 16px;
     }
 
-    /* 顶部天象图标部件（点击切换横/竖屏） */
+    /* 顶部天象部件（点击切换横/竖屏） */
     .sky-badge {
       width: 40px;
       height: 40px;
@@ -158,64 +158,55 @@
       cursor: pointer;
     }
 
-    /* 方案 0：极细物理描边字（编号 10） */
-    .svg-outline-box {
-      width: 100%;
-      height: 175px;
-      display: none;
-      -webkit-box-pack: center;
-      -webkit-justify-content: center;
-      justify-content: center;
-      -webkit-box-align: center;
-      -webkit-align-items: center;
-      align-items: center;
-    }
-    .svg-outline-box svg {
-      width: 96%;
-      height: 100%;
-    }
-
-    /* 方案 1：金梅新细圆仿真矢量字（方案 2） */
-    .svg-round-box {
-      width: 100%;
-      height: 175px;
-      display: none;
-      -webkit-box-pack: center;
-      -webkit-justify-content: center;
-      justify-content: center;
-      -webkit-box-align: center;
-      -webkit-align-items: center;
-      align-items: center;
-    }
-    .svg-round-box svg {
-      width: 92%;
-      height: 100%;
-    }
-
-    /* 方案 2 & 3：文本字形容器 */
     .timer-text {
-      font-size: 195px;
+      font-size: 200px;
       line-height: 0.88;
       text-align: center;
       width: 100%;
-      display: none;
+      display: block;
     }
     body.portrait-mode .timer-text {
       font-size: 145px;
     }
 
-    /* 方案 2: Kindle 官方古典雅致细体 */
+    /* 方案 0: 极细物理描边字（编号 10 效果，1.5px 极细镂空线条） */
+    .font-style-0 {
+      font-family: "Helvetica Neue Light", "Helvetica Neue", "Arial Narrow", sans-serif;
+      font-weight: 200;
+      letter-spacing: -2px;
+      color: transparent !important;
+      -webkit-text-fill-color: transparent !important;
+      -webkit-text-stroke: 1.5px #000000;
+    }
+
+    /* 方案 1: 胶囊几何细圆（方案 2 效果，端点圆润治愈） */
+    .font-style-1 {
+      font-family: "Century Gothic", "Apple Gothic", "Arial Rounded MT Bold", sans-serif;
+      font-weight: 200;
+      letter-spacing: -3px;
+      color: #000000;
+      -webkit-text-fill-color: #000000;
+      -webkit-text-stroke: 0;
+    }
+
+    /* 方案 2: Kindle 官方古典雅致细体（Baskerville） */
     .font-style-2 {
       font-family: "Baskerville", "Bookerly Light", "Georgia", serif;
       font-weight: 200;
       letter-spacing: 0px;
+      color: #000000;
+      -webkit-text-fill-color: #000000;
+      -webkit-text-stroke: 0;
     }
 
-    /* 方案 3: 极简等宽机械细体 */
+    /* 方案 3: 极简等宽机械细体（Courier） */
     .font-style-3 {
       font-family: "Courier New", "Courier", monospace;
       font-weight: 200;
       letter-spacing: 2px;
+      color: #000000;
+      -webkit-text-fill-color: #000000;
+      -webkit-text-stroke: 0;
     }
 
     /* 脚印宽幅长轨道 (16 档卡槽) */
@@ -351,33 +342,9 @@
 
     <!-- 中间主体区 -->
     <div class="main-section">
-      <!-- 倒计时区域（点击循环切换 4 套方案） -->
+      <!-- 倒计时区域（点击循环切换 4 套字体） -->
       <div class="timer-container" onclick="switchFont()">
-        
-        <!-- 方案 0: 极细物理描边字（编号 10） -->
-        <div class="svg-outline-box" id="view-outline">
-          <svg viewBox="0 0 320 85">
-            <text id="outline-text-node" x="160" y="70" font-size="82" text-anchor="middle" font-family="sans-serif" fill="none" stroke="#000" stroke-width="1.6" letter-spacing="2">00:25</text>
-          </svg>
-        </div>
-
-        <!-- 方案 1: 金梅新细圆仿真矢量字（方案 2） -->
-        <div class="svg-round-box" id="view-round">
-          <svg viewBox="0 0 300 80">
-            <g id="rnd-g0" transform="translate(10, 0)"></g>
-            <g id="rnd-g1" transform="translate(70, 0)"></g>
-            <g id="rnd-colon" transform="translate(136, 0)">
-              <circle cx="6" cy="28" r="2.2" fill="#000"/>
-              <circle cx="6" cy="52" r="2.2" fill="#000"/>
-            </g>
-            <g id="rnd-g2" transform="translate(160, 0)"></g>
-            <g id="rnd-g3" transform="translate(220, 0)"></g>
-          </svg>
-        </div>
-
-        <!-- 方案 2 & 3: 常规文本字体 -->
-        <div class="timer-text" id="view-text">00:25</div>
-
+        <div class="timer-text font-style-0" id="timer-text">00:25</div>
       </div>
       
       <!-- 脚印进度滑槽（16 档宽轨，未开始前保持隐藏） -->
@@ -442,19 +409,6 @@
       }
     ];
 
-    var ROUND_GLYPHS = {
-      '0': '<rect x="0" y="5" width="46" height="70" rx="23" ry="23" fill="none" stroke="#000" stroke-width="1.8"/>',
-      '1': '<path d="M 12 18 L 26 5 L 26 75 M 10 75 L 42 75" fill="none" stroke="#000" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
-      '2': '<path d="M 4 24 C 4 6, 44 6, 44 26 C 44 44, 4 54, 4 75 L 46 75" fill="none" stroke="#000" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
-      '3': '<path d="M 4 8 L 42 8 L 22 34 C 38 34, 46 44, 46 56 C 46 68, 34 76, 18 76 C 8 76, 2 70, 2 64" fill="none" stroke="#000" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
-      '4': '<path d="M 34 75 L 34 5 L 4 50 L 46 50" fill="none" stroke="#000" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
-      '5': '<path d="M 42 8 L 8 8 L 4 38 C 10 34, 46 32, 44 58 C 42 76, 6 76, 4 64" fill="none" stroke="#000" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
-      '6': '<path d="M 40 12 C 28 6, 6 24, 6 48 C 6 66, 20 76, 32 76 C 42 76, 46 64, 46 50 C 46 36, 32 30, 18 34" fill="none" stroke="#000" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
-      '7': '<path d="M 4 8 L 44 8 L 16 75" fill="none" stroke="#000" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
-      '8': '<rect x="6" y="5" width="34" height="34" rx="17" ry="17" fill="none" stroke="#000" stroke-width="1.8"/><rect x="4" y="37" width="38" height="38" rx="19" ry="19" fill="none" stroke="#000" stroke-width="1.8"/>',
-      '9': '<path d="M 6 68 C 18 74, 40 56, 40 32 C 40 14, 26 4, 14 4 C 4 4, 0 16, 0 30 C 0 44, 14 50, 28 46" fill="none" stroke="#000" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>'
-    };
-
     var totalTime = 25 * 60;
     var timeLeft = totalTime;
     var timerId = null;
@@ -469,14 +423,10 @@
     var SKY_INTERVAL = 2;
 
     var currentFontIndex = 0;
-    var TOTAL_FONTS = 4;
+    var TOTAL_FONTS = 4; // 0:物理描边, 1:胶囊细圆, 2:Baskerville, 3:Courier
 
     var containerEl = document.getElementById('main-container');
-    var viewOutlineEl = document.getElementById('view-outline');
-    var viewRoundEl = document.getElementById('view-round');
-    var viewTextEl = document.getElementById('view-text');
-    var outlineTextNode = document.getElementById('outline-text-node');
-
+    var timerTextEl = document.getElementById('timer-text');
     var toggleBtn = document.getElementById('btn-toggle');
     var sunBoxEl = document.getElementById('sun-box');
     var moonBoxEl = document.getElementById('moon-box');
@@ -484,7 +434,7 @@
     var moonStarEl = document.getElementById('moon-star');
     var trackSlots = document.querySelectorAll('.track-slot');
 
-    // 精准扣除安全边距，彻底杜绝顶部/侧面微溢出滚动条
+    // 精确视口尺寸计算，彻底消除滚动条
     function updateLayoutDimensions() {
       var isPortrait = document.body.classList.contains('portrait-mode');
       if (isPortrait) {
@@ -495,9 +445,8 @@
         var h = window.innerHeight || document.documentElement.clientHeight || 800;
         var screenLong = Math.max(w, h);
         var screenShort = Math.min(w, h);
-        // 扣除 6px/12px 安全余量，确保永远小于物理可视高度
         containerEl.style.width = (screenLong - 6) + 'px';
-        containerEl.style.height = (screenShort - 12) + 'px';
+        containerEl.style.height = (screenShort - 14) + 'px';
       }
     }
 
@@ -526,7 +475,7 @@
           currentFontIndex = 0;
         }
       }
-      applyFontView();
+      applyFont();
     }
 
     function switchFont() {
@@ -534,25 +483,11 @@
       try {
         localStorage.setItem('kindle_pomodoro_font', currentFontIndex);
       } catch(e) {}
-      applyFontView();
-      updateDisplay();
+      applyFont();
     }
 
-    function applyFontView() {
-      viewOutlineEl.style.display = 'none';
-      viewRoundEl.style.display = 'none';
-      viewTextEl.style.display = 'none';
-
-      if (currentFontIndex === 0) {
-        viewOutlineEl.style.display = '-webkit-flex';
-        viewOutlineEl.style.display = 'flex';
-      } else if (currentFontIndex === 1) {
-        viewRoundEl.style.display = '-webkit-flex';
-        viewRoundEl.style.display = 'flex';
-      } else {
-        viewTextEl.style.display = 'block';
-        viewTextEl.className = 'timer-text font-style-' + currentFontIndex;
-      }
+    function applyFont() {
+      timerTextEl.className = 'timer-text font-style-' + currentFontIndex;
     }
 
     function getLocalHour() {
@@ -633,40 +568,20 @@
       }
     }
 
-    function formatTimeStrings(seconds) {
+    function formatTime(seconds) {
       var totalMinutes = Math.ceil(seconds / 60);
-      if (totalMinutes <= 0) return ['00', '00'];
+      if (totalMinutes <= 0) return '00:00';
 
       var hours = Math.floor(totalMinutes / 60);
       var mins = totalMinutes % 60;
 
       var strH = (hours < 10 ? '0' : '') + hours;
       var strM = (mins < 10 ? '0' : '') + mins;
-      return [strH, strM];
-    }
-
-    function renderRoundDigit(groupId, char) {
-      var gEl = document.getElementById(groupId);
-      if (gEl) {
-        gEl.innerHTML = ROUND_GLYPHS[char] || ROUND_GLYPHS['0'];
-      }
+      return strH + ':' + strM;
     }
 
     function updateDisplay() {
-      var parts = formatTimeStrings(timeLeft);
-      var timeStr = parts[0] + ':' + parts[1];
-
-      if (currentFontIndex === 0) {
-        outlineTextNode.textContent = timeStr;
-      } else if (currentFontIndex === 1) {
-        renderRoundDigit('rnd-g0', parts[0].charAt(0));
-        renderRoundDigit('rnd-g1', parts[0].charAt(1));
-        renderRoundDigit('rnd-g2', parts[1].charAt(0));
-        renderRoundDigit('rnd-g3', parts[1].charAt(1));
-      } else {
-        viewTextEl.innerText = timeStr;
-      }
-
+      timerTextEl.innerText = formatTime(timeLeft);
       updateProgressTracks();
     }
 
@@ -734,6 +649,7 @@
 
     window.onresize = updateLayoutDimensions;
 
+    // 初始化
     initSavedOrientation();
     initSavedFont();
     updateDayNightMode();
