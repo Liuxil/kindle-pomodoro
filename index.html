@@ -297,6 +297,38 @@
       font-size: 26px;
       padding: 5px 44px;
     }
+
+    /* 休息 / 庆祝全屏层（去文字纯静谧咖啡） */
+    .rest-screen {
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #ffffff;
+      -webkit-box-pack: center;
+      -webkit-justify-content: center;
+      justify-content: center;
+      -webkit-box-align: center;
+      -webkit-align-items: center;
+      align-items: center;
+      cursor: pointer;
+      z-index: 100;
+    }
+    .rest-screen.active {
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: flex;
+    }
+    .coffee-icon {
+      width: 160px;
+      height: 160px;
+    }
+    .steam-line {
+      -webkit-transition: none;
+      transition: none;
+    }
   </style>
 </head>
 <body>
@@ -378,6 +410,25 @@
         <button id="btn-toggle" class="btn-start" onclick="toggleTimer()">开始</button>
       </div>
     </div>
+
+    <!-- 休息静态页面：纯咖啡图案（点击返回主页面） -->
+    <div class="rest-screen" id="rest-screen" onclick="dismissRestScreen()">
+      <div class="coffee-icon">
+        <svg viewBox="0 0 100 100" style="width:100%;height:100%;">
+          <!-- 3 缕动态摇曳热气 -->
+          <path id="steam-1" class="steam-line" d="M36 22 Q 32 14 36 6" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round"/>
+          <path id="steam-2" class="steam-line" d="M48 22 Q 44 14 48 6" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round"/>
+          <path id="steam-3" class="steam-line" d="M60 22 Q 56 14 60 6" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round"/>
+          <!-- 咖啡杯身 -->
+          <path d="M22 30 L74 30 L68 76 C68 82 62 86 54 86 L42 86 C34 86 28 82 28 76 Z" fill="none" stroke="#000" stroke-width="3.5" stroke-linejoin="round"/>
+          <!-- 杯把手 -->
+          <path d="M72 38 C84 38 88 46 88 56 C88 66 82 70 70 70" fill="none" stroke="#000" stroke-width="3.5" stroke-linecap="round"/>
+          <!-- 杯底托盘 -->
+          <path d="M16 92 L80 92" stroke="#000" stroke-width="3.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+    </div>
+
   </div>
 
   <script>
@@ -423,16 +474,43 @@
     var SKY_INTERVAL = 2;
 
     var currentFontIndex = 0;
-    var TOTAL_FONTS = 3; // 0: 镂空描边, 1: 实心版本, 2: Baskerville
+    var TOTAL_FONTS = 3;
+
+    var restSteamStep = 0;
+    var restTimerId = null;
 
     var containerEl = document.getElementById('main-container');
     var timerTextEl = document.getElementById('timer-text');
     var toggleBtn = document.getElementById('btn-toggle');
+    var restScreenEl = document.getElementById('rest-screen');
     var sunBoxEl = document.getElementById('sun-box');
     var moonBoxEl = document.getElementById('moon-box');
     var sunRaysEl = document.getElementById('sun-rays');
     var moonStarEl = document.getElementById('moon-star');
     var trackSlots = document.querySelectorAll('.track-slot');
+
+    var steam1El = document.getElementById('steam-1');
+    var steam2El = document.getElementById('steam-2');
+    var steam3El = document.getElementById('steam-3');
+
+    // 咖啡热气形态字典（低频墨水屏 2 秒摇曳轮播）
+    var STEAM_PATHS = [
+      {
+        s1: 'M36 22 Q 32 14 36 6',
+        s2: 'M48 22 Q 44 14 48 6',
+        s3: 'M60 22 Q 56 14 60 6'
+      },
+      {
+        s1: 'M36 22 Q 40 14 36 6',
+        s2: 'M48 22 Q 52 14 48 6',
+        s3: 'M60 22 Q 64 14 60 6'
+      },
+      {
+        s1: 'M36 22 Q 34 14 38 5',
+        s2: 'M48 22 Q 46 14 50 5',
+        s3: 'M60 22 Q 58 14 62 5'
+      }
+    ];
 
     function updateLayoutDimensions() {
       var isPortrait = document.body.classList.contains('portrait-mode');
@@ -622,7 +700,36 @@
         timeLeft = totalTime;
         clearTracks();
         updateDisplay();
+        
+        showRestScreen();
       }
+    }
+
+    // 咖啡热气低频动画
+    function tickSteamAnimation() {
+      restSteamStep = (restSteamStep + 1) % STEAM_PATHS.length;
+      var cur = STEAM_PATHS[restSteamStep];
+      steam1El.setAttribute('d', cur.s1);
+      steam2El.setAttribute('d', cur.s2);
+      steam3El.setAttribute('d', cur.s3);
+    }
+
+    function showRestScreen() {
+      restScreenEl.className = 'rest-screen active';
+      restSteamStep = 0;
+      if (restTimerId) {
+        clearInterval(restTimerId);
+      }
+      restTimerId = setInterval(tickSteamAnimation, 2000);
+    }
+
+    function dismissRestScreen() {
+      if (restTimerId) {
+        clearInterval(restTimerId);
+        restTimerId = null;
+      }
+      restScreenEl.className = 'rest-screen';
+      updateDisplay();
     }
 
     function addMinutes(mins) {
