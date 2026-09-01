@@ -136,7 +136,7 @@
       cursor: pointer;
     }
 
-    /* 常规文本字形（等比放大） */
+    /* 常规文本字形 */
     .timer-text {
       font-size: 145px;
       line-height: 1;
@@ -172,7 +172,7 @@
       letter-spacing: 4px;
     }
 
-    /* 字体 4: 七段数码管液晶结构 (7-Segment LED) */
+    /* 字体 4: 七段数码管液晶结构 */
     .timer-segment {
       display: none;
       -webkit-box-align: center;
@@ -187,13 +187,6 @@
       width: 60px;
       height: 120px;
       margin: 0 4px;
-    }
-    .seg-digit polygon {
-      fill: #000000;
-      display: none;
-    }
-    .seg-digit polygon.on {
-      display: block;
     }
     .seg-colon {
       display: -webkit-box;
@@ -300,7 +293,7 @@
   <div class="container">
     <div class="main-section">
       
-      <!-- 顶部昼夜天象（点击切换） -->
+      <!-- 顶部昼夜天象 -->
       <div class="sky-badge" onclick="toggleManualSky()">
         <!-- 太阳 -->
         <div class="sun-box" id="sun-box">
@@ -338,60 +331,60 @@
         </div>
       </div>
 
-      <!-- 倒计时区域（点击任意位置即可循环切换 5 套字体） -->
+      <!-- 倒计时区域（点击任意位置切换 5 套字体） -->
       <div class="timer-container" onclick="switchFont()">
-        <!-- 模式 0~3：常规文本 -->
+        <!-- 文本字体容器 -->
         <div class="timer-text" id="timer-text">00:25</div>
 
-        <!-- 模式 4：静态七段数码管结构（原生兼容 Kindle WebKit） -->
+        <!-- 七段数码管容器（每个段采用独立 ID + 属性渲染） -->
         <div class="timer-segment" id="timer-segment">
           <!-- 第 1 位 -->
-          <svg class="seg-digit" id="seg-0" viewBox="0 0 54 90">
-            <polygon class="seg-a" points="6,6 12,2 42,2 48,6 42,10 12,10"/>
-            <polygon class="seg-b" points="48,6 52,12 52,40 48,44 44,40 44,12"/>
-            <polygon class="seg-c" points="48,46 52,50 52,80 48,84 44,80 44,50"/>
-            <polygon class="seg-d" points="6,84 12,88 42,88 48,84 42,80 12,80"/>
-            <polygon class="seg-e" points="6,46 10,50 10,80 6,84 2,80 2,50"/>
-            <polygon class="seg-f" points="6,6 10,12 10,40 6,44 2,40 2,12"/>
-            <polygon class="seg-g" points="6,45 12,41 42,41 48,45 42,49 12,49"/>
+          <svg class="seg-digit" viewBox="0 0 54 90">
+            <polygon id="s0-a" points="6,6 12,2 42,2 48,6 42,10 12,10" fill="#000"/>
+            <polygon id="s0-b" points="48,6 52,12 52,40 48,44 44,40 44,12" fill="#000"/>
+            <polygon id="s0-c" points="48,46 52,50 52,80 48,84 44,80 44,50" fill="#000"/>
+            <polygon id="s0-d" points="6,84 12,88 42,88 48,84 42,80 12,80" fill="#000"/>
+            <polygon id="s0-e" points="6,46 10,50 10,80 6,84 2,80 2,50" fill="#000"/>
+            <polygon id="s0-f" points="6,6 10,12 10,40 6,44 2,40 2,12" fill="#000"/>
+            <polygon id="s0-g" points="6,45 12,41 42,41 48,45 42,49 12,49" fill="#000"/>
           </svg>
           <!-- 第 2 位 -->
-          <svg class="seg-digit" id="seg-1" viewBox="0 0 54 90">
-            <polygon class="seg-a" points="6,6 12,2 42,2 48,6 42,10 12,10"/>
-            <polygon class="seg-b" points="48,6 52,12 52,40 48,44 44,40 44,12"/>
-            <polygon class="seg-c" points="48,46 52,50 52,80 48,84 44,80 44,50"/>
-            <polygon class="seg-d" points="6,84 12,88 42,88 48,84 42,80 12,80"/>
-            <polygon class="seg-e" points="6,46 10,50 10,80 6,84 2,80 2,50"/>
-            <polygon class="seg-f" points="6,6 10,12 10,40 6,44 2,40 2,12"/>
-            <polygon class="seg-g" points="6,45 12,41 42,41 48,45 42,49 12,49"/>
+          <svg class="seg-digit" viewBox="0 0 54 90">
+            <polygon id="s1-a" points="6,6 12,2 42,2 48,6 42,10 12,10" fill="#000"/>
+            <polygon id="s1-b" points="48,6 52,12 52,40 48,44 44,40 44,12" fill="#000"/>
+            <polygon id="s1-c" points="48,46 52,50 52,80 48,84 44,80 44,50" fill="#000"/>
+            <polygon id="s1-d" points="6,84 12,88 42,88 48,84 42,80 12,80" fill="#000"/>
+            <polygon id="s1-e" points="6,46 10,50 10,80 6,84 2,80 2,50" fill="#000"/>
+            <polygon id="s1-f" points="6,6 10,12 10,40 6,44 2,40 2,12" fill="#000"/>
+            <polygon id="s1-g" points="6,45 12,41 42,41 48,45 42,49 12,49" fill="#000"/>
           </svg>
           
           <div class="seg-colon"><span></span><span></span></div>
 
           <!-- 第 3 位 -->
-          <svg class="seg-digit" id="seg-2" viewBox="0 0 54 90">
-            <polygon class="seg-a" points="6,6 12,2 42,2 48,6 42,10 12,10"/>
-            <polygon class="seg-b" points="48,6 52,12 52,40 48,44 44,40 44,12"/>
-            <polygon class="seg-c" points="48,46 52,50 52,80 48,84 44,80 44,50"/>
-            <polygon class="seg-d" points="6,84 12,88 42,88 48,84 42,80 12,80"/>
-            <polygon class="seg-e" points="6,46 10,50 10,80 6,84 2,80 2,50"/>
-            <polygon class="seg-f" points="6,6 10,12 10,40 6,44 2,40 2,12"/>
-            <polygon class="seg-g" points="6,45 12,41 42,41 48,45 42,49 12,49"/>
+          <svg class="seg-digit" viewBox="0 0 54 90">
+            <polygon id="s2-a" points="6,6 12,2 42,2 48,6 42,10 12,10" fill="#000"/>
+            <polygon id="s2-b" points="48,6 52,12 52,40 48,44 44,40 44,12" fill="#000"/>
+            <polygon id="s2-c" points="48,46 52,50 52,80 48,84 44,80 44,50" fill="#000"/>
+            <polygon id="s2-d" points="6,84 12,88 42,88 48,84 42,80 12,80" fill="#000"/>
+            <polygon id="s2-e" points="6,46 10,50 10,80 6,84 2,80 2,50" fill="#000"/>
+            <polygon id="s2-f" points="6,6 10,12 10,40 6,44 2,40 2,12" fill="#000"/>
+            <polygon id="s2-g" points="6,45 12,41 42,41 48,45 42,49 12,49" fill="#000"/>
           </svg>
           <!-- 第 4 位 -->
-          <svg class="seg-digit" id="seg-3" viewBox="0 0 54 90">
-            <polygon class="seg-a" points="6,6 12,2 42,2 48,6 42,10 12,10"/>
-            <polygon class="seg-b" points="48,6 52,12 52,40 48,44 44,40 44,12"/>
-            <polygon class="seg-c" points="48,46 52,50 52,80 48,84 44,80 44,50"/>
-            <polygon class="seg-d" points="6,84 12,88 42,88 48,84 42,80 12,80"/>
-            <polygon class="seg-e" points="6,46 10,50 10,80 6,84 2,80 2,50"/>
-            <polygon class="seg-f" points="6,6 10,12 10,40 6,44 2,40 2,12"/>
-            <polygon class="seg-g" points="6,45 12,41 42,41 48,45 42,49 12,49"/>
+          <svg class="seg-digit" viewBox="0 0 54 90">
+            <polygon id="s3-a" points="6,6 12,2 42,2 48,6 42,10 12,10" fill="#000"/>
+            <polygon id="s3-b" points="48,6 52,12 52,40 48,44 44,40 44,12" fill="#000"/>
+            <polygon id="s3-c" points="48,46 52,50 52,80 48,84 44,80 44,50" fill="#000"/>
+            <polygon id="s3-d" points="6,84 12,88 42,88 48,84 42,80 12,80" fill="#000"/>
+            <polygon id="s3-e" points="6,46 10,50 10,80 6,84 2,80 2,50" fill="#000"/>
+            <polygon id="s3-f" points="6,6 10,12 10,40 6,44 2,40 2,12" fill="#000"/>
+            <polygon id="s3-g" points="6,45 12,41 42,41 48,45 42,49 12,49" fill="#000"/>
           </svg>
         </div>
       </div>
       
-      <!-- 脚印全幅进度滑槽（未开始前保持隐藏） -->
+      <!-- 脚印全幅进度滑槽 -->
       <div class="tracks-container" id="tracks-bottom">
         <div class="track-slot"></div>
         <div class="track-slot"></div>
@@ -619,21 +612,15 @@
       return [strH, strM];
     }
 
-    // 纯 class 控制七段亮暗（完全规避 innerHTML）
-    function renderSegmentDigit(svgId, char) {
-      var svgEl = document.getElementById(svgId);
-      if (!svgEl) return;
+    // 通过直接修改 fill 属性（100% 兼容 Kindle WebKit，零渲染故障）
+    function renderDigit(prefix, char) {
       var map = DIGIT_MAP[char] || DIGIT_MAP['0'];
       var segs = ['a', 'b', 'c', 'd', 'e', 'f', 'g'];
       for (var i = 0; i < segs.length; i++) {
         var s = segs[i];
-        var poly = svgEl.querySelector('.seg-' + s);
-        if (poly) {
-          if (map[s]) {
-            poly.className.baseVal = 'seg-' + s + ' on';
-          } else {
-            poly.className.baseVal = 'seg-' + s;
-          }
+        var el = document.getElementById(prefix + '-' + s);
+        if (el) {
+          el.setAttribute('fill', map[s] ? '#000000' : 'transparent');
         }
       }
     }
@@ -643,10 +630,10 @@
       var timeStr = parts[0] + ':' + parts[1];
 
       if (currentFontIndex === 4) {
-        renderSegmentDigit('seg-0', parts[0].charAt(0));
-        renderSegmentDigit('seg-1', parts[0].charAt(1));
-        renderSegmentDigit('seg-2', parts[1].charAt(0));
-        renderSegmentDigit('seg-3', parts[1].charAt(1));
+        renderDigit('s0', parts[0].charAt(0));
+        renderDigit('s1', parts[0].charAt(1));
+        renderDigit('s2', parts[1].charAt(0));
+        renderDigit('s3', parts[1].charAt(1));
       } else {
         timerTextEl.innerText = timeStr;
       }
