@@ -353,10 +353,9 @@
         els.appContainer.style.webkitTransform = 'translate(-50%, -50%) rotate(90deg)';
         els.appContainer.style.transform = 'translate(-50%, -50%) rotate(90deg)';
         
-        // 横屏模式下增大字体尺寸，从而有效缩减两侧60%的空白区域
-        els.timerText.style.fontSize = '285px';
-        // 同步增大负边距防止垂直方向溢出
-        els.timerText.style.margin = '-30px 0';
+        // 修正横屏字号：回调至 250px 以平衡视觉边距
+        els.timerText.style.fontSize = '250px';
+        els.timerText.style.margin = '-15px 0';
       }
     }
 
