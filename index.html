@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Kindle 庆祝/休息动画预览</title>
+  <title>Pomodoro</title>
   <style>
     * {
       box-sizing: border-box;
@@ -26,10 +26,13 @@
       height: 0 !important;
     }
 
+    /* 默认横屏模式 */
     .container {
-      width: 100%;
-      height: 100%;
-      position: relative;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      -webkit-transform: translate(-50%, -50%) rotate(90deg);
+      transform: translate(-50%, -50%) rotate(90deg);
       display: -webkit-box;
       display: -webkit-flex;
       display: flex;
@@ -37,6 +40,115 @@
       -webkit-box-direction: normal;
       -webkit-flex-direction: column;
       flex-direction: column;
+      -webkit-box-pack: justify;
+      -webkit-justify-content: space-between;
+      justify-content: space-between;
+      -webkit-box-align: center;
+      -webkit-align-items: center;
+      align-items: center;
+      padding: 6px 4px 10px 4px;
+      overflow: hidden !important;
+    }
+
+    /* 竖屏模式：纯 CSS 视口锁定，彻底杜绝 JS 初始化时序误差 */
+    body.portrait-mode .container {
+      position: static !important;
+      width: 100% !important;
+      height: 100% !important;
+      -webkit-transform: none !important;
+      transform: none !important;
+      padding: 16px 4px 28px 4px !important;
+    }
+
+    /* 顶部天象部件 */
+    .sky-badge {
+      width: 60px;
+      height: 60px;
+      position: relative;
+      cursor: pointer;
+      -webkit-flex-shrink: 0;
+      flex-shrink: 0;
+    }
+    .sun-box {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      display: none;
+    }
+    .sun-rays {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      -webkit-transition: none;
+      transition: none;
+    }
+    .sun-face {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 30px;
+      height: 30px;
+      margin-top: -15px;
+      margin-left: -15px;
+      background: #ffffff;
+      border: 2.5px solid #000000;
+      border-radius: 50%;
+      box-sizing: border-box;
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: flex;
+      -webkit-box-align: center;
+      -webkit-align-items: center;
+      align-items: center;
+      -webkit-box-pack: center;
+      -webkit-justify-content: center;
+      justify-content: center;
+    }
+    .moon-box {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      display: none;
+    }
+    .moon-star {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 18px;
+      height: 18px;
+      -webkit-transition: none;
+      transition: none;
+    }
+
+    /* 中间主体区 */
+    .main-section {
+      width: 100%;
+      -webkit-box-flex: 1;
+      -webkit-flex: 1;
+      flex: 1;
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: flex;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+      -webkit-flex-direction: column;
+      flex-direction: column;
+      -webkit-box-align: center;
+      -webkit-align-items: center;
+      align-items: center;
+      -webkit-box-pack: center;
+      -webkit-justify-content: center;
+      justify-content: center;
+    }
+
+    /* 倒计时主容器 */
+    .timer-container {
+      width: 100%;
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: flex;
       -webkit-box-pack: center;
       -webkit-justify-content: center;
       justify-content: center;
@@ -46,29 +158,77 @@
       cursor: pointer;
     }
 
-    .mode-tip {
-      position: absolute;
-      top: 14px;
-      font-size: 14px;
-      letter-spacing: 2px;
-      font-weight: bold;
-      border: 1.5px solid #000000;
-      padding: 4px 12px;
-      border-radius: 6px;
-    }
-
-    .footer-tip {
-      position: absolute;
-      bottom: 16px;
-      font-size: 12px;
-      letter-spacing: 1px;
-      color: #333333;
-    }
-
-    .view-panel {
+    /* 横屏大字 */
+    .timer-text {
+      font-size: 240px;
+      line-height: 0.85;
+      text-align: center;
       width: 100%;
-      height: 75%;
-      display: none;
+      display: block;
+      letter-spacing: -6px;
+    }
+
+    /* 竖屏大字 */
+    body.portrait-mode .timer-text {
+      font-size: 215px;
+      line-height: 0.82;
+      letter-spacing: -6px;
+    }
+
+    /* 方案 0: 极细物理描边字（镂空透明版） */
+    .font-style-0 {
+      font-family: "Helvetica Neue Light", "Helvetica Neue", "Arial Narrow", sans-serif;
+      font-weight: 200;
+      letter-spacing: -3px;
+      color: transparent !important;
+      -webkit-text-fill-color: transparent !important;
+      -webkit-text-stroke: 1.5px #000000;
+    }
+
+    /* 方案 1: 极细物理描边字（纯实心黑色版） */
+    .font-style-1 {
+      font-family: "Helvetica Neue Light", "Helvetica Neue", "Arial Narrow", sans-serif;
+      font-weight: 200;
+      letter-spacing: -3px;
+      color: #000000 !important;
+      -webkit-text-fill-color: #000000 !important;
+      -webkit-text-stroke: 0 !important;
+    }
+
+    /* 方案 2: 古典雅致细体 */
+    .font-style-2 {
+      font-family: "Baskerville", "Bookerly Light", "Georgia", serif;
+      font-weight: 200;
+      letter-spacing: -1px;
+      color: #000000;
+      -webkit-text-fill-color: #000000;
+      -webkit-text-stroke: 0;
+    }
+
+    /* 脚印宽幅长轨道 (16 档卡槽) */
+    .tracks-container {
+      width: 96%;
+      height: 26px;
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: flex;
+      -webkit-box-pack: justify;
+      -webkit-justify-content: space-between;
+      justify-content: space-between;
+      -webkit-box-align: center;
+      -webkit-align-items: center;
+      align-items: center;
+      margin-top: 6px;
+    }
+    body.portrait-mode .tracks-container {
+      margin-top: 14px;
+    }
+    .track-slot {
+      width: 20px;
+      height: 20px;
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: flex;
       -webkit-box-pack: center;
       -webkit-justify-content: center;
       justify-content: center;
@@ -76,19 +236,118 @@
       -webkit-align-items: center;
       align-items: center;
     }
-    .view-panel.active {
+    .track-slot svg {
+      width: 18px;
+      height: 18px;
+      fill: #000000;
+      display: none;
+    }
+    .track-slot:nth-child(even) svg {
+      margin-top: 4px;
+      -webkit-transform: rotate(6deg);
+      transform: rotate(6deg);
+    }
+    .track-slot:nth-child(odd) svg {
+      margin-top: -4px;
+      -webkit-transform: rotate(-6deg);
+      transform: rotate(-6deg);
+    }
+    .track-slot.active svg {
+      display: block;
+    }
+
+    /* 底部按钮栏 */
+    .footer {
+      width: 94%;
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: flex;
+      -webkit-box-pack: justify;
+      -webkit-justify-content: space-between;
+      justify-content: space-between;
+      -webkit-box-align: center;
+      -webkit-align-items: center;
+      align-items: center;
+      -webkit-flex-shrink: 0;
+      flex-shrink: 0;
+    }
+    .btn-adjust-group {
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: flex;
+      gap: 10px;
+    }
+    button {
+      background: #ffffff;
+      color: #000000;
+      border: 3px solid #000000;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button:active {
+      background: #000000;
+      color: #ffffff;
+    }
+    .btn-adjust {
+      font-size: 18px;
+      padding: 5px 14px;
+    }
+    .btn-start {
+      font-size: 26px;
+      padding: 5px 44px;
+    }
+
+    /* 休息 / 庆祝全屏层（点击切换方案） */
+    .rest-screen {
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #ffffff;
+      -webkit-box-pack: center;
+      -webkit-justify-content: center;
+      justify-content: center;
+      -webkit-box-align: center;
+      -webkit-align-items: center;
+      align-items: center;
+      cursor: pointer;
+      z-index: 100;
+    }
+    .rest-screen.active {
       display: -webkit-box;
       display: -webkit-flex;
       display: flex;
     }
 
-    /* 方案 1：咖啡杯 */
+    .rest-panel {
+      display: none;
+      width: 100%;
+      height: 100%;
+      -webkit-box-pack: center;
+      -webkit-justify-content: center;
+      justify-content: center;
+      -webkit-box-align: center;
+      -webkit-align-items: center;
+      align-items: center;
+    }
+    .rest-panel.active {
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: flex;
+    }
+
     .coffee-icon {
       width: 160px;
       height: 160px;
     }
+    .steam-line {
+      -webkit-transition: none;
+      transition: none;
+    }
 
-    /* 方案 2：烟花多帧容器 */
     .firework-stage {
       width: 320px;
       height: 420px;
@@ -106,7 +365,6 @@
       display: block;
     }
 
-    /* 方案 3：像素猫咪容器 */
     .pixel-cat-stage {
       width: 280px;
       height: 280px;
@@ -123,269 +381,644 @@
     .cat-frame.active {
       display: block;
     }
+
+    /* 方案切换提示角标 */
+    .rest-tip-badge {
+      position: absolute;
+      bottom: 16px;
+      font-size: 12px;
+      color: #555555;
+      letter-spacing: 1px;
+    }
   </style>
 </head>
 <body>
 
-  <div class="container" onclick="toggleMode()">
+  <div class="container" id="main-container">
     
-    <div class="mode-tip" id="mode-text">方案 A：摇曳热气咖啡</div>
+    <!-- 顶部天象图标（点击切换横/竖屏） -->
+    <div class="sky-badge" onclick="toggleScreenOrientation()" title="点击切换横/竖屏">
+      <div class="sun-box" id="sun-box">
+        <div class="sun-rays" id="sun-rays">
+          <svg viewBox="0 0 100 100" stroke="#000" stroke-linecap="round">
+            <path d="M50 4 L50 16" stroke-width="4.5"/>
+            <path d="M50 84 L50 96" stroke-width="4.5"/>
+            <path d="M4 50 L16 50" stroke-width="4.5"/>
+            <path d="M84 50 L96 50" stroke-width="4.5"/>
+            <path d="M17 17 L26 26" stroke-width="4"/>
+            <path d="M74 74 L83 83" stroke-width="4"/>
+            <path d="M17 83 L26 74" stroke-width="4"/>
+            <path d="M74 26 L83 17" stroke-width="4"/>
+          </svg>
+        </div>
+        <div class="sun-face">
+          <svg viewBox="0 0 34 34">
+            <circle cx="12" cy="14" r="1.8" fill="#000"/>
+            <circle cx="22" cy="14" r="1.8" fill="#000"/>
+            <path d="M12 19 Q 17 24 22 19" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
 
-    <div class="view-panel active" id="panel-coffee">
-      <div class="coffee-icon">
-        <svg viewBox="0 0 100 100" style="width:100%;height:100%;">
-          <path id="steam-1" d="M36 22 Q 32 14 36 6" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round"/>
-          <path id="steam-2" d="M48 22 Q 44 14 48 6" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round"/>
-          <path id="steam-3" d="M60 22 Q 56 14 60 6" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round"/>
-          <path d="M22 30 L74 30 L68 76 C68 82 62 86 54 86 L42 86 C34 86 28 82 28 76 Z" fill="none" stroke="#000" stroke-width="3.5" stroke-linejoin="round"/>
-          <path d="M72 38 C84 38 88 46 88 56 C88 66 82 70 70 70" fill="none" stroke="#000" stroke-width="3.5" stroke-linecap="round"/>
-          <path d="M16 92 L80 92" stroke="#000" stroke-width="3.5" stroke-linecap="round"/>
+      <div class="moon-box" id="moon-box">
+        <svg viewBox="0 0 68 68" style="width:100%;height:100%;">
+          <path d="M38 12 C24 12 12 24 12 38 C12 48 18 56 26 59 C23 54 22 48 22 42 C22 28 32 17 46 16 C43 13 40 12 38 12 Z" fill="#000"/>
         </svg>
+        <div class="moon-star" id="moon-star">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 2 Q 12 12 2 12 Q 12 12 12 22 Q 12 12 22 12 Q 12 12 12 2 Z" fill="#000"/>
+          </svg>
+        </div>
       </div>
     </div>
 
-    <div class="view-panel" id="panel-firework">
-      <div class="firework-stage">
-        
-        <div class="fw-frame active" id="frame-0">
-          <svg viewBox="0 0 320 420" style="width:100%;height:100%;">
-            <circle cx="90" cy="200" r="3" fill="#000"/>
-            <line x1="90" y1="205" x2="90" y2="235" stroke="#000" stroke-width="2" stroke-dasharray="3 4" stroke-linecap="round"/>
-            <rect x="60" y="60" width="8" height="3.5" rx="1" fill="#000" transform="rotate(25 60 60)"/>
-            <rect x="180" y="45" width="7" height="3.5" rx="1" fill="none" stroke="#000" stroke-width="1.2" transform="rotate(-30 180 45)"/>
-            <circle cx="270" cy="80" r="1.8" fill="#000"/>
-          </svg>
-        </div>
-
-        <div class="fw-frame" id="frame-1">
-          <svg viewBox="0 0 320 420" style="width:100%;height:100%;" fill="none" stroke="#000" stroke-linecap="round">
-            <line x1="90" y1="115" x2="90" y2="100" stroke-width="2.4"/>
-            <line x1="90" y1="145" x2="90" y2="160" stroke-width="2.4"/>
-            <line x1="75" y1="130" x2="60" y2="130" stroke-width="2.4"/>
-            <line x1="105" y1="130" x2="120" y2="130" stroke-width="2.4"/>
-            <circle cx="90" cy="130" r="2.5" fill="#000" stroke="none"/>
-            <rect x="62" y="140" width="8" height="3.5" rx="1" fill="#000" transform="rotate(15 62 140)"/>
-            <rect x="178" y="125" width="7" height="3.5" rx="1" fill="none" stroke="#000" stroke-width="1.2" transform="rotate(-15 178 125)"/>
-            <circle cx="268" cy="160" r="1.8" fill="#000" stroke="none"/>
-          </svg>
-        </div>
-
-        <div class="fw-frame" id="frame-2">
-          <svg viewBox="0 0 320 420" style="width:100%;height:100%;" fill="none" stroke="#000" stroke-linecap="round">
-            <line x1="90" y1="95" x2="90" y2="70" stroke-width="2.2"/>
-            <line x1="90" y1="165" x2="90" y2="190" stroke-width="2.2"/>
-            <line x1="55" y1="130" x2="30" y2="130" stroke-width="2.2"/>
-            <line x1="125" y1="130" x2="150" y2="130" stroke-width="2.2"/>
-            <line x1="65" y1="105" x2="48" y2="88" stroke-width="1.8"/>
-            <line x1="115" y1="155" x2="132" y2="172" stroke-width="1.8"/>
-            <line x1="65" y1="155" x2="48" y2="172" stroke-width="1.8"/>
-            <line x1="115" y1="105" x2="132" y2="88" stroke-width="1.8"/>
-            <circle cx="90" cy="60" r="1.8" fill="#000" stroke="none"/>
-            <circle cx="90" cy="200" r="1.8" fill="#000" stroke="none"/>
-            <circle cx="20" cy="130" r="1.8" fill="#000" stroke="none"/>
-            <circle cx="160" cy="130" r="1.8" fill="#000" stroke="none"/>
-            <rect x="65" y="240" width="8" height="3.5" rx="1" fill="#000" transform="rotate(-15 65 240)"/>
-            <rect x="175" y="225" width="7" height="3.5" rx="1" fill="none" stroke="#000" stroke-width="1.2" transform="rotate(20 175 225)"/>
-            <circle cx="265" cy="260" r="1.8" fill="#000" stroke="none"/>
-          </svg>
-        </div>
-
-        <div class="fw-frame" id="frame-3">
-          <svg viewBox="0 0 320 420" style="width:100%;height:100%;">
-            <circle cx="230" cy="220" r="3" fill="#000"/>
-            <line x1="230" y1="225" x2="230" y2="255" stroke="#000" stroke-width="2" stroke-dasharray="3 4" stroke-linecap="round"/>
-            <rect x="120" y="55" width="8" height="3.5" rx="1" fill="none" stroke="#000" stroke-width="1.2" transform="rotate(35 120 55)"/>
-            <rect x="220" y="70" width="7.5" height="3.5" rx="1" fill="#000" transform="rotate(-20 220 70)"/>
-            <circle cx="75" cy="90" r="1.8" fill="#000"/>
-          </svg>
-        </div>
-
-        <div class="fw-frame" id="frame-4">
-          <svg viewBox="0 0 320 420" style="width:100%;height:100%;" fill="none" stroke="#000" stroke-linecap="round">
-            <line x1="230" y1="135" x2="230" y2="120" stroke-width="2.4"/>
-            <line x1="230" y1="165" x2="230" y2="180" stroke-width="2.4"/>
-            <line x1="215" y1="150" x2="200" y2="150" stroke-width="2.4"/>
-            <line x1="245" y1="150" x2="260" y2="150" stroke-width="2.4"/>
-            <circle cx="230" cy="150" r="2.5" fill="#000" stroke="none"/>
-            <rect x="122" y="145" width="8" height="3.5" rx="1" fill="none" stroke="#000" stroke-width="1.2" transform="rotate(20 122 145)"/>
-            <rect x="218" y="160" width="7.5" height="3.5" rx="1" fill="#000" transform="rotate(-10 218 160)"/>
-            <circle cx="78" cy="180" r="1.8" fill="#000" stroke="none"/>
-          </svg>
-        </div>
-
-        <div class="fw-frame" id="frame-5">
-          <svg viewBox="0 0 320 420" style="width:100%;height:100%;" fill="none" stroke="#000" stroke-linecap="round">
-            <line x1="230" y1="115" x2="230" y2="90" stroke-width="2.2"/>
-            <line x1="230" y1="185" x2="230" y2="210" stroke-width="2.2"/>
-            <line x1="195" y1="150" x2="170" y2="150" stroke-width="2.2"/>
-            <line x1="265" y1="150" x2="290" y2="150" stroke-width="2.2"/>
-            <line x1="205" y1="125" x2="188" y2="108" stroke-width="1.8"/>
-            <line x1="255" y1="175" x2="272" y2="192" stroke-width="1.8"/>
-            <line x1="205" y1="175" x2="188" y2="192" stroke-width="1.8"/>
-            <line x1="255" y1="125" x2="272" y2="108" stroke-width="1.8"/>
-            <circle cx="230" cy="80" r="1.8" fill="#000" stroke="none"/>
-            <circle cx="230" cy="220" r="1.8" fill="#000" stroke="none"/>
-            <circle cx="160" cy="150" r="1.8" fill="#000" stroke="none"/>
-            <circle cx="300" cy="150" r="1.8" fill="#000" stroke="none"/>
-            <rect x="125" y="255" width="8" height="3.5" rx="1" fill="none" stroke="#000" stroke-width="1.2" transform="rotate(-20 125 255)"/>
-            <rect x="215" y="270" width="7.5" height="3.5" rx="1" fill="#000" transform="rotate(15 215 270)"/>
-            <circle cx="80" cy="290" r="1.8" fill="#000" stroke="none"/>
-          </svg>
-        </div>
-
+    <!-- 中间主体区 -->
+    <div class="main-section">
+      <!-- 倒计时区域（点击循环切换 3 套字体） -->
+      <div class="timer-container" onclick="switchFont()">
+        <div class="timer-text font-style-0" id="timer-text">00:25</div>
+      </div>
+      
+      <!-- 脚印进度滑槽（16 档宽轨，未开始前保持隐藏） -->
+      <div class="tracks-container" id="tracks-bottom">
+        <div class="track-slot"></div>
+        <div class="track-slot"></div>
+        <div class="track-slot"></div>
+        <div class="track-slot"></div>
+        <div class="track-slot"></div>
+        <div class="track-slot"></div>
+        <div class="track-slot"></div>
+        <div class="track-slot"></div>
+        <div class="track-slot"></div>
+        <div class="track-slot"></div>
+        <div class="track-slot"></div>
+        <div class="track-slot"></div>
+        <div class="track-slot"></div>
+        <div class="track-slot"></div>
+        <div class="track-slot"></div>
+        <div class="track-slot"></div>
       </div>
     </div>
 
-    <div class="view-panel" id="panel-pixel-cat">
-      <div class="pixel-cat-stage">
-        
-        <div class="cat-frame active" id="cat-p0">
-          <svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000">
-            <rect x="145" y="65" width="6" height="2"/>
-            <rect x="149" y="67" width="2" height="2"/>
-            <rect x="147" y="69" width="2" height="2"/>
-            <rect x="143" y="71" width="6" height="2"/>
-            
-            <rect x="160" y="48" width="8" height="2"/>
-            <rect x="164" y="50" width="2" height="2"/>
-            <rect x="162" y="52" width="2" height="2"/>
-            <rect x="158" y="54" width="8" height="2"/>
-            
-            <rect x="70" y="100" width="70" height="30"/>
-            <rect x="60" y="110" width="80" height="20"/>
-            <rect x="80" y="90" width="50" height="10"/>
-            <rect x="80" y="80" width="10" height="10"/>
-            <rect x="110" y="80" width="10" height="10"/>
-            <rect x="92" y="108" width="8" height="3" fill="#fff"/>
-            <rect x="116" y="108" width="8" height="3" fill="#fff"/>
-            
-            <rect x="50" y="120" width="10" height="10"/>
-            <rect x="40" y="125" width="10" height="10"/>
-            <rect x="35" y="135" width="10" height="10"/>
-            <rect x="35" y="145" width="10" height="10"/>
-          </svg>
-        </div>
-
-        <div class="cat-frame" id="cat-p1">
-          <svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000">
-            <rect x="152" y="52" width="8" height="2"/>
-            <rect x="156" y="54" width="2" height="2"/>
-            <rect x="154" y="56" width="2" height="2"/>
-            <rect x="150" y="58" width="8" height="2"/>
-            
-            <rect x="170" y="32" width="10" height="2"/>
-            <rect x="176" y="34" width="2" height="2"/>
-            <rect x="173" y="36" width="2" height="2"/>
-            <rect x="168" y="38" width="10" height="2"/>
-            
-            <rect x="70" y="100" width="70" height="30"/>
-            <rect x="60" y="110" width="80" height="20"/>
-            <rect x="80" y="90" width="50" height="10"/>
-            <rect x="80" y="80" width="10" height="10"/>
-            <rect x="110" y="80" width="10" height="10"/>
-            <rect x="92" y="108" width="8" height="3" fill="#fff"/>
-            <rect x="116" y="108" width="8" height="3" fill="#fff"/>
-            
-            <rect x="50" y="120" width="10" height="10"/>
-            <rect x="42" y="130" width="10" height="10"/>
-            <rect x="42" y="140" width="10" height="10"/>
-            <rect x="45" y="150" width="10" height="10"/>
-          </svg>
-        </div>
-
+    <!-- 底部按钮栏 -->
+    <div class="footer">
+      <div class="btn-adjust-group">
+        <button class="btn-adjust" onclick="addMinutes(5)">+5m</button>
+        <button class="btn-adjust" onclick="addMinutes(10)">+10m</button>
+        <button class="btn-adjust" onclick="addMinutes(-5)">-5m</button>
+      </div>
+      <div>
+        <button id="btn-toggle" class="btn-start" onclick="toggleTimer()">开始</button>
       </div>
     </div>
 
-    <div class="footer-tip">点击屏幕任意区域切换方案 (A / B / C)</div>
+    <!-- 倒计时结束后的休息/庆祝全屏层（内含 3 个方案，点击切换，双击或长按/特定区域返回主界面，这里设计为单击切换方案，若想返回主界面可点击左上角或设定逻辑。根据要求：点击切换方案，再次循环） -->
+    <div class="rest-screen" id="rest-screen" onclick="handleRestScreenClick(event)">
+      
+      <!-- 方案 1：咖啡杯 -->
+      <div class="rest-panel active" id="rest-panel-0">
+        <div class="coffee-icon">
+          <svg viewBox="0 0 100 100" style="width:100%;height:100%;">
+            <path id="steam-1" class="steam-line" d="M36 22 Q 32 14 36 6" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round"/>
+            <path id="steam-2" class="steam-line" d="M48 22 Q 44 14 48 6" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round"/>
+            <path id="steam-3" class="steam-line" d="M60 22 Q 56 14 60 6" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round"/>
+            <path d="M22 30 L74 30 L68 76 C68 82 62 86 54 86 L42 86 C34 86 28 82 28 76 Z" fill="none" stroke="#000" stroke-width="3.5" stroke-linejoin="round"/>
+            <path d="M72 38 C84 38 88 46 88 56 C88 66 82 70 70 70" fill="none" stroke="#000" stroke-width="3.5" stroke-linecap="round"/>
+            <path d="M16 92 L80 92" stroke="#000" stroke-width="3.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- 方案 2：双烟花 + 碎纸 -->
+      <div class="rest-panel" id="rest-panel-1">
+        <div class="firework-stage">
+          <div class="fw-frame active" id="frame-0">
+            <svg viewBox="0 0 320 420" style="width:100%;height:100%;">
+              <circle cx="90" cy="200" r="3" fill="#000"/>
+              <line x1="90" y1="205" x2="90" y2="235" stroke="#000" stroke-width="2" stroke-dasharray="3 4" stroke-linecap="round"/>
+              <rect x="60" y="60" width="8" height="3.5" rx="1" fill="#000" transform="rotate(25 60 60)"/>
+              <rect x="180" y="45" width="7" height="3.5" rx="1" fill="none" stroke="#000" stroke-width="1.2" transform="rotate(-30 180 45)"/>
+              <circle cx="270" cy="80" r="1.8" fill="#000"/>
+            </svg>
+          </div>
+          <div class="fw-frame" id="frame-1">
+            <svg viewBox="0 0 320 420" style="width:100%;height:100%;" fill="none" stroke="#000" stroke-linecap="round">
+              <line x1="90" y1="115" x2="90" y2="100" stroke-width="2.4"/>
+              <line x1="90" y1="145" x2="90" y2="160" stroke-width="2.4"/>
+              <line x1="75" y1="130" x2="60" y2="130" stroke-width="2.4"/>
+              <line x1="105" y1="130" x2="120" y2="130" stroke-width="2.4"/>
+              <circle cx="90" cy="130" r="2.5" fill="#000" stroke="none"/>
+              <rect x="62" y="140" width="8" height="3.5" rx="1" fill="#000" transform="rotate(15 62 140)"/>
+              <rect x="178" y="125" width="7" height="3.5" rx="1" fill="none" stroke="#000" stroke-width="1.2" transform="rotate(-15 178 125)"/>
+              <circle cx="268" cy="160" r="1.8" fill="#000" stroke="none"/>
+            </svg>
+          </div>
+          <div class="fw-frame" id="frame-2">
+            <svg viewBox="0 0 320 420" style="width:100%;height:100%;" fill="none" stroke="#000" stroke-linecap="round">
+              <line x1="90" y1="95" x2="90" y2="70" stroke-width="2.2"/>
+              <line x1="90" y1="165" x2="90" y2="190" stroke-width="2.2"/>
+              <line x1="55" y1="130" x2="30" y2="130" stroke-width="2.2"/>
+              <line x1="125" y1="130" x2="150" y2="130" stroke-width="2.2"/>
+              <line x1="65" y1="105" x2="48" y2="88" stroke-width="1.8"/>
+              <line x1="115" y1="155" x2="132" y2="172" stroke-width="1.8"/>
+              <line x1="65" y1="155" x2="48" y2="172" stroke-width="1.8"/>
+              <line x1="115" y1="105" x2="132" y2="88" stroke-width="1.8"/>
+              <circle cx="90" cy="60" r="1.8" fill="#000" stroke="none"/>
+              <circle cx="90" cy="200" r="1.8" fill="#000" stroke="none"/>
+              <circle cx="20" cy="130" r="1.8" fill="#000" stroke="none"/>
+              <circle cx="160" cy="130" r="1.8" fill="#000" stroke="none"/>
+              <rect x="65" y="240" width="8" height="3.5" rx="1" fill="#000" transform="rotate(-15 65 240)"/>
+              <rect x="175" y="225" width="7" height="3.5" rx="1" fill="none" stroke="#000" stroke-width="1.2" transform="rotate(20 175 225)"/>
+              <circle cx="265" cy="260" r="1.8" fill="#000" stroke="none"/>
+            </svg>
+          </div>
+          <div class="fw-frame" id="frame-3">
+            <svg viewBox="0 0 320 420" style="width:100%;height:100%;">
+              <circle cx="230" cy="220" r="3" fill="#000"/>
+              <line x1="230" y1="225" x2="230" y2="255" stroke="#000" stroke-width="2" stroke-dasharray="3 4" stroke-linecap="round"/>
+              <rect x="120" y="55" width="8" height="3.5" rx="1" fill="none" stroke="#000" stroke-width="1.2" transform="rotate(35 120 55)"/>
+              <rect x="220" y="70" width="7.5" height="3.5" rx="1" fill="#000" transform="rotate(-20 220 70)"/>
+              <circle cx="75" cy="90" r="1.8" fill="#000"/>
+            </svg>
+          </div>
+          <div class="fw-frame" id="frame-4">
+            <svg viewBox="0 0 320 420" style="width:100%;height:100%;" fill="none" stroke="#000" stroke-linecap="round">
+              <line x1="230" y1="135" x2="230" y2="120" stroke-width="2.4"/>
+              <line x1="230" y1="165" x2="230" y2="180" stroke-width="2.4"/>
+              <line x1="215" y1="150" x2="200" y2="150" stroke-width="2.4"/>
+              <line x1="245" y1="150" x2="260" y2="150" stroke-width="2.4"/>
+              <circle cx="230" cy="150" r="2.5" fill="#000" stroke="none"/>
+              <rect x="122" y="145" width="8" height="3.5" rx="1" fill="none" stroke="#000" stroke-width="1.2" transform="rotate(20 122 145)"/>
+              <rect x="218" y="160" width="7.5" height="3.5" rx="1" fill="#000" transform="rotate(-10 218 160)"/>
+              <circle cx="78" cy="180" r="1.8" fill="#000" stroke="none"/>
+            </svg>
+          </div>
+          <div class="fw-frame" id="frame-5">
+            <svg viewBox="0 0 320 420" style="width:100%;height:100%;" fill="none" stroke="#000" stroke-linecap="round">
+              <line x1="230" y1="115" x2="230" y2="90" stroke-width="2.2"/>
+              <line x1="230" y1="185" x2="230" y2="210" stroke-width="2.2"/>
+              <line x1="195" y1="150" x2="170" y2="150" stroke-width="2.2"/>
+              <line x1="265" y1="150" x2="290" y2="150" stroke-width="2.2"/>
+              <line x1="205" y1="125" x2="188" y2="108" stroke-width="1.8"/>
+              <line x1="255" y1="175" x2="272" y2="192" stroke-width="1.8"/>
+              <line x1="205" y1="175" x2="188" y2="192" stroke-width="1.8"/>
+              <line x1="255" y1="125" x2="272" y2="108" stroke-width="1.8"/>
+              <circle cx="230" cy="80" r="1.8" fill="#000" stroke="none"/>
+              <circle cx="230" cy="220" r="1.8" fill="#000" stroke="none"/>
+              <circle cx="160" cy="150" r="1.8" fill="#000" stroke="none"/>
+              <circle cx="300" cy="150" r="1.8" fill="#000" stroke="none"/>
+              <rect x="125" y="255" width="8" height="3.5" rx="1" fill="none" stroke="#000" stroke-width="1.2" transform="rotate(-20 125 255)"/>
+              <rect x="215" y="270" width="7.5" height="3.5" rx="1" fill="#000" transform="rotate(15 215 270)"/>
+              <circle cx="80" cy="290" r="1.8" fill="#000" stroke="none"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- 方案 3：像素风趴睡小猫 + 像素 ZZZ -->
+      <div class="rest-panel" id="rest-panel-2">
+        <div class="pixel-cat-stage">
+          <div class="cat-frame active" id="cat-p0">
+            <svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000">
+              <rect x="145" y="65" width="6" height="2"/>
+              <rect x="149" y="67" width="2" height="2"/>
+              <rect x="147" y="69" width="2" height="2"/>
+              <rect x="143" y="71" width="6" height="2"/>
+              <rect x="160" y="48" width="8" height="2"/>
+              <rect x="164" y="50" width="2" height="2"/>
+              <rect x="162" y="52" width="2" height="2"/>
+              <rect x="158" y="54" width="8" height="2"/>
+              <rect x="70" y="100" width="70" height="30"/>
+              <rect x="60" y="110" width="80" height="20"/>
+              <rect x="80" y="90" width="50" height="10"/>
+              <rect x="80" y="80" width="10" height="10"/>
+              <rect x="110" y="80" width="10" height="10"/>
+              <rect x="92" y="108" width="8" height="3" fill="#fff"/>
+              <rect x="116" y="108" width="8" height="3" fill="#fff"/>
+              <rect x="50" y="120" width="10" height="10"/>
+              <rect x="40" y="125" width="10" height="10"/>
+              <rect x="35" y="135" width="10" height="10"/>
+              <rect x="35" y="145" width="10" height="10"/>
+            </svg>
+          </div>
+          <div class="cat-frame" id="cat-p1">
+            <svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000">
+              <rect x="152" y="52" width="8" height="2"/>
+              <rect x="156" y="54" width="2" height="2"/>
+              <rect x="154" y="56" width="2" height="2"/>
+              <rect x="150" y="58" width="8" height="2"/>
+              <rect x="170" y="32" width="10" height="2"/>
+              <rect x="176" y="34" width="2" height="2"/>
+              <rect x="173" y="36" width="2" height="2"/>
+              <rect x="168" y="38" width="10" height="2"/>
+              <rect x="70" y="100" width="70" height="30"/>
+              <rect x="60" y="110" width="80" height="20"/>
+              <rect x="80" y="90" width="50" height="10"/>
+              <rect x="80" y="80" width="10" height="10"/>
+              <rect x="110" y="80" width="10" height="10"/>
+              <rect x="92" y="108" width="8" height="3" fill="#fff"/>
+              <rect x="116" y="108" width="8" height="3" fill="#fff"/>
+              <rect x="50" y="120" width="10" height="10"/>
+              <rect x="42" y="130" width="10" height="10"/>
+              <rect x="42" y="140" width="10" height="10"/>
+              <rect x="45" y="150" width="10" height="10"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="rest-tip-badge">点击任意处：切换休息方案 / 双击或三击可返回主界面（在此设计为循环切换，若需返回可再次通过功能键）</div>
+    </div>
 
   </div>
 
   <script>
-    var currentMode = 0; // 0: 咖啡, 1: 烟花, 2: 像素猫
-    var modeTextEl = document.getElementById('mode-text');
-    var panelCoffeeEl = document.getElementById('panel-coffee');
-    var panelFireworkEl = document.getElementById('panel-firework');
-    var panelCatEl = document.getElementById('panel-pixel-cat');
-
-    /* ================= 方案 1: 咖啡热气 ================= */
-    var STEAM_PATHS = [
-      { s1: 'M36 22 Q 32 14 36 6', s2: 'M48 22 Q 44 14 48 6', s3: 'M60 22 Q 56 14 60 6' },
-      { s1: 'M36 22 Q 40 14 36 6', s2: 'M48 22 Q 52 14 48 6', s3: 'M60 22 Q 64 14 60 6' },
-      { s1: 'M36 22 Q 34 14 38 5', s2: 'M48 22 Q 46 14 50 5', s3: 'M60 22 Q 58 14 62 5' }
+    var ANIMALS = [
+      {
+        name: 'cat',
+        feetCount: 4,
+        svg: '<svg viewBox="0 0 24 24"><ellipse cx="9" cy="12" rx="4.5" ry="5.5"/><circle cx="16" cy="7" r="2"/><circle cx="19" cy="12" r="2.2"/><circle cx="16" cy="17" r="2"/></svg>'
+      },
+      {
+        name: 'pig_hoof',
+        feetCount: 4,
+        svg: '<svg viewBox="0 0 24 24"><ellipse cx="12" cy="7.5" rx="6" ry="3.2" transform="rotate(10 12 7.5)" fill="#000"/><ellipse cx="12" cy="16.5" rx="6" ry="3.2" transform="rotate(-10 12 16.5)" fill="#000"/></svg>'
+      },
+      {
+        name: 'horse_hoof',
+        feetCount: 4,
+        svg: '<svg viewBox="0 0 24 24"><path d="M5 6 C15 5 19 9 19 12 C19 15 15 19 5 18 L5 14.5 C12 15 14 13.5 14 12 C14 10.5 12 9 5 9.5 Z" fill="#000"/></svg>'
+      },
+      {
+        name: 'bird',
+        feetCount: 2,
+        svg: '<svg viewBox="0 0 24 24"><path d="M5 12 L19 12 M13 12 L19 6 M13 12 L19 18" stroke="#000" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+      },
+      {
+        name: 'duck',
+        feetCount: 2,
+        svg: '<svg viewBox="0 0 24 24"><path d="M4 12 L9 12 M9 12 L17 4 C14 8 13 10 9 12 C13 14 14 16 17 20 Z" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="#000"/></svg>'
+      }
     ];
-    var steamStep = 0;
+
+    var totalTime = 25 * 60;
+    var timeLeft = totalTime;
+    var timerId = null;
+    var hasStarted = false;
+
+    var isDayTime = true;
+    var sunAngle = 0;
+    var starToggled = false;
+
+    var currentAnimal = null;
+    var TOTAL_SLOTS = 16;
+    var SKY_INTERVAL = 2;
+
+    var currentFontIndex = 0;
+    var TOTAL_FONTS = 3;
+
+    var restSteamStep = 0;
+    var restTimerId = null;
+
+    // 休息方案索引: 0: 咖啡, 1: 烟花, 2: 像素猫
+    var activeRestIndex = 0;
+    var restPanels = [];
+    var restAnimTimer = null;
+
+    var containerEl = document.getElementById('main-container');
+    var timerTextEl = document.getElementById('timer-text');
+    var toggleBtn = document.getElementById('btn-toggle');
+    var restScreenEl = document.getElementById('rest-screen');
+    var sunBoxEl = document.getElementById('sun-box');
+    var moonBoxEl = document.getElementById('moon-box');
+    var sunRaysEl = document.getElementById('sun-rays');
+    var moonStarEl = document.getElementById('moon-star');
+    var trackSlots = document.querySelectorAll('.track-slot');
+
     var steam1El = document.getElementById('steam-1');
     var steam2El = document.getElementById('steam-2');
     var steam3El = document.getElementById('steam-3');
 
-    setInterval(function() {
-      if (currentMode === 0) {
-        steamStep = (steamStep + 1) % STEAM_PATHS.length;
-        var cur = STEAM_PATHS[steamStep];
-        steam1El.setAttribute('d', cur.s1);
-        steam2El.setAttribute('d', cur.s2);
-        steam3El.setAttribute('d', cur.s3);
+    var STEAM_PATHS = [
+      {
+        s1: 'M36 22 Q 32 14 36 6',
+        s2: 'M48 22 Q 44 14 48 6',
+        s3: 'M60 22 Q 56 14 60 6'
+      },
+      {
+        s1: 'M36 22 Q 40 14 36 6',
+        s2: 'M48 22 Q 52 14 48 6',
+        s3: 'M60 22 Q 64 14 60 6'
+      },
+      {
+        s1: 'M36 22 Q 34 14 38 5',
+        s2: 'M48 22 Q 46 14 50 5',
+        s3: 'M60 22 Q 58 14 62 5'
       }
-    }, 2000);
+    ];
 
-    /* ================= 方案 2: 烟花 ================= */
+    // 动态校准横屏尺寸
+    function updateLayoutDimensions() {
+      var isPortrait = document.body.classList.contains('portrait-mode');
+      if (isPortrait) {
+        containerEl.style.width = '';
+        containerEl.style.height = '';
+        return;
+      }
+      var w = window.innerWidth || document.documentElement.clientWidth || 600;
+      var h = window.innerHeight || document.documentElement.clientHeight || 800;
+      var screenLong = Math.max(w, h);
+      var screenShort = Math.min(w, h);
+      containerEl.style.width = (screenLong - 6) + 'px';
+      containerEl.style.height = (screenShort - 14) + 'px';
+    }
+
+    function toggleScreenOrientation() {
+      var current = localStorage.getItem('kindle_pomodoro_orient');
+      var next = (current === 'portrait') ? 'landscape' : 'portrait';
+      try {
+        localStorage.setItem('kindle_pomodoro_orient', next);
+      } catch(e) {}
+      window.location.reload();
+    }
+
+    function initSavedOrientation() {
+      var saved = localStorage.getItem('kindle_pomodoro_orient');
+      if (saved === 'portrait') {
+        document.body.classList.add('portrait-mode');
+      }
+      updateLayoutDimensions();
+    }
+
+    function initSavedFont() {
+      var saved = localStorage.getItem('kindle_pomodoro_font');
+      if (saved !== null) {
+        currentFontIndex = parseInt(saved, 10) || 0;
+        if (currentFontIndex >= TOTAL_FONTS) {
+          currentFontIndex = 0;
+        }
+      }
+      applyFont();
+    }
+
+    function switchFont() {
+      currentFontIndex = (currentFontIndex + 1) % TOTAL_FONTS;
+      try {
+        localStorage.setItem('kindle_pomodoro_font', currentFontIndex);
+      } catch(e) {}
+      applyFont();
+    }
+
+    function applyFont() {
+      timerTextEl.className = 'timer-text font-style-' + currentFontIndex;
+    }
+
+    function getLocalHour() {
+      var d = new Date();
+      var tzOffset = d.getTimezoneOffset();
+      if (tzOffset === 0) {
+        return (d.getUTCHours() + 8) % 24;
+      }
+      return d.getHours();
+    }
+
+    function updateDayNightMode() {
+      var hour = getLocalHour();
+      isDayTime = (hour >= 6 && hour < 18);
+      renderSkyIcon();
+    }
+
+    function renderSkyIcon() {
+      if (isDayTime) {
+        sunBoxEl.style.display = 'block';
+        moonBoxEl.style.display = 'none';
+      } else {
+        sunBoxEl.style.display = 'none';
+        moonBoxEl.style.display = 'block';
+      }
+    }
+
+    function clearTracks() {
+      for (var i = 0; i < TOTAL_SLOTS; i++) {
+        trackSlots[i].innerHTML = '';
+        trackSlots[i].className = 'track-slot';
+      }
+      hasStarted = false;
+    }
+
+    function startAnimalTracks() {
+      var randIndex = Math.floor(Math.random() * ANIMALS.length);
+      currentAnimal = ANIMALS[randIndex];
+      for (var i = 0; i < TOTAL_SLOTS; i++) {
+        trackSlots[i].innerHTML = currentAnimal.svg;
+        trackSlots[i].className = 'track-slot';
+      }
+      hasStarted = true;
+      updateProgressTracks();
+    }
+
+    function updateProgressTracks() {
+      if (!hasStarted || !currentAnimal) {
+        return;
+      }
+
+      var progressRatio = (totalTime - timeLeft) / totalTime;
+      var leadIndex = Math.min(TOTAL_SLOTS - 1, Math.floor(progressRatio * TOTAL_SLOTS));
+      var count = currentAnimal.feetCount;
+
+      for (var i = 0; i < TOTAL_SLOTS; i++) {
+        trackSlots[i].className = 'track-slot';
+      }
+
+      for (var k = 0; k < count; k++) {
+        var pos = leadIndex - k;
+        if (pos >= 0 && pos < TOTAL_SLOTS) {
+          trackSlots[pos].className = 'track-slot active';
+        }
+      }
+    }
+
+    function tickSkyBadge() {
+      if (isDayTime) {
+        sunAngle = (sunAngle + 15) % 360;
+        sunRaysEl.style.webkitTransform = 'rotate(' + sunAngle + 'deg)';
+        sunRaysEl.style.transform = 'rotate(' + sunAngle + 'deg)';
+      } else {
+        starToggled = !starToggled;
+        var starAngle = starToggled ? 20 : 0;
+        moonStarEl.style.webkitTransform = 'rotate(' + starAngle + 'deg)';
+        moonStarEl.style.transform = 'rotate(' + starAngle + 'deg)';
+      }
+    }
+
+    function formatTime(seconds) {
+      var totalMinutes = Math.ceil(seconds / 60);
+      if (totalMinutes <= 0) return '00:00';
+
+      var hours = Math.floor(totalMinutes / 60);
+      var mins = totalMinutes % 60;
+
+      var strH = (hours < 10 ? '0' : '') + hours;
+      var strM = (mins < 10 ? '0' : '') + mins;
+      return strH + ':' + strM;
+    }
+
+    function updateDisplay() {
+      timerTextEl.innerText = formatTime(timeLeft);
+      updateProgressTracks();
+    }
+
+    function toggleTimer() {
+      if (timerId) {
+        clearInterval(timerId);
+        timerId = null;
+        toggleBtn.innerText = '开始';
+      } else {
+        if (timeLeft <= 0 || !hasStarted) {
+          timeLeft = totalTime;
+          startAnimalTracks();
+        }
+        updateDayNightMode();
+        timerId = setInterval(tick, 1000);
+        toggleBtn.innerText = '暂停';
+      }
+    }
+
+    function tick() {
+      if (timeLeft > 0) {
+        timeLeft--;
+
+        var elapsed = totalTime - timeLeft;
+
+        if (elapsed % SKY_INTERVAL === 0) {
+          tickSkyBadge();
+        }
+
+        updateProgressTracks();
+
+        if (timeLeft % 60 === 0 || timeLeft === 0) {
+          updateDisplay();
+        }
+      } else {
+        clearInterval(timerId);
+        timerId = null;
+        toggleBtn.innerText = '开始';
+        timeLeft = totalTime;
+        clearTracks();
+        updateDisplay();
+        
+        showRestScreen();
+      }
+    }
+
+    /* ================= 休息界面动画控制 ================= */
+    restPanels = [
+      document.getElementById('rest-panel-0'),
+      document.getElementById('rest-panel-1'),
+      document.getElementById('rest-panel-2')
+    ];
+
     var fwStep = 0;
-    var TOTAL_FRAMES = 6;
+    var TOTAL_FW_FRAMES = 6;
     var fwFrames = [];
-    for (var i = 0; i < TOTAL_FRAMES; i++) {
+    for (var i = 0; i < TOTAL_FW_FRAMES; i++) {
       fwFrames.push(document.getElementById('frame-' + i));
     }
 
-    setInterval(function() {
-      if (currentMode === 1) {
-        fwStep = (fwStep + 1) % TOTAL_FRAMES;
-        for (var k = 0; k < TOTAL_FRAMES; k++) {
-          if (k === fwStep) {
-            fwFrames[k].className = 'fw-frame active';
-          } else {
-            fwFrames[k].className = 'fw-frame';
-          }
-        }
-      }
-    }, 800);
-
-    /* ================= 方案 3: 像素猫与像素 ZZZ 动态切换 ================= */
     var pixelCatStep = 0;
     var catP0 = document.getElementById('cat-p0');
     var catP1 = document.getElementById('cat-p1');
 
-    setInterval(function() {
-      if (currentMode === 2) {
-        pixelCatStep = 1 - pixelCatStep;
-        if (pixelCatStep === 0) {
-          catP0.className = 'cat-frame active';
-          catP1.className = 'cat-frame';
-        } else {
-          catP0.className = 'cat-frame';
-          catP1.className = 'cat-frame active';
-        }
-      }
-    }, 1000);
+    function showRestScreen() {
+      activeRestIndex = 0;
+      updateActiveRestPanel();
+      restScreenEl.className = 'rest-screen active';
 
-    /* ================= 切换方案逻辑 ================= */
-    function toggleMode() {
-      currentMode = (currentMode + 1) % 3;
+      if (restAnimTimer) clearInterval(restAnimTimer);
       
-      panelCoffeeEl.className = 'view-panel';
-      panelFireworkEl.className = 'view-panel';
-      panelCatEl.className = 'view-panel';
+      // 统一驱动各休息动画的定时器 (每 800ms 驱动一次帧步进)
+      restAnimTimer = setInterval(function() {
+        if (!restScreenEl.classList.contains('active')) return;
 
-      if (currentMode === 0) {
-        modeTextEl.innerText = '方案 A：摇曳热气咖啡';
-        panelCoffeeEl.className = 'view-panel active';
-      } else if (currentMode === 1) {
-        modeTextEl.innerText = '方案 B：双烟花 + 极简碎纸';
-        panelFireworkEl.className = 'view-panel active';
-      } else {
-        modeTextEl.innerText = '方案 C：像素风趴睡小猫';
-        panelCatEl.className = 'view-panel active';
+        if (activeRestIndex === 0) {
+          // 咖啡热气
+          restSteamStep = (restSteamStep + 1) % STEAM_PATHS.length;
+          var cur = STEAM_PATHS[restSteamStep];
+          steam1El.setAttribute('d', cur.s1);
+          steam2El.setAttribute('d', cur.s2);
+          steam3El.setAttribute('d', cur.s3);
+        } else if (activeRestIndex === 1) {
+          // 烟花
+          fwStep = (fwStep + 1) % TOTAL_FW_FRAMES;
+          for (var k = 0; k < TOTAL_FW_FRAMES; k++) {
+            fwFrames[k].className = (k === fwStep) ? 'fw-frame active' : 'fw-frame';
+          }
+        } else if (activeRestIndex === 2) {
+          // 像素猫尾巴与 ZZZ
+          pixelCatStep = 1 - pixelCatStep;
+          if (pixelCatStep === 0) {
+            catP0.className = 'cat-frame active';
+            catP1.className = 'cat-frame';
+          } else {
+            catP0.className = 'cat-frame';
+            catP1.className = 'cat-frame active';
+          }
+        }
+      }, 800);
+    }
+
+    function updateActiveRestPanel() {
+      for (var j = 0; j < restPanels.length; j++) {
+        restPanels[j].className = (j === activeRestIndex) ? 'rest-panel active' : 'rest-panel';
       }
     }
+
+    // 点击休息界面：单次点击切换下一个休息方案，若想返回主界面可设置最后方案再点击返回，或保持循环切换
+    function handleRestScreenClick(e) {
+      e.stopPropagation();
+      activeRestIndex = (activeRestIndex + 1) % restPanels.length;
+      updateActiveRestPanel();
+    }
+
+    function addMinutes(mins) {
+      if (timerId) {
+        clearInterval(timerId);
+        timerId = null;
+        toggleBtn.innerText = '开始';
+      }
+
+      var currentMins = Math.round(totalTime / 60);
+      currentMins += mins;
+
+      if (currentMins < 5) {
+        currentMins = 5;
+      } else if (currentMins > 120) {
+        currentMins = 120;
+      }
+
+      totalTime = currentMins * 60;
+      timeLeft = totalTime;
+      clearTracks();
+      updateDayNightMode();
+      updateDisplay();
+    }
+
+    window.onresize = updateLayoutDimensions;
+
+    // 页面启动与多阶段重绘校准
+    initSavedOrientation();
+    initSavedFont();
+    updateDayNightMode();
+    clearTracks();
+    updateDisplay();
+
+    window.addEventListener('load', function() {
+      updateLayoutDimensions();
+    });
+
+    setTimeout(function() {
+      updateLayoutDimensions();
+    }, 100);
   </script>
 </body>
 </html>
