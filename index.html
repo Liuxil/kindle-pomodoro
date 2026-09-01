@@ -46,18 +46,18 @@
       -webkit-box-align: center;
       -webkit-align-items: center;
       align-items: center;
-      padding: 4px 16px 8px 16px;
+      padding: 6px 20px 10px 20px;
       overflow: hidden !important;
     }
 
-    /* 竖屏模式 */
+    /* 竖屏模式：同源流式自适应排版，左右留出极细物理边距 */
     body.portrait-mode .container {
       position: static;
       width: 100% !important;
       height: 100% !important;
       -webkit-transform: none !important;
       transform: none !important;
-      padding: 6px 12px 16px 12px;
+      padding: 6px 8px 16px 8px;
     }
 
     /* 顶部天象部件（60px 大图标） */
@@ -122,7 +122,7 @@
       transition: none;
     }
 
-    /* 中间主体区 */
+    /* 中间主体区：自动填满垂直可用空间并居中 */
     .main-section {
       width: 100%;
       -webkit-box-flex: 1;
@@ -149,10 +149,6 @@
       display: -webkit-box;
       display: -webkit-flex;
       display: flex;
-      -webkit-box-orient: vertical;
-      -webkit-box-direction: normal;
-      -webkit-flex-direction: column;
-      flex-direction: column;
       -webkit-box-pack: center;
       -webkit-justify-content: center;
       justify-content: center;
@@ -162,31 +158,20 @@
       cursor: pointer;
     }
 
-    /* 横屏模式：单行 230px 极限大字 */
+    /* 横屏单行大字：撑满屏幕横向空间 */
     .timer-text {
-      font-size: 230px;
-      line-height: 0.86;
+      font-size: 215px;
+      line-height: 0.88;
       text-align: center;
       width: 100%;
       display: block;
       white-space: nowrap;
     }
-    .timer-part-sec, .timer-colon {
-      display: inline;
-    }
 
-    /* 竖屏模式：上下分行 240px 极限大字展示 */
+    /* 竖屏单行大字：紧凑字间距吃满可用宽度 */
     body.portrait-mode .timer-text {
-      font-size: 240px;
-      line-height: 0.82;
-      letter-spacing: -6px;
-    }
-    body.portrait-mode .timer-colon {
-      display: none; /* 竖屏分行时隐藏中间冒号 */
-    }
-    body.portrait-mode .timer-part-sec {
-      display: block;
-      margin-top: -12px;
+      font-size: 168px;
+      line-height: 0.85;
     }
 
     /* 方案 0: 极细物理描边字（1.5px 极细镂空线条） */
@@ -196,7 +181,10 @@
       letter-spacing: -3px;
       color: transparent !important;
       -webkit-text-fill-color: transparent !important;
-      -webkit-text-stroke: 1.6px #000000;
+      -webkit-text-stroke: 1.5px #000000;
+    }
+    body.portrait-mode .font-style-0 {
+      letter-spacing: -6px;
     }
 
     /* 方案 1: 胶囊几何细圆（端点圆润治愈） */
@@ -208,6 +196,9 @@
       -webkit-text-fill-color: #000000;
       -webkit-text-stroke: 0;
     }
+    body.portrait-mode .font-style-1 {
+      letter-spacing: -7px;
+    }
 
     /* 方案 2: Kindle 官方古典雅致细体（Baskerville） */
     .font-style-2 {
@@ -217,6 +208,9 @@
       color: #000000;
       -webkit-text-fill-color: #000000;
       -webkit-text-stroke: 0;
+    }
+    body.portrait-mode .font-style-2 {
+      letter-spacing: -3px;
     }
 
     /* 脚印宽幅长轨道 (16 档卡槽) */
@@ -232,11 +226,11 @@
       -webkit-box-align: center;
       -webkit-align-items: center;
       align-items: center;
-      margin-top: 4px;
+      margin-top: 6px;
     }
     body.portrait-mode .tracks-container {
       width: 96%;
-      margin-top: 10px;
+      margin-top: 12px;
     }
     .track-slot {
       width: 20px;
@@ -293,7 +287,7 @@
       display: -webkit-box;
       display: -webkit-flex;
       display: flex;
-      gap: 10px;
+      gap: 12px;
     }
     button {
       background: #ffffff;
@@ -308,8 +302,8 @@
       color: #ffffff;
     }
     .btn-adjust {
-      font-size: 18px;
-      padding: 5px 14px;
+      font-size: 20px;
+      padding: 5px 18px;
     }
     .btn-start {
       font-size: 26px;
@@ -359,11 +353,9 @@
 
     <!-- 中间主体区 -->
     <div class="main-section">
-      <!-- 倒计时区域（横屏单行 / 竖屏分行大字） -->
+      <!-- 倒计时区域（单行大字，点击循环切换 3 套字体） -->
       <div class="timer-container" onclick="switchFont()">
-        <div class="timer-text font-style-0" id="timer-text">
-          <span id="t-min">00</span><span class="timer-colon">:</span><span id="t-sec" class="timer-part-sec">25</span>
-        </div>
+        <div class="timer-text font-style-0" id="timer-text">00:25</div>
       </div>
       
       <!-- 脚印进度滑槽（16 档宽轨，未开始前保持隐藏） -->
@@ -392,7 +384,6 @@
       <div class="btn-adjust-group">
         <button class="btn-adjust" onclick="addMinutes(5)">+5m</button>
         <button class="btn-adjust" onclick="addMinutes(10)">+10m</button>
-        <button class="btn-adjust" onclick="addMinutes(-5)">-5m</button>
       </div>
       <div>
         <button id="btn-toggle" class="btn-start" onclick="toggleTimer()">开始</button>
@@ -447,8 +438,6 @@
 
     var containerEl = document.getElementById('main-container');
     var timerTextEl = document.getElementById('timer-text');
-    var minNode = document.getElementById('t-min');
-    var secNode = document.getElementById('t-sec');
     var toggleBtn = document.getElementById('btn-toggle');
     var sunBoxEl = document.getElementById('sun-box');
     var moonBoxEl = document.getElementById('moon-box');
@@ -589,22 +578,20 @@
       }
     }
 
-    function formatTimeStrings(seconds) {
+    function formatTime(seconds) {
       var totalMinutes = Math.ceil(seconds / 60);
-      if (totalMinutes <= 0) return ['00', '00'];
+      if (totalMinutes <= 0) return '00:00';
 
       var hours = Math.floor(totalMinutes / 60);
       var mins = totalMinutes % 60;
 
       var strH = (hours < 10 ? '0' : '') + hours;
       var strM = (mins < 10 ? '0' : '') + mins;
-      return [strH, strM];
+      return strH + ':' + strM;
     }
 
     function updateDisplay() {
-      var parts = formatTimeStrings(timeLeft);
-      minNode.innerText = parts[0];
-      secNode.innerText = parts[1];
+      timerTextEl.innerText = formatTime(timeLeft);
       updateProgressTracks();
     }
 
@@ -659,10 +646,8 @@
       var currentMins = Math.round(totalTime / 60);
       currentMins += mins;
 
-      if (currentMins < 5) {
+      if (currentMins > 120) {
         currentMins = 5;
-      } else if (currentMins > 120) {
-        currentMins = 120;
       }
 
       totalTime = currentMins * 60;
