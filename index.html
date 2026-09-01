@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Kindle 纤细字体实机测试</title>
+  <title>金梅细圆实机效果测试</title>
   <style>
     * {
       box-sizing: border-box;
@@ -17,7 +17,7 @@
       font-family: sans-serif;
     }
     h1 {
-      font-size: 20px;
+      font-size: 18px;
       text-align: center;
       margin-bottom: 4px;
     }
@@ -29,7 +29,7 @@
     }
     .test-item {
       border-bottom: 2px solid #000000;
-      padding: 14px 0 10px 0;
+      padding: 14px 0 12px 0;
       text-align: center;
     }
     .label {
@@ -37,160 +37,86 @@
       font-weight: bold;
       margin-bottom: 4px;
       display: block;
-      color: #000;
     }
     .desc {
       font-size: 11px;
       color: #555;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
-    .sample {
-      font-size: 96px;
+
+    /* 方案 A: 标准 CSS 调用金梅字体别名 */
+    .sample-css {
+      font-size: 80px;
       line-height: 1;
       margin: 6px 0;
-      display: block;
-    }
-
-    /* 1. Futura 极细 */
-    .f1 {
-      font-family: "Futura Light", "Futura", sans-serif;
-      font-weight: 100;
-    }
-
-    /* 2. Helvetica Neue 极细 */
-    .f2 {
-      font-family: "Helvetica Neue Light", "Helvetica Neue", "HelveticaNeue-UltraLight", sans-serif;
-      font-weight: 100;
-    }
-
-    /* 3. Bookerly (Kindle 独占衬线) 细体 */
-    .f3 {
-      font-family: "Bookerly", "Bookerly Light", serif;
+      font-family: "金梅新细圆", "KingType New Thin Round", "KingNewThinRound", "KingType", "Yuanti SC", "Hiragino Round Gothic Pro", "圆体-简", sans-serif;
       font-weight: 200;
     }
 
-    /* 4. Baskerville 经典衬线细体 */
-    .f4 {
-      font-family: "Baskerville", serif;
-      font-weight: 200;
-    }
-
-    /* 5. Caecilia (Kindle 预装厚衬线) 细体 */
-    .f5 {
-      font-family: "Caecilia", "PMN Caecilia", serif;
-      font-weight: 200;
-    }
-
-    /* 6. Century Gothic 几何细体 */
-    .f6 {
-      font-family: "Century Gothic", "Apple Gothic", sans-serif;
-      font-weight: 200;
-    }
-
-    /* 7. Gill Sans 优雅人文细体 */
-    .f7 {
-      font-family: "Gill Sans Light", "Gill Sans", sans-serif;
-      font-weight: 200;
-    }
-
-    /* 8. Courier / 等宽细体 */
-    .f8 {
-      font-family: "Courier New", "Courier", monospace;
-      font-weight: 200;
-    }
-
-    /* 9. 无衬线通用 -apple-system 细体 */
-    .f9 {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      font-weight: 100;
-    }
-
-    /* 10. SVG 矢量极细镂空空心体 (必定生效，不受字体库限制) */
-    .svg-thin-sample {
+    /* 矢量容器 */
+    .svg-box {
       height: 90px;
       width: 100%;
       display: flex;
       justify-content: center;
       align-items: center;
-      margin: 6px 0;
+    }
+    .svg-box svg {
+      height: 80px;
+      width: 280px;
     }
   </style>
 </head>
 <body>
 
-  <h1>Kindle 实机字体与粗细测试表</h1>
-  <p class="intro">请在 Kindle 上查看以下各行哪一种字形生效且线条最纤细清晰：</p>
+  <h1>金梅新细圆风格实机对比</h1>
+  <p class="intro">请在 Kindle 上查看以下哪套极细圆角字形最清晰耐看：</p>
 
-  <!-- 1 -->
+  <!-- 1. CSS 直接声明 -->
   <div class="test-item">
-    <span class="label">【编号 1】Futura Light (100)</span>
-    <div class="desc">font-family: "Futura Light", "Futura"; weight: 100</div>
-    <span class="sample f1">00:25</span>
+    <span class="label">【方案 1】CSS 原生金梅新细圆别名声明</span>
+    <div class="desc">依赖系统是否内置该字库，未内置时会回退为默认字体</div>
+    <div class="sample-css">00:25</div>
   </div>
 
-  <!-- 2 -->
+  <!-- 2. 矢量仿真：超细圆角（1.5px 极幼圆角） -->
   <div class="test-item">
-    <span class="label">【编号 2】Helvetica Neue UltraLight (100)</span>
-    <div class="desc">font-family: "Helvetica Neue Light", "Helvetica Neue"; weight: 100</div>
-    <span class="sample f2">00:25</span>
+    <span class="label">【方案 2】矢量仿真 · 超细胶囊圆角（1.5px 线条）</span>
+    <div class="desc">纯矢量圆角生成，线条极其纤细，端点柔和圆润</div>
+    <div class="svg-box">
+      <svg viewBox="0 0 280 80">
+        <!-- 0 -->
+        <rect x="10" y="5" width="46" height="70" rx="23" ry="23" fill="none" stroke="#000" stroke-width="1.8"/>
+        <!-- 0 -->
+        <rect x="70" y="5" width="46" height="70" rx="23" ry="23" fill="none" stroke="#000" stroke-width="1.8"/>
+        <!-- : -->
+        <circle cx="132" cy="28" r="2.5" fill="#000"/>
+        <circle cx="132" cy="52" r="2.5" fill="#000"/>
+        <!-- 2 -->
+        <path d="M 150 25 C 150 8, 190 8, 190 26 C 190 44, 150 54, 150 74 L 192 74" fill="none" stroke="#000" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        <!-- 5 -->
+        <path d="M 248 8 L 214 8 L 210 38 C 215 34, 252 32, 250 58 C 248 76, 212 76, 210 64" fill="none" stroke="#000" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
   </div>
 
-  <!-- 3 -->
+  <!-- 3. 矢量仿真：舒展微圆角（2.2px 线条） -->
   <div class="test-item">
-    <span class="label">【编号 3】Bookerly Light (200)</span>
-    <div class="desc">Kindle 独家正文字体 | font-family: "Bookerly"; weight: 200</div>
-    <span class="sample f3">00:25</span>
-  </div>
-
-  <!-- 4 -->
-  <div class="test-item">
-    <span class="label">【编号 4】Baskerville Light (200)</span>
-    <div class="desc">Kindle 预装衬线体 | font-family: "Baskerville"; weight: 200</div>
-    <span class="sample f4">00:25</span>
-  </div>
-
-  <!-- 5 -->
-  <div class="test-item">
-    <span class="label">【编号 5】Caecilia (200)</span>
-    <div class="desc">Kindle 原装经典平板衬线 | font-family: "Caecilia"; weight: 200</div>
-    <span class="sample f5">00:25</span>
-  </div>
-
-  <!-- 6 -->
-  <div class="test-item">
-    <span class="label">【编号 6】Century Gothic (200)</span>
-    <div class="desc">正圆几何线条 | font-family: "Century Gothic"; weight: 200</div>
-    <span class="sample f6">00:25</span>
-  </div>
-
-  <!-- 7 -->
-  <div class="test-item">
-    <span class="label">【编号 7】Gill Sans Light (200)</span>
-    <div class="desc">font-family: "Gill Sans Light", "Gill Sans"; weight: 200</div>
-    <span class="sample f7">00:25</span>
-  </div>
-
-  <!-- 8 -->
-  <div class="test-item">
-    <span class="label">【编号 8】Courier New (200)</span>
-    <div class="desc">等宽机械体 | font-family: "Courier New", "Courier"; weight: 200</div>
-    <span class="sample f8">00:25</span>
-  </div>
-
-  <!-- 9 -->
-  <div class="test-item">
-    <span class="label">【编号 9】System-UI Light (100)</span>
-    <div class="desc">系统默认轻量栈 | font-family: -apple-system, sans-serif; weight: 100</div>
-    <span class="sample f9">00:25</span>
-  </div>
-
-  <!-- 10 -->
-  <div class="test-item">
-    <span class="label">【编号 10】SVG 极细物理描边字（1.5px 描边）</span>
-    <div class="desc">不受系统字库限制，通过矢量描边强制呈现极细骨架</div>
-    <div class="svg-thin-sample">
-      <svg viewBox="0 0 320 85" style="height: 100%; width: 300px;">
-        <text x="160" y="70" font-size="80" text-anchor="middle" font-family="sans-serif" fill="none" stroke="#000" stroke-width="2" letter-spacing="2">00:25</text>
+    <span class="label">【方案 3】矢量仿真 · 金梅新细圆标准骨架（2.2px 线条）</span>
+    <div class="desc">黑度适中，圆角弧度更饱满，墨水屏阅读清晰度最高</div>
+    <div class="svg-box">
+      <svg viewBox="0 0 280 80">
+        <!-- 0 -->
+        <rect x="10" y="5" width="46" height="70" rx="23" ry="23" fill="none" stroke="#000" stroke-width="2.4"/>
+        <!-- 0 -->
+        <rect x="70" y="5" width="46" height="70" rx="23" ry="23" fill="none" stroke="#000" stroke-width="2.4"/>
+        <!-- : -->
+        <circle cx="132" cy="28" r="3" fill="#000"/>
+        <circle cx="132" cy="52" r="3" fill="#000"/>
+        <!-- 2 -->
+        <path d="M 150 25 C 150 8, 190 8, 190 26 C 190 44, 150 54, 150 74 L 192 74" fill="none" stroke="#000" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+        <!-- 5 -->
+        <path d="M 248 8 L 214 8 L 210 38 C 215 34, 252 32, 250 58 C 248 76, 212 76, 210 64" fill="none" stroke="#000" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     </div>
   </div>
