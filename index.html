@@ -21,7 +21,7 @@
       font-family: sans-serif;
     }
 
-    /* 默认横屏模式 (90度旋转全屏铺满) */
+    /* 默认横屏模式 (90度旋转全屏流式排版) */
     .container {
       position: absolute;
       top: 50%;
@@ -37,13 +37,13 @@
       -webkit-box-direction: normal;
       -webkit-flex-direction: column;
       flex-direction: column;
-      -webkit-box-pack: start;
-      -webkit-justify-content: flex-start;
-      justify-content: flex-start;
+      -webkit-box-pack: justify;
+      -webkit-justify-content: space-between;
+      justify-content: space-between;
       -webkit-box-align: center;
       -webkit-align-items: center;
       align-items: center;
-      padding: 12px 24px 0 24px;
+      padding: 6px 20px 10px 20px;
     }
 
     /* 竖屏模式 */
@@ -53,16 +53,17 @@
       height: 100%;
       -webkit-transform: none !important;
       transform: none !important;
-      padding: 12px 16px 36px 16px;
+      padding: 10px 16px 24px 16px;
     }
 
     /* 顶部天象部件 */
     .sky-badge {
-      width: 44px;
-      height: 44px;
+      width: 40px;
+      height: 40px;
       position: relative;
       cursor: pointer;
-      margin-bottom: 2px;
+      -webkit-flex-shrink: 0;
+      flex-shrink: 0;
     }
     .sun-box {
       width: 100%;
@@ -83,10 +84,10 @@
       position: absolute;
       top: 50%;
       left: 50%;
-      width: 22px;
-      height: 22px;
-      margin-top: -11px;
-      margin-left: -11px;
+      width: 20px;
+      height: 20px;
+      margin-top: -10px;
+      margin-left: -10px;
       background: #ffffff;
       border: 2px solid #000000;
       border-radius: 50%;
@@ -109,16 +110,20 @@
     }
     .moon-star {
       position: absolute;
-      top: 5px;
+      top: 4px;
       right: 4px;
-      width: 13px;
-      height: 13px;
+      width: 12px;
+      height: 12px;
       -webkit-transition: none;
       transition: none;
     }
 
+    /* 中间主体区：自动填满中间剩余空间 */
     .main-section {
       width: 100%;
+      -webkit-box-flex: 1;
+      -webkit-flex: 1;
+      flex: 1;
       display: -webkit-box;
       display: -webkit-flex;
       display: flex;
@@ -132,13 +137,11 @@
       -webkit-box-pack: center;
       -webkit-justify-content: center;
       justify-content: center;
-      margin-top: 4px;
     }
 
     /* 倒计时主容器 */
     .timer-container {
       width: 100%;
-      height: 210px;
       display: -webkit-box;
       display: -webkit-flex;
       display: flex;
@@ -148,41 +151,40 @@
       -webkit-box-align: center;
       -webkit-align-items: center;
       align-items: center;
-      margin-bottom: 4px;
       cursor: pointer;
     }
 
     .timer-text {
-      font-size: 240px;
-      line-height: 0.95;
+      font-size: 200px;
+      line-height: 0.88;
       text-align: center;
       width: 100%;
     }
     body.portrait-mode .timer-text {
-      font-size: 160px;
+      font-size: 145px;
     }
 
-    /* 3 种精选字体 */
+    /* 3 种精选细体 */
     .font-style-0 {
-      font-family: "Avenir Next Rounded Pro", "Varela Round", "Nunito", "Arial Rounded MT Bold", sans-serif;
-      font-weight: 300;
-      letter-spacing: -2px;
-    }
-    .font-style-1 {
-      font-family: "Helvetica Neue Light", "Helvetica Neue", "Arial Narrow", sans-serif;
-      font-weight: 200;
+      font-family: "Futura Light", "Futura", "Helvetica Neue Light", "Helvetica Neue-UltraLight", sans-serif;
+      font-weight: 100;
       letter-spacing: -4px;
     }
+    .font-style-1 {
+      font-family: "Century Gothic", "Gill Sans Light", "Gill Sans", "Apple Gothic", sans-serif;
+      font-weight: 200;
+      letter-spacing: -2px;
+    }
     .font-style-2 {
-      font-family: "Baskerville", "Garamond", "Georgia", serif;
-      font-weight: 300;
+      font-family: "Baskerville", "Bookerly Light", "Georgia", serif;
+      font-weight: 200;
       letter-spacing: 0px;
     }
 
     /* 脚印宽幅长轨道 (16 档卡槽) */
     .tracks-container {
-      width: 94%;
-      height: 30px;
+      width: 92%;
+      height: 26px;
       display: -webkit-box;
       display: -webkit-flex;
       display: flex;
@@ -192,11 +194,11 @@
       -webkit-box-align: center;
       -webkit-align-items: center;
       align-items: center;
-      margin-top: 2px;
+      margin-top: 6px;
     }
     .track-slot {
-      width: 22px;
-      height: 22px;
+      width: 20px;
+      height: 20px;
       display: -webkit-box;
       display: -webkit-flex;
       display: flex;
@@ -208,8 +210,8 @@
       align-items: center;
     }
     .track-slot svg {
-      width: 19px;
-      height: 19px;
+      width: 18px;
+      height: 18px;
       fill: #000000;
       display: none;
     }
@@ -227,12 +229,9 @@
       display: block;
     }
 
-    /* 底部按钮栏：采用绝对定位死锁在屏幕最底端 */
+    /* 底部按钮栏：流式置底 */
     .footer {
-      position: absolute;
-      bottom: 12px;
-      left: 24px;
-      right: 24px;
+      width: 96%;
       display: -webkit-box;
       display: -webkit-flex;
       display: flex;
@@ -242,12 +241,8 @@
       -webkit-box-align: center;
       -webkit-align-items: center;
       align-items: center;
-    }
-    body.portrait-mode .footer {
-      position: absolute;
-      bottom: 24px;
-      left: 16px;
-      right: 16px;
+      -webkit-flex-shrink: 0;
+      flex-shrink: 0;
     }
     .btn-adjust-group {
       display: -webkit-box;
@@ -268,12 +263,12 @@
       color: #ffffff;
     }
     .btn-adjust {
-      font-size: 22px;
-      padding: 6px 20px;
+      font-size: 20px;
+      padding: 5px 18px;
     }
     .btn-start {
-      font-size: 28px;
-      padding: 6px 48px;
+      font-size: 26px;
+      padding: 5px 44px;
     }
   </style>
 </head>
@@ -345,7 +340,7 @@
       </div>
     </div>
 
-    <!-- 底部按钮：死锁绝对定位在最下方 -->
+    <!-- 底部按钮栏 -->
     <div class="footer">
       <div class="btn-adjust-group">
         <button class="btn-adjust" onclick="addMinutes(5)">+5m</button>
