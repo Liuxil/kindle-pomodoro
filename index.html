@@ -30,32 +30,13 @@
       -webkit-box-direction: normal;
       -webkit-flex-direction: column;
       flex-direction: column;
-      -webkit-box-pack: justify;
-      -webkit-justify-content: space-between;
-      justify-content: space-between;
-      -webkit-box-align: center;
-      -webkit-align-items: center;
-      align-items: center;
-      padding: 35px 20px 45px 20px;
-    }
-    .header {
-      font-size: 32px;
-      font-weight: bold;
-      letter-spacing: 4px;
-    }
-    .timer-wrapper {
-      display: -webkit-box;
-      display: -webkit-flex;
-      display: flex;
-      -webkit-box-align: center;
-      -webkit-align-items: center;
-      align-items: center;
       -webkit-box-pack: center;
       -webkit-justify-content: center;
       justify-content: center;
-      -webkit-box-flex: 1;
-      -webkit-flex: 1;
-      flex: 1;
+      -webkit-box-align: center;
+      -webkit-align-items: center;
+      align-items: center;
+      padding: 20px;
     }
     .timer {
       font-size: 110px;
@@ -63,13 +44,14 @@
       font-family: monospace, sans-serif;
       line-height: 1;
       text-align: center;
+      margin-bottom: 24px;
     }
     .progress-bar-container {
       width: 82%;
       height: 16px;
       border: 3px solid #000000;
       padding: 2px;
-      margin-bottom: 30px;
+      margin-bottom: 70px;
     }
     .progress-bar {
       height: 100%;
@@ -88,13 +70,13 @@
       -webkit-box-align: center;
       -webkit-align-items: center;
       align-items: center;
-      gap: 16px;
+      gap: 28px;
     }
     .btn-row {
       display: -webkit-box;
       display: -webkit-flex;
       display: flex;
-      gap: 16px;
+      gap: 36px;
       -webkit-box-pack: center;
       -webkit-justify-content: center;
       justify-content: center;
@@ -103,9 +85,7 @@
       background: #ffffff;
       color: #000000;
       border: 3px solid #000000;
-      font-size: 26px;
       font-weight: bold;
-      padding: 12px 28px;
       border-radius: 8px;
       cursor: pointer;
     }
@@ -114,42 +94,35 @@
       color: #ffffff;
     }
     .btn-adjust {
-      font-size: 22px;
-      padding: 8px 20px;
-      border: 2px solid #000000;
+      font-size: 24px;
+      padding: 10px 28px;
+    }
+    .btn-start {
+      font-size: 28px;
+      padding: 14px 44px;
     }
   </style>
 </head>
 <body>
 
   <div class="container">
-    <div class="header">专注中</div>
+    <div class="timer" id="timer-display">00:25</div>
 
-    <div class="timer-wrapper">
-      <div class="timer" id="timer-display">25m</div>
-    </div>
-
-    <!-- 进度条 -->
     <div class="progress-bar-container">
       <div class="progress-bar" id="progress-bar"></div>
     </div>
 
     <div class="footer">
-      <!-- 调整时长按钮行 -->
       <div class="btn-row">
         <button class="btn-adjust" onclick="addMinutes(5)">+5m</button>
         <button class="btn-adjust" onclick="addMinutes(10)">+10m</button>
       </div>
-      <!-- 操作按钮行 -->
-      <div class="btn-row">
-        <button id="btn-toggle" onclick="toggleTimer()">开始</button>
-        <button id="btn-reset" onclick="resetTimer()">重置</button>
-      </div>
+      <button id="btn-toggle" class="btn-start" onclick="toggleTimer()">开始</button>
     </div>
   </div>
 
   <script>
-    var totalTime = 25 * 60;  // 默认25分钟
+    var totalTime = 25 * 60;
     var timeLeft = totalTime;
     var timerId = null;
 
@@ -164,13 +137,9 @@
       var hours = Math.floor(totalMinutes / 60);
       var mins = totalMinutes % 60;
 
-      if (hours >= 1) {
-        var strH = (hours < 10 ? '0' : '') + hours;
-        var strM = (mins < 10 ? '0' : '') + mins;
-        return strH + ':' + strM;
-      } else {
-        return totalMinutes + 'm';
-      }
+      var strH = (hours < 10 ? '0' : '') + hours;
+      var strM = (mins < 10 ? '0' : '') + mins;
+      return strH + ':' + strM;
     }
 
     function updateDisplay() {
@@ -208,17 +177,13 @@
       }
     }
 
-    function resetTimer() {
+    function addMinutes(mins) {
       if (timerId) {
         clearInterval(timerId);
         timerId = null;
         toggleBtn.innerText = '开始';
       }
-      timeLeft = totalTime;
-      updateDisplay();
-    }
 
-    function addMinutes(mins) {
       var currentMins = Math.round(totalTime / 60);
       currentMins += mins;
 
@@ -227,7 +192,8 @@
       }
 
       totalTime = currentMins * 60;
-      resetTimer();
+      timeLeft = totalTime;
+      updateDisplay();
     }
 
     updateDisplay();
