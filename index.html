@@ -88,7 +88,7 @@
       height: 160px;
     }
 
-    /* 方案 2：烟花多帧容器 */
+    /* 方案 2：烟花容器 */
     .firework-stage {
       width: 320px;
       height: 420px;
@@ -103,6 +103,23 @@
       display: none;
     }
     .fw-frame.active {
+      display: block;
+    }
+
+    /* 方案 3：自然风景容器 */
+    .landscape-stage {
+      width: 320px;
+      height: 420px;
+      position: relative;
+    }
+    .nature-svg {
+      width: 100%;
+      height: 100%;
+    }
+    .bird-frame {
+      display: none;
+    }
+    .bird-frame.active {
       display: block;
     }
   </style>
@@ -127,43 +144,35 @@
       </div>
     </div>
 
-    <!-- 方案 2: 双烟花 + 极简碎纸（纯 DIV 帧切换，确保 100% 触发重绘） -->
+    <!-- 方案 2: 双烟花 + 碎纸 -->
     <div class="view-panel" id="panel-firework">
       <div class="firework-stage">
-        
-        <!-- 帧 0: 左侧升空 + 碎纸高位 A -->
+        <!-- 帧 0 -->
         <div class="fw-frame active" id="frame-0">
           <svg viewBox="0 0 320 420" style="width:100%;height:100%;">
-            <!-- 左升空 -->
             <circle cx="90" cy="200" r="3" fill="#000"/>
             <line x1="90" y1="205" x2="90" y2="235" stroke="#000" stroke-width="2" stroke-dasharray="3 4" stroke-linecap="round"/>
-            <!-- 碎纸 A (高) -->
             <rect x="60" y="60" width="8" height="3.5" rx="1" fill="#000" transform="rotate(25 60 60)"/>
             <rect x="180" y="45" width="7" height="3.5" rx="1" fill="none" stroke="#000" stroke-width="1.2" transform="rotate(-30 180 45)"/>
             <circle cx="270" cy="80" r="1.8" fill="#000"/>
           </svg>
         </div>
-
-        <!-- 帧 1: 左侧初绽 + 碎纸中位 A -->
+        <!-- 帧 1 -->
         <div class="fw-frame" id="frame-1">
           <svg viewBox="0 0 320 420" style="width:100%;height:100%;" fill="none" stroke="#000" stroke-linecap="round">
-            <!-- 左初绽 -->
             <line x1="90" y1="115" x2="90" y2="100" stroke-width="2.4"/>
             <line x1="90" y1="145" x2="90" y2="160" stroke-width="2.4"/>
             <line x1="75" y1="130" x2="60" y2="130" stroke-width="2.4"/>
             <line x1="105" y1="130" x2="120" y2="130" stroke-width="2.4"/>
             <circle cx="90" cy="130" r="2.5" fill="#000" stroke="none"/>
-            <!-- 碎纸 A (中) -->
             <rect x="62" y="140" width="8" height="3.5" rx="1" fill="#000" transform="rotate(15 62 140)"/>
             <rect x="178" y="125" width="7" height="3.5" rx="1" fill="none" stroke="#000" stroke-width="1.2" transform="rotate(-15 178 125)"/>
             <circle cx="268" cy="160" r="1.8" fill="#000" stroke="none"/>
           </svg>
         </div>
-
-        <!-- 帧 2: 左侧大盛开 + 碎纸低位 A + 右侧升空准备 -->
+        <!-- 帧 2 -->
         <div class="fw-frame" id="frame-2">
           <svg viewBox="0 0 320 420" style="width:100%;height:100%;" fill="none" stroke="#000" stroke-linecap="round">
-            <!-- 左盛开 -->
             <line x1="90" y1="95" x2="90" y2="70" stroke-width="2.2"/>
             <line x1="90" y1="165" x2="90" y2="190" stroke-width="2.2"/>
             <line x1="55" y1="130" x2="30" y2="130" stroke-width="2.2"/>
@@ -176,46 +185,37 @@
             <circle cx="90" cy="200" r="1.8" fill="#000" stroke="none"/>
             <circle cx="20" cy="130" r="1.8" fill="#000" stroke="none"/>
             <circle cx="160" cy="130" r="1.8" fill="#000" stroke="none"/>
-            <!-- 碎纸 A (低) -->
             <rect x="65" y="240" width="8" height="3.5" rx="1" fill="#000" transform="rotate(-15 65 240)"/>
             <rect x="175" y="225" width="7" height="3.5" rx="1" fill="none" stroke="#000" stroke-width="1.2" transform="rotate(20 175 225)"/>
             <circle cx="265" cy="260" r="1.8" fill="#000" stroke="none"/>
           </svg>
         </div>
-
-        <!-- 帧 3: 右侧升空 + 碎纸高位 B -->
+        <!-- 帧 3 -->
         <div class="fw-frame" id="frame-3">
           <svg viewBox="0 0 320 420" style="width:100%;height:100%;">
-            <!-- 右升空 -->
             <circle cx="230" cy="220" r="3" fill="#000"/>
             <line x1="230" y1="225" x2="230" y2="255" stroke="#000" stroke-width="2" stroke-dasharray="3 4" stroke-linecap="round"/>
-            <!-- 碎纸 B (高) -->
             <rect x="120" y="55" width="8" height="3.5" rx="1" fill="none" stroke="#000" stroke-width="1.2" transform="rotate(35 120 55)"/>
             <rect x="220" y="70" width="7.5" height="3.5" rx="1" fill="#000" transform="rotate(-20 220 70)"/>
             <circle cx="75" cy="90" r="1.8" fill="#000"/>
           </svg>
         </div>
-
-        <!-- 帧 4: 右侧初绽 + 碎纸中位 B -->
+        <!-- 帧 4 -->
         <div class="fw-frame" id="frame-4">
           <svg viewBox="0 0 320 420" style="width:100%;height:100%;" fill="none" stroke="#000" stroke-linecap="round">
-            <!-- 右初绽 -->
             <line x1="230" y1="135" x2="230" y2="120" stroke-width="2.4"/>
             <line x1="230" y1="165" x2="230" y2="180" stroke-width="2.4"/>
             <line x1="215" y1="150" x2="200" y2="150" stroke-width="2.4"/>
             <line x1="245" y1="150" x2="260" y2="150" stroke-width="2.4"/>
             <circle cx="230" cy="150" r="2.5" fill="#000" stroke="none"/>
-            <!-- 碎纸 B (中) -->
             <rect x="122" y="145" width="8" height="3.5" rx="1" fill="none" stroke="#000" stroke-width="1.2" transform="rotate(20 122 145)"/>
             <rect x="218" y="160" width="7.5" height="3.5" rx="1" fill="#000" transform="rotate(-10 218 160)"/>
             <circle cx="78" cy="180" r="1.8" fill="#000" stroke="none"/>
           </svg>
         </div>
-
-        <!-- 帧 5: 右侧大盛开 + 碎纸低位 B -->
+        <!-- 帧 5 -->
         <div class="fw-frame" id="frame-5">
           <svg viewBox="0 0 320 420" style="width:100%;height:100%;" fill="none" stroke="#000" stroke-linecap="round">
-            <!-- 右盛开 -->
             <line x1="230" y1="115" x2="230" y2="90" stroke-width="2.2"/>
             <line x1="230" y1="185" x2="230" y2="210" stroke-width="2.2"/>
             <line x1="195" y1="150" x2="170" y2="150" stroke-width="2.2"/>
@@ -228,13 +228,78 @@
             <circle cx="230" cy="220" r="1.8" fill="#000" stroke="none"/>
             <circle cx="160" cy="150" r="1.8" fill="#000" stroke="none"/>
             <circle cx="300" cy="150" r="1.8" fill="#000" stroke="none"/>
-            <!-- 碎纸 B (低) -->
             <rect x="125" y="255" width="8" height="3.5" rx="1" fill="none" stroke="#000" stroke-width="1.2" transform="rotate(-20 125 255)"/>
             <rect x="215" y="270" width="7.5" height="3.5" rx="1" fill="#000" transform="rotate(15 215 270)"/>
             <circle cx="80" cy="290" r="1.8" fill="#000" stroke="none"/>
           </svg>
         </div>
+      </div>
+    </div>
 
+    <!-- 方案 3: 远山落日飞鸟（静态风景 + 纯原生多帧飞鸟掠空） -->
+    <div class="view-panel" id="panel-nature">
+      <div class="landscape-stage">
+        <svg viewBox="0 0 320 420" class="nature-svg">
+          
+          <!-- ================= 静态背景层 ================= -->
+          <!-- 1. 巨大落日轮廓 -->
+          <circle cx="160" cy="180" r="62" fill="none" stroke="#000" stroke-width="2.5"/>
+
+          <!-- 2. 远山轮廓 (背景山脊) -->
+          <path d="M-20 270 L70 190 L160 260 L240 180 L340 270" fill="none" stroke="#000" stroke-width="2.2" stroke-linejoin="round"/>
+          <path d="M40 260 L100 215 L180 280" fill="none" stroke="#000" stroke-width="1.6" stroke-linejoin="round"/>
+
+          <!-- 3. 近景山体 (带填充阻断) -->
+          <path d="M-10 320 L90 240 L190 320 L270 250 L330 310 L330 420 L-10 420 Z" fill="#ffffff" stroke="#000" stroke-width="2.5" stroke-linejoin="round"/>
+
+          <!-- 4. 山脚松林剪影 -->
+          <!-- 左侧林群 -->
+          <path d="M30 320 L40 295 L50 320 Z" fill="#000"/>
+          <path d="M45 320 L55 285 L65 320 Z" fill="#000"/>
+          <path d="M60 320 L68 300 L76 320 Z" fill="#000"/>
+          <!-- 中右侧林群 -->
+          <path d="M210 320 L220 290 L230 320 Z" fill="#000"/>
+          <path d="M225 320 L235 280 L245 320 Z" fill="#000"/>
+          <path d="M240 320 L250 295 L260 320 Z" fill="#000"/>
+          <path d="M255 320 L263 305 L271 320 Z" fill="#000"/>
+
+          <!-- 地平线底线 -->
+          <line x1="20" y1="350" x2="300" y2="350" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+
+          <!-- ================= 动态飞鸟层 (5帧错落掠空) ================= -->
+          <!-- 飞鸟 帧 0: 左侧刚入画 (上展翅) -->
+          <g class="bird-frame active" id="bird-f0">
+            <!-- 领头大鸟 -->
+            <path d="M45 105 Q 55 95 62 105 Q 69 95 79 105" fill="none" stroke="#000" stroke-width="2.4" stroke-linecap="round"/>
+            <!-- 伴随小鸟 -->
+            <path d="M25 125 Q 32 118 37 125 Q 42 118 49 125" fill="none" stroke="#000" stroke-width="1.8" stroke-linecap="round"/>
+          </g>
+
+          <!-- 飞鸟 帧 1: 左中位置 (平展/下扑翅) -->
+          <g class="bird-frame" id="bird-f1">
+            <path d="M100 95 Q 110 102 117 95 Q 124 102 134 95" fill="none" stroke="#000" stroke-width="2.4" stroke-linecap="round"/>
+            <path d="M78 113 Q 85 119 90 113 Q 95 119 102 113" fill="none" stroke="#000" stroke-width="1.8" stroke-linecap="round"/>
+          </g>
+
+          <!-- 飞鸟 帧 2: 正中飞越落日 (上展翅) -->
+          <g class="bird-frame" id="bird-f2">
+            <path d="M155 85 Q 165 75 172 85 Q 179 75 189 85" fill="none" stroke="#000" stroke-width="2.4" stroke-linecap="round"/>
+            <path d="M132 102 Q 139 95 144 102 Q 149 95 156 102" fill="none" stroke="#000" stroke-width="1.8" stroke-linecap="round"/>
+          </g>
+
+          <!-- 飞鸟 帧 3: 右中位置 (平展/下扑翅) -->
+          <g class="bird-frame" id="bird-f3">
+            <path d="M210 78 Q 220 85 227 78 Q 234 85 244 78" fill="none" stroke="#000" stroke-width="2.4" stroke-linecap="round"/>
+            <path d="M185 93 Q 192 99 197 93 Q 202 99 209 93" fill="none" stroke="#000" stroke-width="1.8" stroke-linecap="round"/>
+          </g>
+
+          <!-- 飞鸟 帧 4: 右侧远去 (上展翅微缩) -->
+          <g class="bird-frame" id="bird-f4">
+            <path d="M265 70 Q 274 62 280 70 Q 286 62 295 70" fill="none" stroke="#000" stroke-width="2.2" stroke-linecap="round"/>
+            <path d="M242 83 Q 248 77 253 83 Q 258 77 264 83" fill="none" stroke="#000" stroke-width="1.6" stroke-linecap="round"/>
+          </g>
+
+        </svg>
       </div>
     </div>
 
@@ -243,10 +308,11 @@
   </div>
 
   <script>
-    var currentMode = 0; // 0: 咖啡, 1: 烟花
+    var currentMode = 0; // 0: 咖啡, 1: 烟花, 2: 远山落日
     var modeTextEl = document.getElementById('mode-text');
     var panelCoffeeEl = document.getElementById('panel-coffee');
     var panelFireworkEl = document.getElementById('panel-firework');
+    var panelNatureEl = document.getElementById('panel-nature');
 
     /* ================= 方案 1: 咖啡热气（2000ms 慢节奏） ================= */
     var STEAM_PATHS = [
@@ -269,37 +335,58 @@
       }
     }, 2000);
 
-    /* ================= 方案 2: 烟花（800ms 原生帧切换，稳定可靠） ================= */
+    /* ================= 方案 2: 烟花（800ms 原生帧切换） ================= */
     var fwStep = 0;
-    var TOTAL_FRAMES = 6;
+    var TOTAL_FW_FRAMES = 6;
     var fwFrames = [];
-    for (var i = 0; i < TOTAL_FRAMES; i++) {
+    for (var i = 0; i < TOTAL_FW_FRAMES; i++) {
       fwFrames.push(document.getElementById('frame-' + i));
     }
 
     setInterval(function() {
       if (currentMode === 1) {
-        fwStep = (fwStep + 1) % TOTAL_FRAMES;
-        for (var k = 0; k < TOTAL_FRAMES; k++) {
-          if (k === fwStep) {
-            fwFrames[k].className = 'fw-frame active';
-          } else {
-            fwFrames[k].className = 'fw-frame';
-          }
+        fwStep = (fwStep + 1) % TOTAL_FW_FRAMES;
+        for (var k = 0; k < TOTAL_FW_FRAMES; k++) {
+          fwFrames[k].className = (k === fwStep) ? 'fw-frame active' : 'fw-frame';
         }
       }
     }, 800);
 
+    /* ================= 方案 3: 飞鸟掠空（1200ms 舒缓悠闲步进） ================= */
+    var birdStep = 0;
+    var TOTAL_BIRD_FRAMES = 5;
+    var birdFrames = [];
+    for (var b = 0; b < TOTAL_BIRD_FRAMES; b++) {
+      birdFrames.push(document.getElementById('bird-f' + b));
+    }
+
+    setInterval(function() {
+      if (currentMode === 2) {
+        birdStep = (birdStep + 1) % TOTAL_BIRD_FRAMES;
+        for (var j = 0; j < TOTAL_BIRD_FRAMES; j++) {
+          birdFrames[j].className = (j === birdStep) ? 'bird-frame active' : 'bird-frame';
+        }
+      }
+    }, 1200);
+
+    /* ================= 切换模式 ================= */
     function toggleMode() {
-      currentMode = (currentMode === 0) ? 1 : 0;
+      currentMode = (currentMode + 1) % 3;
       if (currentMode === 0) {
         modeTextEl.innerText = '方案 A：摇曳热气咖啡';
         panelCoffeeEl.className = 'view-panel active';
         panelFireworkEl.className = 'view-panel';
-      } else {
+        panelNatureEl.className = 'view-panel';
+      } else if (currentMode === 1) {
         modeTextEl.innerText = '方案 B：双烟花 + 极简碎纸';
         panelCoffeeEl.className = 'view-panel';
         panelFireworkEl.className = 'view-panel active';
+        panelNatureEl.className = 'view-panel';
+      } else {
+        modeTextEl.innerText = '方案 C：远山落日飞鸟';
+        panelCoffeeEl.className = 'view-panel';
+        panelFireworkEl.className = 'view-panel';
+        panelNatureEl.className = 'view-panel active';
       }
     }
   </script>
