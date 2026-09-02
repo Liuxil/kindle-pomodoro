@@ -9,6 +9,12 @@
   <meta name="apple-mobile-web-app-title" content="番茄钟">
   <link rel="apple-touch-icon" href="icon.png">
   <title>Pomodoro</title>
+  
+  <!-- 引入类似 7段式液晶的电子字体 -->
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+  </style>
+
   <style>
     * {
       box-sizing: border-box;
@@ -38,9 +44,6 @@
       box-sizing: border-box;
     }
 
-    /* 
-      1. 基础容器，加入过渡动画让旋转更平滑 
-    */
     #app-container {
       position: absolute;
       top: 50%; left: 50%;
@@ -75,13 +78,13 @@
 
     .sky-badge { width: 60px; height: 60px; position: relative; cursor: pointer; flex-shrink: 0; }
     .sun-box, .moon-box { width: 100%; height: 100%; position: relative; display: none; }
-    .sun-rays { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+    .sun-rays { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transition: transform 0.5s linear; }
     .sun-face {
       position: absolute; top: 50%; left: 50%; width: 30px; height: 30px; margin: -15px 0 0 -15px;
       background: #ffffff; border: 2.5px solid #000000; border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
     }
-    .moon-star { position: absolute; top: 6px; right: 6px; width: 18px; height: 18px; }
+    .moon-star { position: absolute; top: 6px; right: 6px; width: 18px; height: 18px; transition: transform 0.3s ease; }
 
     .main-section {
       width: 100%; flex: 1;
@@ -97,9 +100,6 @@
       align-items: center;
     }
     
-    /* 
-      2. 默认横屏文字样式 
-    */
     .timer-text {
       font-size: 250px;
       line-height: 1;
@@ -111,9 +111,7 @@
       white-space: nowrap;
     }
 
-    /* 
-      3. 竖屏文字样式 (减小字号，调整行距适应两行) 
-    */
+    /* 竖屏文字样式 (减小字号，调整行距适应两行) */
     .portrait-format .timer-text {
       font-size: 190px;
       line-height: 0.85; 
@@ -122,9 +120,22 @@
       white-space: normal;
     }
 
+    /* 字体样式 0 与 1 保持不变 */
     .font-style-0 { font-family: "Helvetica Neue Light", "Helvetica Neue", "Arial Narrow", sans-serif; font-weight: 200; color: transparent !important; -webkit-text-fill-color: transparent !important; -webkit-text-stroke: 1.5px #000000; }
     .font-style-1 { font-family: "Helvetica Neue Light", "Helvetica Neue", "Arial Narrow", sans-serif; font-weight: 200; color: #000000 !important; -webkit-text-fill-color: #000000 !important; -webkit-text-stroke: 0 !important; }
-    .font-style-2 { font-family: "Baskerville", "Bookerly Light", "Georgia", serif; font-weight: 200; letter-spacing: -1px; color: #000000; -webkit-text-fill-color: #000000; -webkit-text-stroke: 0; }
+    
+    /* 字体样式 2: 替换为 7段式液晶数字风格 */
+    .font-style-2 { 
+      font-family: 'Share Tech Mono', monospace; 
+      font-weight: 400; 
+      letter-spacing: -8px; 
+      color: #000000 !important; 
+      -webkit-text-fill-color: #000000 !important; 
+      -webkit-text-stroke: 0 !important; 
+    }
+    .portrait-format .font-style-2 {
+      letter-spacing: -4px;
+    }
 
     .tracks-container {
       width: 96%; height: 26px; margin-top: 10px;
@@ -214,18 +225,196 @@
         </div>
       </div>
 
-      <!-- 省略了中间的休息界面 SVG 动画以保持简练，请原样保留你原本拥有的 rest-panel 动画节点 -->
+      <!-- ================= 休息页面与彩蛋动画节点完整保留 ================= -->
       <div class="rest-screen" id="rest-screen">
-        <div class="rest-panel active" id="rest-panel-0">
-          <div class="pixel-stage">
-            <div class="anim-frame active"><svg viewBox="0 0 200 200" fill="#000"><rect x="80" y="80" width="40" height="40"/></svg></div>
+        
+        <div class="rest-panel" id="rest-panel-0">
+          <div class="pixel-stage" id="stage-bird-coffee">
+            <div class="anim-frame active">
+              <svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000">
+                <rect x="20" y="165" width="10" height="5"/><rect x="40" y="165" width="15" height="5"/><rect x="65" y="165" width="80" height="5"/><rect x="155" y="165" width="10" height="5"/>
+                <rect x="70" y="140" width="5" height="5"/><rect x="65" y="145" width="5" height="5"/><rect x="60" y="150" width="5" height="5"/><rect x="50" y="155" width="20" height="5"/>
+                <rect x="90" y="140" width="5" height="15"/><rect x="80" y="155" width="20" height="5"/>
+                <g transform="translate(0, 0)">
+                    <rect x="85" y="45" width="25" height="5"/><rect x="80" y="50" width="35" height="5"/>
+                    <rect x="80" y="55" width="10" height="5"/> <rect x="105" y="55" width="10" height="5"/>
+                    <rect x="80" y="60" width="5" height="10"/><rect x="90" y="60" width="10" height="10"/><rect x="110" y="60" width="5" height="10"/>
+                    <rect x="115" y="65" width="15" height="5"/>
+                    <rect x="80" y="70" width="10" height="5"/> <rect x="105" y="70" width="10" height="5"/>
+                    <rect x="80" y="75" width="35" height="5"/>
+                    <rect x="70" y="80" width="45" height="5"/><rect x="65" y="85" width="55" height="5"/><rect x="60" y="90" width="60" height="5"/>
+                    <rect x="55" y="95" width="15" height="5"/> <rect x="75" y="95" width="45" height="5"/>
+                    <rect x="55" y="100" width="15" height="5"/> <rect x="75" y="100" width="45" height="5"/>
+                    <rect x="50" y="105" width="20" height="5"/> <rect x="75" y="105" width="45" height="5"/>
+                    <rect x="50" y="110" width="20" height="5"/> <rect x="75" y="110" width="45" height="5"/>
+                    <rect x="45" y="115" width="5" height="5"/> <rect x="55" y="115" width="65" height="5"/>
+                    <rect x="45" y="120" width="70" height="5"/><rect x="50" y="125" width="60" height="5"/>
+                    <rect x="60" y="130" width="40" height="5"/><rect x="65" y="135" width="10" height="5"/> <rect x="85" y="135" width="10" height="5"/>
+                    <rect x="125" y="85" width="25" height="35"/>
+                    <rect x="150" y="95" width="10" height="5"/><rect x="155" y="100" width="5" height="10"/><rect x="150" y="110" width="10" height="5"/>
+                    <rect x="135" y="70" width="5" height="5"/>
+                    <rect x="130" y="60" width="5" height="5"/><rect x="140" y="60" width="5" height="5"/>
+                    <rect x="135" y="50" width="5" height="5"/>
+                    <rect x="130" y="40" width="5" height="5"/><rect x="140" y="40" width="5" height="5"/>
+                    <rect x="135" y="30" width="5" height="5"/>
+                </g>
+              </svg>
+            </div>
+            <div class="anim-frame">
+              <svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000">
+                <rect x="20" y="165" width="10" height="5"/><rect x="40" y="165" width="15" height="5"/><rect x="65" y="165" width="80" height="5"/><rect x="155" y="165" width="10" height="5"/>
+                <rect x="70" y="140" width="5" height="5"/><rect x="65" y="145" width="5" height="5"/><rect x="60" y="150" width="5" height="5"/><rect x="50" y="155" width="20" height="5"/>
+                <rect x="90" y="140" width="5" height="15"/><rect x="80" y="155" width="20" height="5"/>
+                <g transform="translate(0, 0)">
+                    <rect x="85" y="45" width="25" height="5"/><rect x="80" y="50" width="35" height="5"/>
+                    <rect x="80" y="55" width="10" height="5"/> <rect x="105" y="55" width="10" height="5"/>
+                    <rect x="80" y="60" width="5" height="10"/><rect x="90" y="60" width="10" height="10"/><rect x="110" y="60" width="5" height="10"/>
+                    <rect x="115" y="65" width="15" height="5"/>
+                    <rect x="80" y="70" width="10" height="5"/> <rect x="105" y="70" width="10" height="5"/>
+                    <rect x="80" y="75" width="35" height="5"/>
+                    <rect x="70" y="80" width="45" height="5"/><rect x="65" y="85" width="55" height="5"/><rect x="60" y="90" width="60" height="5"/>
+                    <rect x="55" y="95" width="15" height="5"/> <rect x="75" y="95" width="45" height="5"/>
+                    <rect x="55" y="100" width="15" height="5"/> <rect x="75" y="100" width="45" height="5"/>
+                    <rect x="50" y="105" width="20" height="5"/> <rect x="75" y="105" width="45" height="5"/>
+                    <rect x="50" y="110" width="20" height="5"/> <rect x="75" y="110" width="45" height="5"/>
+                    <rect x="45" y="115" width="5" height="5"/> <rect x="55" y="115" width="65" height="5"/>
+                    <rect x="45" y="120" width="70" height="5"/><rect x="50" y="125" width="60" height="5"/>
+                    <rect x="60" y="130" width="40" height="5"/><rect x="65" y="135" width="10" height="5"/> <rect x="85" y="135" width="10" height="5"/>
+                    <rect x="125" y="85" width="25" height="35"/>
+                    <rect x="150" y="95" width="10" height="5"/><rect x="155" y="100" width="5" height="10"/><rect x="150" y="110" width="10" height="5"/>
+                    <rect x="130" y="70" width="5" height="5"/><rect x="140" y="70" width="5" height="5"/>
+                    <rect x="135" y="60" width="5" height="5"/>
+                    <rect x="130" y="50" width="5" height="5"/><rect x="140" y="50" width="5" height="5"/>
+                    <rect x="135" y="40" width="5" height="5"/>
+                    <rect x="130" y="30" width="5" height="5"/><rect x="140" y="30" width="5" height="5"/>
+                </g>
+              </svg>
+            </div>
+            <div class="anim-frame">
+              <svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000">
+                <rect x="20" y="165" width="10" height="5"/><rect x="40" y="165" width="15" height="5"/><rect x="65" y="165" width="80" height="5"/><rect x="155" y="165" width="10" height="5"/>
+                <g transform="translate(0, 30)">
+                    <rect x="85" y="45" width="25" height="5"/><rect x="80" y="50" width="35" height="5"/>
+                    <rect x="80" y="55" width="35" height="5"/> 
+                    <rect x="80" y="60" width="5" height="5"/>
+                    <rect x="90" y="60" width="10" height="5"/> 
+                    <rect x="110" y="60" width="5" height="5"/>
+                    <rect x="80" y="65" width="35" height="10"/> 
+                    <rect x="115" y="65" width="15" height="5"/>
+                    <rect x="80" y="75" width="35" height="5"/>
+                    <rect x="70" y="80" width="45" height="5"/><rect x="65" y="85" width="55" height="5"/><rect x="60" y="90" width="60" height="5"/>
+                    <rect x="55" y="95" width="15" height="5"/> <rect x="75" y="95" width="45" height="5"/>
+                    <rect x="55" y="100" width="15" height="5"/> <rect x="75" y="100" width="45" height="5"/>
+                    <rect x="50" y="105" width="20" height="5"/> <rect x="75" y="105" width="45" height="5"/>
+                    <rect x="50" y="110" width="20" height="5"/> <rect x="75" y="110" width="45" height="5"/>
+                    <rect x="45" y="115" width="5" height="5"/> <rect x="55" y="115" width="65" height="5"/>
+                    <rect x="45" y="120" width="70" height="5"/><rect x="50" y="125" width="60" height="5"/>
+                    <rect x="60" y="130" width="40" height="5"/><rect x="65" y="135" width="10" height="5"/> <rect x="85" y="135" width="10" height="5"/>
+                    <rect x="125" y="85" width="25" height="35"/>
+                    <rect x="150" y="95" width="10" height="5"/><rect x="155" y="100" width="5" height="10"/><rect x="150" y="110" width="10" height="5"/>
+                    <rect x="135" y="70" width="5" height="5"/>
+                    <rect x="130" y="60" width="5" height="5"/><rect x="140" y="60" width="5" height="5"/>
+                    <rect x="135" y="50" width="5" height="5"/>
+                    <rect x="130" y="40" width="5" height="5"/><rect x="140" y="40" width="5" height="5"/>
+                    <rect x="135" y="30" width="5" height="5"/>
+                </g>
+              </svg>
+            </div>
+            <div class="anim-frame">
+              <svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000">
+                <rect x="20" y="165" width="10" height="5"/><rect x="40" y="165" width="15" height="5"/><rect x="65" y="165" width="80" height="5"/><rect x="155" y="165" width="10" height="5"/>
+                <g transform="translate(0, 30)">
+                    <rect x="85" y="45" width="25" height="5"/><rect x="80" y="50" width="35" height="5"/>
+                    <rect x="80" y="55" width="35" height="5"/> 
+                    <rect x="80" y="60" width="5" height="5"/>
+                    <rect x="90" y="60" width="10" height="5"/>
+                    <rect x="110" y="60" width="5" height="5"/>
+                    <rect x="80" y="65" width="35" height="10"/> 
+                    <rect x="115" y="65" width="15" height="5"/>
+                    <rect x="80" y="75" width="35" height="5"/>
+                    <rect x="70" y="80" width="45" height="5"/><rect x="65" y="85" width="55" height="5"/><rect x="60" y="90" width="60" height="5"/>
+                    <rect x="55" y="95" width="15" height="5"/> <rect x="75" y="95" width="45" height="5"/>
+                    <rect x="55" y="100" width="15" height="5"/> <rect x="75" y="100" width="45" height="5"/>
+                    <rect x="50" y="105" width="20" height="5"/> <rect x="75" y="105" width="45" height="5"/>
+                    <rect x="50" y="110" width="20" height="5"/> <rect x="75" y="110" width="45" height="5"/>
+                    <rect x="45" y="115" width="5" height="5"/> <rect x="55" y="115" width="65" height="5"/>
+                    <rect x="45" y="120" width="70" height="5"/><rect x="50" y="125" width="60" height="5"/>
+                    <rect x="60" y="130" width="40" height="5"/><rect x="65" y="135" width="10" height="5"/> <rect x="85" y="135" width="10" height="5"/>
+                    <rect x="125" y="85" width="25" height="35"/>
+                    <rect x="150" y="95" width="10" height="5"/><rect x="155" y="100" width="5" height="10"/><rect x="150" y="110" width="10" height="5"/>
+                    <rect x="130" y="70" width="5" height="5"/><rect x="140" y="70" width="5" height="5"/>
+                    <rect x="135" y="60" width="5" height="5"/>
+                    <rect x="130" y="50" width="5" height="5"/><rect x="140" y="50" width="5" height="5"/>
+                    <rect x="135" y="40" width="5" height="5"/>
+                    <rect x="130" y="30" width="5" height="5"/><rect x="140" y="30" width="5" height="5"/>
+                </g>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="rest-panel" id="rest-panel-1">
+          <div class="pixel-stage" id="stage-combo">
+            <div id="flower-layer" class="anim-layer">
+              <div class="anim-frame active">
+                <svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="30" y="120" width="140" height="15"/><rect x="35" y="110" width="5" height="10"/><rect x="95" y="115" width="5" height="5"/><rect x="105" y="110" width="5" height="10"/><rect x="145" y="115" width="5" height="5"/><rect x="160" y="105" width="5" height="15"/><rect x="40" y="135" width="10" height="5"/><rect x="55" y="135" width="15" height="5"/><rect x="65" y="140" width="5" height="10"/><rect x="55" y="150" width="15" height="5"/><rect x="105" y="135" width="20" height="5"/><rect x="120" y="140" width="5" height="15"/><rect x="105" y="155" width="20" height="5"/><rect x="105" y="160" width="5" height="20"/><rect x="155" y="135" width="5" height="15"/><rect x="55" y="90" width="5" height="30"/><rect x="50" y="100" width="5" height="5"/><rect x="60" y="90" width="5" height="5"/><rect x="95" y="105" width="5" height="15"/><rect x="90" y="105" width="5" height="5"/><rect x="135" y="85" width="5" height="35"/><rect x="130" y="95" width="5" height="5"/><rect x="140" y="85" width="5" height="5"/><rect x="55" y="75" width="5" height="15"/><rect x="50" y="70" width="15" height="5"/><rect x="55" y="65" width="5" height="15"/><rect x="95" y="95" width="5" height="10"/><rect x="90" y="85" width="5" height="10"/><rect x="100" y="85" width="5" height="10"/><rect x="90" y="95" width="15" height="5"/><rect x="135" y="65" width="5" height="20"/><path d="M130 50 h15 v15 h-15 z M135 55 h5 v5 h-5 z" fill-rule="evenodd"/></svg>
+              </div>
+              <div class="anim-frame">
+                <svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="30" y="120" width="140" height="15"/><rect x="35" y="110" width="5" height="10"/><rect x="95" y="115" width="5" height="5"/><rect x="105" y="110" width="5" height="10"/><rect x="145" y="115" width="5" height="5"/><rect x="160" y="105" width="5" height="15"/><rect x="40" y="135" width="10" height="5"/><rect x="55" y="135" width="15" height="5"/><rect x="65" y="140" width="5" height="10"/><rect x="55" y="150" width="15" height="5"/><rect x="105" y="135" width="20" height="5"/><rect x="120" y="140" width="5" height="15"/><rect x="105" y="155" width="20" height="5"/><rect x="105" y="160" width="5" height="20"/><rect x="155" y="135" width="5" height="15"/><rect x="55" y="90" width="5" height="30"/><rect x="50" y="100" width="5" height="5"/><rect x="60" y="90" width="5" height="5"/><rect x="95" y="105" width="5" height="15"/><rect x="90" y="105" width="5" height="5"/><rect x="135" y="85" width="5" height="35"/><rect x="130" y="95" width="5" height="5"/><rect x="140" y="85" width="5" height="5"/><rect x="55" y="75" width="5" height="15"/><rect x="55" y="70" width="15" height="5"/><rect x="60" y="65" width="5" height="15"/><rect x="100" y="95" width="5" height="10"/><rect x="95" y="85" width="5" height="10"/><rect x="105" y="85" width="5" height="10"/><rect x="95" y="95" width="15" height="5"/><rect x="135" y="65" width="5" height="20"/><path d="M135 50 h15 v15 h-15 z M140 55 h5 v5 h-5 z" fill-rule="evenodd"/></svg>
+              </div>
+              <div class="anim-frame">
+                <svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="30" y="120" width="140" height="15"/><rect x="35" y="110" width="5" height="10"/><rect x="95" y="115" width="5" height="5"/><rect x="105" y="110" width="5" height="10"/><rect x="145" y="115" width="5" height="5"/><rect x="160" y="105" width="5" height="15"/><rect x="40" y="135" width="10" height="5"/><rect x="55" y="135" width="15" height="5"/><rect x="65" y="140" width="5" height="10"/><rect x="55" y="150" width="15" height="5"/><rect x="105" y="135" width="20" height="5"/><rect x="120" y="140" width="5" height="15"/><rect x="105" y="155" width="20" height="5"/><rect x="105" y="160" width="5" height="20"/><rect x="155" y="135" width="5" height="15"/><rect x="55" y="90" width="5" height="30"/><rect x="50" y="100" width="5" height="5"/><rect x="60" y="90" width="5" height="5"/><rect x="95" y="105" width="5" height="15"/><rect x="90" y="105" width="5" height="5"/><rect x="135" y="85" width="5" height="35"/><rect x="130" y="95" width="5" height="5"/><rect x="140" y="85" width="5" height="5"/><rect x="60" y="75" width="5" height="15"/><rect x="60" y="70" width="15" height="5"/><rect x="65" y="65" width="5" height="15"/><rect x="100" y="95" width="5" height="10"/><rect x="95" y="85" width="5" height="10"/><rect x="105" y="85" width="5" height="10"/><rect x="95" y="95" width="15" height="5"/><rect x="140" y="65" width="5" height="20"/><path d="M140 50 h15 v15 h-15 z M145 55 h5 v5 h-5 z" fill-rule="evenodd"/></svg>
+              </div>
+              <div class="anim-frame">
+                <svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="30" y="120" width="140" height="15"/><rect x="35" y="110" width="5" height="10"/><rect x="95" y="115" width="5" height="5"/><rect x="105" y="110" width="5" height="10"/><rect x="145" y="115" width="5" height="5"/><rect x="160" y="105" width="5" height="15"/><rect x="40" y="135" width="10" height="5"/><rect x="55" y="135" width="15" height="5"/><rect x="65" y="140" width="5" height="10"/><rect x="55" y="150" width="15" height="5"/><rect x="105" y="135" width="20" height="5"/><rect x="120" y="140" width="5" height="15"/><rect x="105" y="155" width="20" height="5"/><rect x="105" y="160" width="5" height="20"/><rect x="155" y="135" width="5" height="15"/><rect x="55" y="90" width="5" height="30"/><rect x="50" y="100" width="5" height="5"/><rect x="60" y="90" width="5" height="5"/><rect x="95" y="105" width="5" height="15"/><rect x="90" y="105" width="5" height="5"/><rect x="135" y="85" width="5" height="35"/><rect x="130" y="95" width="5" height="5"/><rect x="140" y="85" width="5" height="5"/><rect x="55" y="75" width="5" height="15"/><rect x="55" y="70" width="15" height="5"/><rect x="60" y="65" width="5" height="15"/><rect x="100" y="95" width="5" height="10"/><rect x="95" y="85" width="5" height="10"/><rect x="105" y="85" width="5" height="10"/><rect x="95" y="95" width="15" height="5"/><rect x="135" y="65" width="5" height="20"/><path d="M135 50 h15 v15 h-15 z M140 55 h5 v5 h-5 z" fill-rule="evenodd"/></svg>
+              </div>
+              <div class="anim-frame">
+                <svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="30" y="120" width="140" height="15"/><rect x="35" y="110" width="5" height="10"/><rect x="95" y="115" width="5" height="5"/><rect x="105" y="110" width="5" height="10"/><rect x="145" y="115" width="5" height="5"/><rect x="160" y="105" width="5" height="15"/><rect x="40" y="135" width="10" height="5"/><rect x="55" y="135" width="15" height="5"/><rect x="65" y="140" width="5" height="10"/><rect x="55" y="150" width="15" height="5"/><rect x="105" y="135" width="20" height="5"/><rect x="120" y="140" width="5" height="15"/><rect x="105" y="155" width="20" height="5"/><rect x="105" y="160" width="5" height="20"/><rect x="155" y="135" width="5" height="15"/><rect x="55" y="90" width="5" height="30"/><rect x="50" y="100" width="5" height="5"/><rect x="60" y="90" width="5" height="5"/><rect x="95" y="105" width="5" height="15"/><rect x="90" y="105" width="5" height="5"/><rect x="135" y="85" width="5" height="35"/><rect x="130" y="95" width="5" height="5"/><rect x="140" y="85" width="5" height="5"/><rect x="55" y="75" width="5" height="15"/><rect x="50" y="70" width="15" height="5"/><rect x="55" y="65" width="5" height="15"/><rect x="95" y="95" width="5" height="10"/><rect x="90" y="85" width="5" height="10"/><rect x="100" y="85" width="5" height="10"/><rect x="90" y="95" width="15" height="5"/><rect x="135" y="65" width="5" height="20"/><path d="M130 50 h15 v15 h-15 z M135 55 h5 v5 h-5 z" fill-rule="evenodd"/></svg>
+              </div>
+              <div class="anim-frame">
+                <svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="30" y="120" width="140" height="15"/><rect x="35" y="110" width="5" height="10"/><rect x="95" y="115" width="5" height="5"/><rect x="105" y="110" width="5" height="10"/><rect x="145" y="115" width="5" height="5"/><rect x="160" y="105" width="5" height="15"/><rect x="40" y="135" width="10" height="5"/><rect x="55" y="135" width="15" height="5"/><rect x="65" y="140" width="5" height="10"/><rect x="55" y="150" width="15" height="5"/><rect x="105" y="135" width="20" height="5"/><rect x="120" y="140" width="5" height="15"/><rect x="105" y="155" width="20" height="5"/><rect x="105" y="160" width="5" height="20"/><rect x="155" y="135" width="5" height="15"/><rect x="55" y="90" width="5" height="30"/><rect x="50" y="100" width="5" height="5"/><rect x="60" y="90" width="5" height="5"/><rect x="95" y="105" width="5" height="15"/><rect x="90" y="105" width="5" height="5"/><rect x="135" y="85" width="5" height="35"/><rect x="130" y="95" width="5" height="5"/><rect x="140" y="85" width="5" height="5"/><rect x="55" y="75" width="5" height="15"/><rect x="45" y="70" width="15" height="5"/><rect x="50" y="65" width="5" height="15"/><rect x="90" y="95" width="5" height="10"/><rect x="85" y="85" width="5" height="10"/><rect x="95" y="85" width="5" height="10"/><rect x="85" y="95" width="15" height="5"/><rect x="135" y="65" width="5" height="20"/><path d="M125 50 h15 v15 h-15 z M130 55 h5 v5 h-5 z" fill-rule="evenodd"/></svg>
+              </div>
+              <div class="anim-frame">
+                <svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="30" y="120" width="140" height="15"/><rect x="35" y="110" width="5" height="10"/><rect x="95" y="115" width="5" height="5"/><rect x="105" y="110" width="5" height="10"/><rect x="145" y="115" width="5" height="5"/><rect x="160" y="105" width="5" height="15"/><rect x="40" y="135" width="10" height="5"/><rect x="55" y="135" width="15" height="5"/><rect x="65" y="140" width="5" height="10"/><rect x="55" y="150" width="15" height="5"/><rect x="105" y="135" width="20" height="5"/><rect x="120" y="140" width="5" height="15"/><rect x="105" y="155" width="20" height="5"/><rect x="105" y="160" width="5" height="20"/><rect x="155" y="135" width="5" height="15"/><rect x="55" y="90" width="5" height="30"/><rect x="50" y="100" width="5" height="5"/><rect x="60" y="90" width="5" height="5"/><rect x="95" y="105" width="5" height="15"/><rect x="90" y="105" width="5" height="5"/><rect x="135" y="85" width="5" height="35"/><rect x="130" y="95" width="5" height="5"/><rect x="140" y="85" width="5" height="5"/><rect x="50" y="75" width="5" height="15"/><rect x="40" y="70" width="15" height="5"/><rect x="45" y="65" width="5" height="15"/><rect x="90" y="95" width="5" height="10"/><rect x="85" y="85" width="5" height="10"/><rect x="95" y="85" width="5" height="10"/><rect x="85" y="95" width="15" height="5"/><rect x="130" y="65" width="5" height="20"/><path d="M120 50 h15 v15 h-15 z M125 55 h5 v5 h-5 z" fill-rule="evenodd"/></svg>
+              </div>
+              <div class="anim-frame">
+                <svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="30" y="120" width="140" height="15"/><rect x="35" y="110" width="5" height="10"/><rect x="95" y="115" width="5" height="5"/><rect x="105" y="110" width="5" height="10"/><rect x="145" y="115" width="5" height="5"/><rect x="160" y="105" width="5" height="15"/><rect x="40" y="135" width="10" height="5"/><rect x="55" y="135" width="15" height="5"/><rect x="65" y="140" width="5" height="10"/><rect x="55" y="150" width="15" height="5"/><rect x="105" y="135" width="20" height="5"/><rect x="120" y="140" width="5" height="15"/><rect x="105" y="155" width="20" height="5"/><rect x="105" y="160" width="5" height="20"/><rect x="155" y="135" width="5" height="15"/><rect x="55" y="90" width="5" height="30"/><rect x="50" y="100" width="5" height="5"/><rect x="60" y="90" width="5" height="5"/><rect x="95" y="105" width="5" height="15"/><rect x="90" y="105" width="5" height="5"/><rect x="135" y="85" width="5" height="35"/><rect x="130" y="95" width="5" height="5"/><rect x="140" y="85" width="5" height="5"/><rect x="55" y="75" width="5" height="15"/><rect x="45" y="70" width="15" height="5"/><rect x="50" y="65" width="5" height="15"/><rect x="90" y="95" width="5" height="10"/><rect x="85" y="85" width="5" height="10"/><rect x="95" y="85" width="5" height="10"/><rect x="85" y="95" width="15" height="5"/><rect x="135" y="65" width="5" height="20"/><path d="M125 50 h15 v15 h-15 z M130 55 h5 v5 h-5 z" fill-rule="evenodd"/></svg>
+              </div>
+            </div>
+            
+            <div id="butterfly-layer" class="anim-layer">
+              <div class="anim-frame active"><svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="95" y="25" width="10" height="10"/></svg></div>
+              <div class="anim-frame"><svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="110" y="20" width="10" height="5"/></svg></div>
+              <div class="anim-frame"><svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="125" y="10" width="5" height="5"/></svg></div>
+              <div class="anim-frame"><svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="140" y="15" width="10" height="5"/></svg></div>
+              <div class="anim-frame"><svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="150" y="25" width="10" height="10"/></svg></div>
+              <div class="anim-frame"><svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="140" y="40" width="5" height="10"/></svg></div>
+              <div class="anim-frame"><svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="125" y="40" width="5" height="5"/></svg></div>
+              <div class="anim-frame"><svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="110" y="35" width="10" height="5"/></svg></div>
+              <div class="anim-frame"><svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="95" y="25" width="10" height="10"/></svg></div>
+              <div class="anim-frame"><svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="80" y="20" width="5" height="10"/></svg></div>
+              <div class="anim-frame"><svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="65" y="10" width="5" height="5"/></svg></div>
+              <div class="anim-frame"><svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="55" y="15" width="5" height="10"/></svg></div>
+              <div class="anim-frame"><svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="40" y="25" width="10" height="10"/></svg></div>
+              <div class="anim-frame"><svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="50" y="40" width="10" height="5"/></svg></div>
+              <div class="anim-frame"><svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="65" y="40" width="5" height="5"/></svg></div>
+              <div class="anim-frame"><svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="80" y="35" width="10" height="5"/></svg></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="rest-panel" id="rest-panel-2">
+          <div class="pixel-cat-stage">
+            <div class="cat-frame active" id="cat-p0"><svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="145" y="65" width="6" height="2"/><rect x="149" y="67" width="2" height="2"/><rect x="147" y="69" width="2" height="2"/><rect x="143" y="71" width="6" height="2"/><rect x="160" y="48" width="8" height="2"/><rect x="164" y="50" width="2" height="2"/><rect x="162" y="52" width="2" height="2"/><rect x="158" y="54" width="8" height="2"/><rect x="70" y="100" width="70" height="30"/><rect x="60" y="110" width="80" height="20"/><rect x="80" y="90" width="50" height="10"/><rect x="80" y="80" width="10" height="10"/><rect x="110" y="80" width="10" height="10"/><rect x="92" y="108" width="8" height="3" fill="#fff"/><rect x="116" y="108" width="8" height="3" fill="#fff"/><rect x="50" y="120" width="10" height="10"/><rect x="40" y="125" width="10" height="10"/><rect x="35" y="135" width="10" height="10"/><rect x="35" y="145" width="10" height="10"/></svg></div>
+            <div class="cat-frame" id="cat-p1"><svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="152" y="52" width="8" height="2"/><rect x="156" y="54" width="2" height="2"/><rect x="154" y="56" width="2" height="2"/><rect x="150" y="58" width="8" height="2"/><rect x="170" y="32" width="10" height="2"/><rect x="176" y="34" width="2" height="2"/><rect x="173" y="36" width="2" height="2"/><rect x="168" y="38" width="10" height="2"/><rect x="70" y="100" width="70" height="30"/><rect x="60" y="110" width="80" height="20"/><rect x="80" y="90" width="50" height="10"/><rect x="80" y="80" width="10" height="10"/><rect x="110" y="80" width="10" height="10"/><rect x="92" y="108" width="8" height="3" fill="#fff"/><rect x="116" y="108" width="8" height="3" fill="#fff"/><rect x="50" y="120" width="10" height="10"/><rect x="42" y="130" width="10" height="10"/><rect x="42" y="140" width="10" height="10"/><rect x="45" y="150" width="10" height="10"/></svg></div>
           </div>
         </div>
       </div>
 
       <div class="standby-screen" id="standby-screen">
         <div class="pixel-cat-stage">
-          <div class="cat-frame active"><svg viewBox="0 0 200 200" fill="#000"><rect x="80" y="80" width="40" height="40"/></svg></div>
+          <div class="cat-frame active" id="standby-cat-p0"><svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="145" y="65" width="6" height="2"/><rect x="149" y="67" width="2" height="2"/><rect x="147" y="69" width="2" height="2"/><rect x="143" y="71" width="6" height="2"/><rect x="160" y="48" width="8" height="2"/><rect x="164" y="50" width="2" height="2"/><rect x="162" y="52" width="2" height="2"/><rect x="158" y="54" width="8" height="2"/><rect x="70" y="100" width="70" height="30"/><rect x="60" y="110" width="80" height="20"/><rect x="80" y="90" width="50" height="10"/><rect x="80" y="80" width="10" height="10"/><rect x="110" y="80" width="10" height="10"/><rect x="92" y="108" width="8" height="3" fill="#fff"/><rect x="116" y="108" width="8" height="3" fill="#fff"/><rect x="50" y="120" width="10" height="10"/><rect x="40" y="125" width="10" height="10"/><rect x="35" y="135" width="10" height="10"/><rect x="35" y="145" width="10" height="10"/></svg></div>
+          <div class="cat-frame" id="standby-cat-p1"><svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="152" y="52" width="8" height="2"/><rect x="156" y="54" width="2" height="2"/><rect x="154" y="56" width="2" height="2"/><rect x="150" y="58" width="8" height="2"/><rect x="170" y="32" width="10" height="2"/><rect x="176" y="34" width="2" height="2"/><rect x="173" y="36" width="2" height="2"/><rect x="168" y="38" width="10" height="2"/><rect x="70" y="100" width="70" height="30"/><rect x="60" y="110" width="80" height="20"/><rect x="80" y="90" width="50" height="10"/><rect x="80" y="80" width="10" height="10"/><rect x="110" y="80" width="10" height="10"/><rect x="92" y="108" width="8" height="3" fill="#fff"/><rect x="116" y="108" width="8" height="3" fill="#fff"/><rect x="50" y="120" width="10" height="10"/><rect x="42" y="130" width="10" height="10"/><rect x="42" y="140" width="10" height="10"/><rect x="45" y="150" width="10" height="10"/></svg></div>
         </div>
       </div>
 
@@ -243,6 +432,7 @@
     
     var TOTAL_SLOTS = 16;
     var TOTAL_FONTS = 3;
+    var SKY_INTERVAL = 2;
 
     var totalTime = 25 * 60;
     var timeLeft = totalTime;
@@ -256,9 +446,20 @@
     var currentAnimal = null;
     var currentFontIndex = 1; 
 
-    // 新增两个状态变量追踪横竖屏逻辑
-    var isPhysicalPortrait = true;  // 手机真实的物理状态（竖着拿还是横着拿）
-    var isLogicalPortrait = true;   // 页面希望渲染的视觉状态
+    // 横竖屏逻辑状态
+    var isPhysicalPortrait = true;
+    var isLogicalPortrait = true;
+
+    // 彩蛋与待机定时状态
+    var easterEggStep = 0;
+    var IDLE_TIMEOUT_MS = 60000;
+    var idleTimer = null;
+    var standbyAnimTimer = null;
+    var standbyCatStep = 0;
+    
+    // 休息界面动画状态
+    var REST_ANIM_INTERVALS = [1000, 180, 1800]; 
+    var restAnimState = { timer: null, index: 0, birdStep: 0, comboStep: 0, catStep: 0 };
 
     var els = {
       appContainer: document.getElementById('app-container'),
@@ -278,68 +479,73 @@
     var lastLeadIndex = -1;
 
     function init() {
-      initOrientation(); // 优先初始化陀螺仪监听
+      initOrientation();
       initDOM();
       initSavedSettings();
       updateDayNightMode();
       clearTracks();
       updateDisplay();
       bindEvents();
+      resetIdleTimer(); // 初始化待机倒计时
     }
 
     /* ====================================================
-       1. 陀螺仪与自适应横竖屏逻辑 
+       1. 陀螺仪与自适应横竖屏逻辑
        ==================================================== */
     function initOrientation() {
       var mql = window.matchMedia("(orientation: portrait)");
       isPhysicalPortrait = mql.matches;
-      // 页面初次加载时，逻辑排版直接跟随手机的物理姿态
       isLogicalPortrait = isPhysicalPortrait; 
       
-      // 监听手机陀螺仪/横竖屏变化
       mql.addEventListener("change", function(e) {
         isPhysicalPortrait = e.matches;
-        // 当手机物理翻转时，解除用户的强制设定，自动归位自适应
         isLogicalPortrait = isPhysicalPortrait;
         applyOrientationLogic();
       });
     }
 
     function applyOrientationLogic() {
-      // 重置类名
       els.appContainer.className = "";
       
-      // 依据当前物理姿态和逻辑需求，分发 CSS 布局状态
       if (isLogicalPortrait === isPhysicalPortrait) {
-        els.appContainer.classList.add("orient-match");           // 无需强制旋转
+        els.appContainer.classList.add("orient-match");
       } else if (isPhysicalPortrait && !isLogicalPortrait) {
-        els.appContainer.classList.add("orient-force-landscape"); // 物理竖向，强制横版视图
+        els.appContainer.classList.add("orient-force-landscape");
       } else {
-        els.appContainer.classList.add("orient-force-portrait");  // 物理横向，强制竖版视图
+        els.appContainer.classList.add("orient-force-portrait");
       }
 
-      // 控制内部元素的排版结构 (竖版还是横版)
       if (isLogicalPortrait) {
         els.appContainer.classList.add("portrait-format");
       } else {
         els.appContainer.classList.remove("portrait-format");
       }
 
-      updateDisplay(); // 触发数字换行重新渲染
+      updateDisplay(); 
     }
 
-    // 保留手动点击切换功能
     function toggleOrientation() {
       isLogicalPortrait = !isLogicalPortrait;
       applyOrientationLogic();
     }
 
+    /* ====================================================
+       2. 初始化、事件绑定与彩蛋触发
+       ==================================================== */
     function initDOM() {
       var slotsHtml = '';
       for (var i = 0; i < TOTAL_SLOTS; i++) { slotsHtml += '<div class="track-slot"></div>'; }
       els.tracksBottom.innerHTML = slotsHtml;
       trackSlots = els.tracksBottom.querySelectorAll('.track-slot');
       els.btnToggle.innerHTML = ICON_PLAY;
+
+      // 提取最新的动画帧节点
+      els.restPanels = [document.getElementById('rest-panel-0'), document.getElementById('rest-panel-1'), document.getElementById('rest-panel-2')];
+      els.birdFrames = document.getElementById('stage-bird-coffee').querySelectorAll('.anim-frame');
+      els.flowerFrames = document.getElementById('flower-layer').querySelectorAll('.anim-frame');
+      els.butterflyFrames = document.getElementById('butterfly-layer').querySelectorAll('.anim-frame');
+      els.cats = [document.getElementById('cat-p0'), document.getElementById('cat-p1')];
+      els.standbyCats = [document.getElementById('standby-cat-p0'), document.getElementById('standby-cat-p1')];
     }
 
     function bindEvents() {
@@ -359,10 +565,29 @@
           e.target.blur();
         });
       }
+
+      els.restScreen.addEventListener('click', hideRestScreen);
+      els.standbyScreen.addEventListener('click', hideStandbyScreen);
+      document.addEventListener('click', resetIdleTimer, true);
+    }
+
+    function handleEasterEgg(action) {
+      if (action === 'FONT') {
+        if (easterEggStep === 0 || easterEggStep === 1) { easterEggStep++; } else { easterEggStep = 2; }
+      } else if (action === '+10') {
+        if (easterEggStep === 2) { easterEggStep = 3; } else if (easterEggStep === 3) { easterEggStep = 4; } else { easterEggStep = 0; }
+      } else if (action === '+5') {
+        if (easterEggStep === 4) { easterEggStep = 5; } else if (easterEggStep === 6) { easterEggStep = 7; } else { easterEggStep = 0; }
+      } else if (action === '-5') {
+        if (easterEggStep === 5) { easterEggStep = 6; } else if (easterEggStep === 7) { easterEggStep = 0; return true; } else { easterEggStep = 0; }
+      } else {
+        easterEggStep = 0;
+      }
+      return false;
     }
 
     function initSavedSettings() {
-      applyOrientationLogic(); // 初始化正确姿态
+      applyOrientationLogic(); 
       try {
         var savedFont = localStorage.getItem('kindle_pomodoro_font');
         if (savedFont !== null) { currentFontIndex = parseInt(savedFont, 10) % TOTAL_FONTS || 0; }
@@ -374,12 +599,16 @@
       currentFontIndex = (currentFontIndex + 1) % TOTAL_FONTS;
       try { localStorage.setItem('kindle_pomodoro_font', currentFontIndex); } catch(e) {}
       applyFont();
+      handleEasterEgg('FONT');
     }
 
     function applyFont() {
       els.timerText.className = 'timer-text font-style-' + currentFontIndex;
     }
 
+    /* ====================================================
+       3. 定时器核心逻辑与天象动画
+       ==================================================== */
     function toggleTimer() {
       if (timerId) { 
         clearInterval(timerId);
@@ -402,7 +631,10 @@
       var newTimeLeft = Math.max(0, Math.ceil((targetEndTime - now) / 1000));
       
       if (newTimeLeft !== timeLeft) { 
+        var elapsedSeconds = totalTime - newTimeLeft;
         timeLeft = newTimeLeft;
+        
+        if (elapsedSeconds % SKY_INTERVAL === 0) tickSkyBadge();
         updateDisplay();
 
         if (timeLeft <= 0) {
@@ -412,11 +644,28 @@
           timeLeft = totalTime;
           clearTracks();
           updateDisplay();
+          showRestScreen(); // 倒计时结束自动弹出休息面板
         }
       }
     }
 
+    function tickSkyBadge() {
+      if (isDayTime) {
+        sunAngle = (sunAngle + 15) % 360;
+        els.sunRays.style.transform = 'rotate(' + sunAngle + 'deg)';
+        els.sunRays.style.webkitTransform = 'rotate(' + sunAngle + 'deg)';
+      } else {
+        starToggled = !starToggled;
+        var starAngle = starToggled ? 20 : 0;
+        els.moonStar.style.transform = 'rotate(' + starAngle + 'deg)';
+        els.moonStar.style.webkitTransform = 'rotate(' + starAngle + 'deg)';
+      }
+    }
+
     function addMinutes(mins) {
+      var actionStr = (mins > 0 ? '+' : '') + mins;
+      var isEggTriggered = handleEasterEgg(actionStr);
+
       if (timerId) { 
         clearInterval(timerId);
         timerId = null;
@@ -429,10 +678,12 @@
       clearTracks();
       updateDayNightMode();
       updateDisplay();
+      
+      if (isEggTriggered) showRestScreen();
     }
 
     /* ====================================================
-       2. 时钟双行渲染逻辑 
+       4. 时钟渲染逻辑
        ==================================================== */
     function updateDisplay() {
       var totalMinutes = Math.ceil(timeLeft / 60);
@@ -442,11 +693,10 @@
       var strH = (hours < 10 ? '0' : '') + hours;
       var strM = (mins < 10 ? '0' : '') + mins;
       
-      // 判断当前是不是逻辑竖屏，如果是竖屏则去掉冒号，用 <br> 断行
       var newText = isLogicalPortrait ? (strH + '<br>' + strM) : (strH + ':' + strM);
 
       if (newText !== lastDisplayedText) {
-        els.timerText.innerHTML = newText; // 使用 innerHTML 使 <br> 标签生效
+        els.timerText.innerHTML = newText;
         lastDisplayedText = newText;
       }
       
@@ -491,6 +741,84 @@
       }
       hasStarted = false;
       lastLeadIndex = -1;
+    }
+
+    /* ====================================================
+       5. 休息界面、待机与 SVG 动画控制
+       ==================================================== */
+    function resetIdleTimer() {
+      if (idleTimer) clearTimeout(idleTimer);
+      idleTimer = setTimeout(function() {
+        if (!hasStarted && els.restScreen.className.indexOf('active') === -1 && els.standbyScreen.className.indexOf('active') === -1) {
+          showStandbyScreen();
+        }
+      }, IDLE_TIMEOUT_MS);
+    }
+
+    function showStandbyScreen() {
+      standbyCatStep = 0;
+      els.standbyCats[0].className = 'cat-frame active';
+      els.standbyCats[1].className = 'cat-frame';
+      els.standbyScreen.className = 'standby-screen active';
+
+      if (standbyAnimTimer) clearInterval(standbyAnimTimer);
+      standbyAnimTimer = setInterval(function() {
+        standbyCatStep = 1 - standbyCatStep;
+        els.standbyCats[0].className = standbyCatStep === 0 ? 'cat-frame active' : 'cat-frame';
+        els.standbyCats[1].className = standbyCatStep === 1 ? 'cat-frame active' : 'cat-frame';
+      }, 1800); 
+    }
+
+    function hideStandbyScreen(e) {
+      if (e) e.stopPropagation();
+      els.standbyScreen.className = 'standby-screen';
+      if (standbyAnimTimer) { clearInterval(standbyAnimTimer); standbyAnimTimer = null; }
+      resetIdleTimer();
+    }
+
+    function showRestScreen() {
+      restAnimState.index = Math.floor(Math.random() * els.restPanels.length);
+      updateActiveRestPanel();
+      els.restScreen.className = 'rest-screen active';
+
+      if (restAnimState.timer) clearInterval(restAnimState.timer);
+      restAnimState.timer = setInterval(animateRestPanel, REST_ANIM_INTERVALS[restAnimState.index]);
+    }
+
+    function hideRestScreen(e) {
+      if (e) e.stopPropagation();
+      els.restScreen.className = 'rest-screen';
+      if (restAnimState.timer) clearInterval(restAnimState.timer);
+    }
+
+    function updateActiveRestPanel() {
+      for (var i = 0; i < els.restPanels.length; i++) {
+        els.restPanels[i].className = (i === restAnimState.index) ? 'rest-panel active' : 'rest-panel';
+      }
+    }
+
+    function animateRestPanel() {
+      if (els.restScreen.className.indexOf('active') === -1) return;
+
+      var idx = restAnimState.index;
+      if (idx === 0) {
+        els.birdFrames[restAnimState.birdStep].className = 'anim-frame';
+        restAnimState.birdStep = (restAnimState.birdStep + 1) % 4;
+        els.birdFrames[restAnimState.birdStep].className = 'anim-frame active';
+      } else if (idx === 1) {
+        els.butterflyFrames[restAnimState.comboStep % 16].className = 'anim-frame';
+        els.flowerFrames[Math.floor(restAnimState.comboStep / 4) % 8].className = 'anim-frame';
+        
+        restAnimState.comboStep++;
+        if (restAnimState.comboStep >= 3200) restAnimState.comboStep = 0;
+        
+        els.butterflyFrames[restAnimState.comboStep % 16].className = 'anim-frame active';
+        els.flowerFrames[Math.floor(restAnimState.comboStep / 4) % 8].className = 'anim-frame active';
+      } else if (idx === 2) {
+        restAnimState.catStep = 1 - restAnimState.catStep;
+        els.cats[0].className = restAnimState.catStep === 0 ? 'cat-frame active' : 'cat-frame';
+        els.cats[1].className = restAnimState.catStep === 1 ? 'cat-frame active' : 'cat-frame';
+      }
     }
 
     window.addEventListener('load', init);
