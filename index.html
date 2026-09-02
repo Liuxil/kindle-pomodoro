@@ -34,6 +34,9 @@
     #app-container {
       position: absolute;
       top: 50%; left: 50%;
+      /* 默认给出与JS默认横屏状态一致的收敛尺寸和transform，
+         避免JS执行前的"第一次绘制"内容溢出viewport，
+         触发老版WebKit的自动缩放(这正是刷新后画面变小的根因之一) */
       width: 100%; height: 100%;
       max-width: 100%; max-height: 100%;
       -webkit-transform: translate(-50%, -50%) rotate(90deg);
@@ -70,9 +73,9 @@
     }
     
     .timer-text {
-      font-size: 250px;
+      font-size: 210px;
       line-height: 1;
-      margin: -15px 0; 
+      margin: -10px 0; 
       text-align: center;
       width: 100%;
       display: block;
@@ -127,9 +130,16 @@
     .rest-screen.active { display: -webkit-box; display: flex; }
     .rest-panel { display: none; width: 100%; height: 100%; -webkit-box-pack: center; justify-content: center; -webkit-box-align: center; align-items: center; }
     .rest-panel.active { display: -webkit-box; display: flex; }
-    
-    .pixel-stage { width: 240px; height: 240px; position: relative; display: -webkit-box; display: flex; -webkit-box-pack: center; justify-content: center; -webkit-box-align: center; align-items: center; }
-    
+    .pixel-coffee-stage { width: 220px; height: 220px; position: relative; }
+    .coffee-frame { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; }
+    .coffee-frame.active { display: block; }
+    .firework-stage { width: 320px; height: 420px; position: relative; }
+    .fw-frame { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; }
+    .fw-frame.active { display: block; }
+    .pixel-cat-stage { width: 280px; height: 280px; position: relative; }
+    .cat-frame { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; }
+    .cat-frame.active { display: block; }
+
     .standby-screen {
       display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #ffffff; z-index: 90; cursor: pointer;
       -webkit-box-orient: vertical; flex-direction: column;
@@ -179,63 +189,25 @@
       </div>
 
       <div class="rest-screen" id="rest-screen">
-        <!-- 面板 0：精简版小鸟咖啡 -->
         <div class="rest-panel" id="rest-panel-0">
-          <div class="pixel-stage">
-            <svg viewBox="0 0 200 200" style="width:180px;height:180px; shape-rendering: crispEdges;" fill="#000">
-              <rect x="20" y="165" width="10" height="5"/><rect x="40" y="165" width="15" height="5"/><rect x="65" y="165" width="80" height="5"/><rect x="155" y="165" width="10" height="5"/>
-              <rect x="70" y="140" width="5" height="5"/><rect x="65" y="145" width="5" height="5"/><rect x="60" y="150" width="5" height="5"/><rect x="50" y="155" width="20" height="5"/>
-              <rect x="90" y="140" width="5" height="15"/><rect x="80" y="155" width="20" height="5"/>
-              <rect x="85" y="45" width="25" height="5"/><rect x="80" y="50" width="35" height="5"/>
-              <rect x="80" y="55" width="10" height="5"/><rect x="105" y="55" width="10" height="5"/>
-              <rect x="80" y="60" width="5" height="10"/><rect x="90" y="60" width="10" height="10"/><rect x="110" y="60" width="5" height="10"/>
-              <rect x="115" y="65" width="15" height="5"/>
-              <rect x="80" y="70" width="10" height="5"/><rect x="105" y="70" width="10" height="5"/>
-              <rect x="80" y="75" width="35" height="5"/>
-              <rect x="70" y="80" width="45" height="5"/><rect x="65" y="85" width="55" height="5"/><rect x="60" y="90" width="60" height="5"/>
-              <rect x="55" y="95" width="15" height="5"/><rect x="75" y="95" width="45" height="5"/>
-              <rect x="55" y="100" width="15" height="5"/><rect x="75" y="100" width="45" height="5"/>
-              <rect x="50" y="105" width="20" height="5"/><rect x="75" y="105" width="45" height="5"/>
-              <rect x="50" y="110" width="20" height="5"/><rect x="75" y="110" width="45" height="5"/>
-              <rect x="45" y="115" width="5" height="5"/><rect x="55" y="115" width="65" height="5"/>
-              <rect x="45" y="120" width="70" height="5"/><rect x="50" y="125" width="60" height="5"/>
-              <rect x="60" y="130" width="40" height="5"/><rect x="65" y="135" width="10" height="5"/><rect x="85" y="135" width="10" height="5"/>
-              <rect x="125" y="85" width="25" height="35"/>
-              <rect x="150" y="95" width="10" height="5"/><rect x="155" y="100" width="5" height="10"/><rect x="150" y="110" width="10" height="5"/>
-              <rect x="135" y="70" width="5" height="5"/><rect x="130" y="60" width="5" height="5"/><rect x="140" y="60" width="5" height="5"/><rect x="135" y="50" width="5" height="5"/>
-            </svg>
+          <div class="pixel-coffee-stage">
+            <div class="coffee-frame active" id="coffee-p0"><svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="50" y="165" width="110" height="8"/><rect x="65" y="110" width="70" height="55"/><rect x="70" y="118" width="60" height="4" fill="#fff"/><rect x="132" y="122" width="28" height="32"/><rect x="140" y="130" width="12" height="16" fill="#fff"/><rect x="85" y="104" width="6" height="6"/><rect x="91" y="98" width="6" height="6"/><rect x="85" y="92" width="6" height="6"/><rect x="91" y="86" width="6" height="6"/><rect x="85" y="80" width="6" height="6"/><rect x="91" y="74" width="6" height="6"/><rect x="85" y="68" width="6" height="6"/><rect x="91" y="62" width="6" height="6"/><rect x="113" y="104" width="6" height="6"/><rect x="107" y="98" width="6" height="6"/><rect x="113" y="92" width="6" height="6"/><rect x="107" y="86" width="6" height="6"/><rect x="113" y="80" width="6" height="6"/><rect x="107" y="74" width="6" height="6"/><rect x="113" y="68" width="6" height="6"/><rect x="107" y="62" width="6" height="6"/></svg></div>
+            <div class="coffee-frame" id="coffee-p1"><svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="50" y="165" width="110" height="8"/><rect x="65" y="110" width="70" height="55"/><rect x="70" y="118" width="60" height="4" fill="#fff"/><rect x="132" y="122" width="28" height="32"/><rect x="140" y="130" width="12" height="16" fill="#fff"/><rect x="91" y="104" width="6" height="6"/><rect x="85" y="98" width="6" height="6"/><rect x="91" y="92" width="6" height="6"/><rect x="85" y="86" width="6" height="6"/><rect x="91" y="80" width="6" height="6"/><rect x="85" y="74" width="6" height="6"/><rect x="91" y="68" width="6" height="6"/><rect x="85" y="62" width="6" height="6"/><rect x="107" y="104" width="6" height="6"/><rect x="113" y="98" width="6" height="6"/><rect x="107" y="92" width="6" height="6"/><rect x="113" y="86" width="6" height="6"/><rect x="107" y="80" width="6" height="6"/><rect x="113" y="74" width="6" height="6"/><rect x="107" y="68" width="6" height="6"/><rect x="113" y="62" width="6" height="6"/></svg></div>
           </div>
         </div>
-        <!-- 面板 1：精简版花草 -->
-        <div class="rest-panel" id="rest-panel-1">
-          <div class="pixel-stage">
-            <svg viewBox="0 0 200 200" style="width:180px;height:180px; shape-rendering: crispEdges;" fill="#000">
-              <rect x="30" y="120" width="140" height="15"/><rect x="35" y="110" width="5" height="10"/><rect x="95" y="115" width="5" height="5"/><rect x="105" y="110" width="5" height="10"/><rect x="145" y="115" width="5" height="5"/><rect x="160" y="105" width="5" height="15"/>
-              <rect x="40" y="135" width="10" height="5"/><rect x="55" y="135" width="15" height="5"/><rect x="65" y="140" width="5" height="10"/><rect x="55" y="150" width="15" height="5"/><rect x="105" y="135" width="20" height="5"/><rect x="120" y="140" width="5" height="15"/><rect x="105" y="155" width="20" height="5"/><rect x="105" y="160" width="5" height="20"/><rect x="155" y="135" width="5" height="15"/>
-              <rect x="55" y="90" width="5" height="30"/><rect x="50" y="100" width="5" height="5"/><rect x="60" y="90" width="5" height="5"/>
-              <rect x="95" y="105" width="5" height="15"/><rect x="90" y="105" width="5" height="5"/>
-              <rect x="135" y="85" width="5" height="35"/><rect x="130" y="95" width="5" height="5"/><rect x="140" y="85" width="5" height="5"/>
-              <rect x="55" y="75" width="5" height="15"/><rect x="50" y="70" width="15" height="5"/><rect x="55" y="65" width="5" height="15"/>
-              <rect x="95" y="95" width="5" height="10"/><rect x="90" y="85" width="5" height="10"/><rect x="100" y="85" width="5" height="10"/><rect x="90" y="95" width="15" height="5"/>
-              <rect x="135" y="65" width="5" height="20"/><path d="M130 50 h15 v15 h-15 z M135 55 h5 v5 h-5 z" fill-rule="evenodd"/>
-            </svg>
-          </div>
-        </div>
-        <!-- 面板 2：精简版猫咪 -->
+        <div class="rest-panel" id="rest-panel-1"><div class="firework-stage" id="fw-stage"></div></div>
         <div class="rest-panel" id="rest-panel-2">
-          <div class="pixel-stage">
-            <svg viewBox="0 0 200 200" style="width:180px;height:180px; shape-rendering: crispEdges;" fill="#000">
-              <rect x="145" y="65" width="6" height="2"/><rect x="149" y="67" width="2" height="2"/><rect x="147" y="69" width="2" height="2"/><rect x="143" y="71" width="6" height="2"/><rect x="160" y="48" width="8" height="2"/><rect x="164" y="50" width="2" height="2"/><rect x="162" y="52" width="2" height="2"/><rect x="158" y="54" width="8" height="2"/><rect x="70" y="100" width="70" height="30"/><rect x="60" y="110" width="80" height="20"/><rect x="80" y="90" width="50" height="10"/><rect x="80" y="80" width="10" height="10"/><rect x="110" y="80" width="10" height="10"/><rect x="92" y="108" width="8" height="3" fill="#fff"/><rect x="116" y="108" width="8" height="3" fill="#fff"/><rect x="50" y="120" width="10" height="10"/><rect x="40" y="125" width="10" height="10"/><rect x="35" y="135" width="10" height="10"/><rect x="35" y="145" width="10" height="10"/>
-            </svg>
+          <div class="pixel-cat-stage">
+            <div class="cat-frame active" id="cat-p0"><svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="145" y="65" width="6" height="2"/><rect x="149" y="67" width="2" height="2"/><rect x="147" y="69" width="2" height="2"/><rect x="143" y="71" width="6" height="2"/><rect x="160" y="48" width="8" height="2"/><rect x="164" y="50" width="2" height="2"/><rect x="162" y="52" width="2" height="2"/><rect x="158" y="54" width="8" height="2"/><rect x="70" y="100" width="70" height="30"/><rect x="60" y="110" width="80" height="20"/><rect x="80" y="90" width="50" height="10"/><rect x="80" y="80" width="10" height="10"/><rect x="110" y="80" width="10" height="10"/><rect x="92" y="108" width="8" height="3" fill="#fff"/><rect x="116" y="108" width="8" height="3" fill="#fff"/><rect x="50" y="120" width="10" height="10"/><rect x="40" y="125" width="10" height="10"/><rect x="35" y="135" width="10" height="10"/><rect x="35" y="145" width="10" height="10"/></svg></div>
+            <div class="cat-frame" id="cat-p1"><svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="152" y="52" width="8" height="2"/><rect x="156" y="54" width="2" height="2"/><rect x="154" y="56" width="2" height="2"/><rect x="150" y="58" width="8" height="2"/><rect x="170" y="32" width="10" height="2"/><rect x="176" y="34" width="2" height="2"/><rect x="173" y="36" width="2" height="2"/><rect x="168" y="38" width="10" height="2"/><rect x="70" y="100" width="70" height="30"/><rect x="60" y="110" width="80" height="20"/><rect x="80" y="90" width="50" height="10"/><rect x="80" y="80" width="10" height="10"/><rect x="110" y="80" width="10" height="10"/><rect x="92" y="108" width="8" height="3" fill="#fff"/><rect x="116" y="108" width="8" height="3" fill="#fff"/><rect x="50" y="120" width="10" height="10"/><rect x="42" y="130" width="10" height="10"/><rect x="42" y="140" width="10" height="10"/><rect x="45" y="150" width="10" height="10"/></svg></div>
           </div>
         </div>
       </div>
 
       <div class="standby-screen" id="standby-screen">
-        <div class="pixel-stage">
-          <svg viewBox="0 0 200 200" style="width:180px;height:180px; shape-rendering: crispEdges;" fill="#000">
-            <rect x="145" y="65" width="6" height="2"/><rect x="149" y="67" width="2" height="2"/><rect x="147" y="69" width="2" height="2"/><rect x="143" y="71" width="6" height="2"/><rect x="160" y="48" width="8" height="2"/><rect x="164" y="50" width="2" height="2"/><rect x="162" y="52" width="2" height="2"/><rect x="158" y="54" width="8" height="2"/><rect x="70" y="100" width="70" height="30"/><rect x="60" y="110" width="80" height="20"/><rect x="80" y="90" width="50" height="10"/><rect x="80" y="80" width="10" height="10"/><rect x="110" y="80" width="10" height="10"/><rect x="92" y="108" width="8" height="3" fill="#fff"/><rect x="116" y="108" width="8" height="3" fill="#fff"/><rect x="50" y="120" width="10" height="10"/><rect x="40" y="125" width="10" height="10"/><rect x="35" y="135" width="10" height="10"/><rect x="35" y="145" width="10" height="10"/>
-          </svg>
+        <div class="pixel-cat-stage">
+          <div class="cat-frame active" id="standby-cat-p0"><svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="145" y="65" width="6" height="2"/><rect x="149" y="67" width="2" height="2"/><rect x="147" y="69" width="2" height="2"/><rect x="143" y="71" width="6" height="2"/><rect x="160" y="48" width="8" height="2"/><rect x="164" y="50" width="2" height="2"/><rect x="162" y="52" width="2" height="2"/><rect x="158" y="54" width="8" height="2"/><rect x="70" y="100" width="70" height="30"/><rect x="60" y="110" width="80" height="20"/><rect x="80" y="90" width="50" height="10"/><rect x="80" y="80" width="10" height="10"/><rect x="110" y="80" width="10" height="10"/><rect x="92" y="108" width="8" height="3" fill="#fff"/><rect x="116" y="108" width="8" height="3" fill="#fff"/><rect x="50" y="120" width="10" height="10"/><rect x="40" y="125" width="10" height="10"/><rect x="35" y="135" width="10" height="10"/><rect x="35" y="145" width="10" height="10"/></svg></div>
+          <div class="cat-frame" id="standby-cat-p1"><svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="152" y="52" width="8" height="2"/><rect x="156" y="54" width="2" height="2"/><rect x="154" y="56" width="2" height="2"/><rect x="150" y="58" width="8" height="2"/><rect x="170" y="32" width="10" height="2"/><rect x="176" y="34" width="2" height="2"/><rect x="173" y="36" width="2" height="2"/><rect x="168" y="38" width="10" height="2"/><rect x="70" y="100" width="70" height="30"/><rect x="60" y="110" width="80" height="20"/><rect x="80" y="90" width="50" height="10"/><rect x="80" y="80" width="10" height="10"/><rect x="110" y="80" width="10" height="10"/><rect x="92" y="108" width="8" height="3" fill="#fff"/><rect x="116" y="108" width="8" height="3" fill="#fff"/><rect x="50" y="120" width="10" height="10"/><rect x="42" y="130" width="10" height="10"/><rect x="42" y="140" width="10" height="10"/><rect x="45" y="150" width="10" height="10"/></svg></div>
         </div>
       </div>
 
@@ -257,6 +229,14 @@
     var TOTAL_SLOTS = 16;
     var SKY_INTERVAL = 2;
     var TOTAL_FONTS = 3;
+    var FW_SVGS = [
+      '<rect x="40" y="60" width="4" height="4"/><rect x="280" y="50" width="3" height="3"/><rect x="60" y="360" width="4" height="4"/><rect x="97" y="147" width="6" height="6"/><rect x="95" y="131" width="10" height="10"/><rect x="95" y="159" width="10" height="10"/><rect x="109" y="145" width="10" height="10"/><rect x="81" y="145" width="10" height="10"/><rect x="105" y="135" width="10" height="10"/><rect x="85" y="135" width="10" height="10"/><rect x="105" y="155" width="10" height="10"/><rect x="85" y="155" width="10" height="10"/>',
+      '<rect x="40" y="60" width="4" height="4"/><rect x="280" y="50" width="3" height="3"/><rect x="60" y="360" width="4" height="4"/><rect x="96" y="116" width="8" height="8"/><rect x="96" y="176" width="8" height="8"/><rect x="126" y="146" width="8" height="8"/><rect x="66" y="146" width="8" height="8"/><rect x="117" y="125" width="8" height="8"/><rect x="75" y="125" width="8" height="8"/><rect x="117" y="167" width="8" height="8"/><rect x="75" y="167" width="8" height="8"/>',
+      '<rect x="40" y="60" width="4" height="4"/><rect x="280" y="50" width="3" height="3"/><rect x="60" y="360" width="4" height="4"/><rect x="97" y="99" width="6" height="6"/><rect x="97" y="195" width="6" height="6"/><rect x="145" y="147" width="6" height="6"/><rect x="49" y="147" width="6" height="6"/><rect x="131" y="113" width="6" height="6"/><rect x="63" y="113" width="6" height="6"/><rect x="131" y="181" width="6" height="6"/><rect x="63" y="181" width="6" height="6"/>',
+      '<rect x="40" y="60" width="4" height="4"/><rect x="280" y="50" width="3" height="3"/><rect x="60" y="360" width="4" height="4"/><rect x="217" y="277" width="6" height="6"/><rect x="215" y="261" width="10" height="10"/><rect x="215" y="289" width="10" height="10"/><rect x="229" y="275" width="10" height="10"/><rect x="201" y="275" width="10" height="10"/><rect x="225" y="265" width="10" height="10"/><rect x="205" y="265" width="10" height="10"/><rect x="225" y="285" width="10" height="10"/><rect x="205" y="285" width="10" height="10"/>',
+      '<rect x="40" y="60" width="4" height="4"/><rect x="280" y="50" width="3" height="3"/><rect x="60" y="360" width="4" height="4"/><rect x="216" y="246" width="8" height="8"/><rect x="216" y="306" width="8" height="8"/><rect x="246" y="276" width="8" height="8"/><rect x="186" y="276" width="8" height="8"/><rect x="237" y="255" width="8" height="8"/><rect x="195" y="255" width="8" height="8"/><rect x="237" y="297" width="8" height="8"/><rect x="195" y="297" width="8" height="8"/>',
+      '<rect x="40" y="60" width="4" height="4"/><rect x="280" y="50" width="3" height="3"/><rect x="60" y="360" width="4" height="4"/><rect x="217" y="229" width="6" height="6"/><rect x="217" y="325" width="6" height="6"/><rect x="265" y="277" width="6" height="6"/><rect x="169" y="277" width="6" height="6"/><rect x="251" y="243" width="6" height="6"/><rect x="183" y="243" width="6" height="6"/><rect x="251" y="311" width="6" height="6"/><rect x="183" y="311" width="6" height="6"/>'
+    ];
 
     var totalTime = 25 * 60;
     var timeLeft = totalTime;
@@ -277,8 +257,10 @@
     var REFRESH_INTERVAL_SEC = 300;
     var secondsSinceRefresh = 0;
 
-    var IDLE_TIMEOUT_MS = 60000;
+    var IDLE_TIMEOUT_MS = 60000; // 静置1分钟无操作后进入待机(仅在未点击开始时生效)
     var idleTimer = null;
+    var standbyAnimTimer = null;
+    var standbyCatStep = 0;
 
     var els = {
       appContainer: document.getElementById('app-container'),
@@ -290,14 +272,19 @@
       sunRays: document.getElementById('sun-rays'),
       moonStar: document.getElementById('moon-star'),
       tracksBottom: document.getElementById('tracks-bottom'),
+      coffees: [document.getElementById('coffee-p0'), document.getElementById('coffee-p1')],
+      fwStage: document.getElementById('fw-stage'),
       restPanels: [document.getElementById('rest-panel-0'), document.getElementById('rest-panel-1'), document.getElementById('rest-panel-2')],
-      standbyScreen: document.getElementById('standby-screen')
+      cats: [document.getElementById('cat-p0'), document.getElementById('cat-p1')],
+      standbyScreen: document.getElementById('standby-screen'),
+      standbyCats: [document.getElementById('standby-cat-p0'), document.getElementById('standby-cat-p1')]
     };
 
     var trackSlots = [];
+    var fwFrames = [];
     var lastDisplayedText = '';
     var lastLeadIndex = -1;
-    var restAnimState = { timer: null, index: 0 };
+    var restAnimState = { timer: null, index: 0, coffeeStep: 0, fwStep: 0, catStep: 0 };
 
     function init() {
       var w = document.documentElement.clientWidth || window.innerWidth;
@@ -311,7 +298,7 @@
       clearTracks();
       updateDisplay();
       bindEvents();
-      resetIdleTimer();
+      resetIdleTimer(); // 首次进入页面就开始计时，1分钟不点开始就待机
     }
 
     function initDOM() {
@@ -319,6 +306,14 @@
       for (var i = 0; i < TOTAL_SLOTS; i++) { slotsHtml += '<div class="track-slot"></div>'; }
       els.tracksBottom.innerHTML = slotsHtml;
       trackSlots = els.tracksBottom.querySelectorAll('.track-slot');
+
+      var fwHtml = '';
+      for (var j = 0; j < FW_SVGS.length; j++) { fwHtml += '<div class="fw-frame ' + (j === 0 ? 'active' : '') + '" id="fw-frame-' + j + '"><svg viewBox="0 0 320 420" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000">' + FW_SVGS[j] + '</svg></div>'; }
+      els.fwStage.innerHTML = fwHtml;
+      
+      var fwNodes = els.fwStage.querySelectorAll('.fw-frame');
+      for (var k = 0; k < fwNodes.length; k++) { fwFrames.push(fwNodes[k]); }
+      
       els.btnToggle.innerHTML = ICON_PLAY;
     }
 
@@ -329,7 +324,7 @@
       els.btnToggle.addEventListener('click', function(e) {
         if (e) e.preventDefault();
         toggleTimer();
-        this.blur();
+        this.blur(); // 兜底：防止部分老内核仅靠CSS outline:none 无法彻底清除点击后的焦点虚线框
       });
       els.restScreen.addEventListener('click', hideRestScreen);
       
@@ -337,30 +332,49 @@
       for (var m = 0; m < adjustBtns.length; m++) {
         adjustBtns[m].addEventListener('click', function(e) {
           addMinutes(parseInt(e.target.getAttribute('data-adj'), 10));
-          e.target.blur();
+          e.target.blur(); // 兜底：防止点击后焦点虚线框停留
         });
       }
 
       els.standbyScreen.addEventListener('click', hideStandbyScreen);
+
+      // 捕获阶段监听整个文档的点击：任何一次交互都重新计时，
+      // 这样不用在每个按钮的处理函数里都手动加一遍
       document.addEventListener('click', resetIdleTimer, true);
     }
 
     function handleEasterEgg(action) {
       if (action === 'FONT') {
-        if (easterEggStep === 0 || easterEggStep === 1) { easterEggStep++; } else { easterEggStep = 2; }
+        if (easterEggStep === 0 || easterEggStep === 1) {
+          easterEggStep++;
+        } else {
+          easterEggStep = 2;
+        }
       } else if (action === '+10') {
-        if (easterEggStep === 2) { easterEggStep = 3; } else if (easterEggStep === 3) { easterEggStep = 4; } else { easterEggStep = 0; }
+        if (easterEggStep === 2) { easterEggStep = 3; }
+        else if (easterEggStep === 3) { easterEggStep = 4; }
+        else { easterEggStep = 0; }
       } else if (action === '+5') {
-        if (easterEggStep === 4) { easterEggStep = 5; } else if (easterEggStep === 6) { easterEggStep = 7; } else { easterEggStep = 0; }
+        if (easterEggStep === 4) { easterEggStep = 5; }
+        else if (easterEggStep === 6) { easterEggStep = 7; }
+        else { easterEggStep = 0; }
       } else if (action === '-5') {
-        if (easterEggStep === 5) { easterEggStep = 6; } else if (easterEggStep === 7) { easterEggStep = 0; return true; } else { easterEggStep = 0; }
+        if (easterEggStep === 5) { easterEggStep = 6; }
+        else if (easterEggStep === 7) { 
+          easterEggStep = 0; 
+          return true; 
+        }
+        else { easterEggStep = 0; }
       } else {
         easterEggStep = 0;
       }
       return false;
     }
 
+    /* 恢复 250px 字号，并彻底清除了所有 scale(0.98) 缩放代码 */
     function applyOrientationLogic() {
+      // 强制取偶数(位运算清掉最低位)，避免 translate(-50%,-50%) 在奇数像素宽高下
+      // 产生半像素，老内核对半像素取整不一致，会在边缘留出1px可滚动缝隙
       var SAFE_LONG = (SCREEN_LONG - 8) & ~1;
       var SAFE_SHORT = (SCREEN_SHORT - 8) & ~1;
 
@@ -369,6 +383,7 @@
         els.appContainer.style.height = SAFE_LONG + 'px';
         els.appContainer.style.webkitTransform = 'translate(-50%, -50%)';
         els.appContainer.style.transform = 'translate(-50%, -50%)';
+        
         els.timerText.style.fontSize = '215px';
         els.timerText.style.margin = '-10px 0';
       } else {
@@ -376,13 +391,19 @@
         els.appContainer.style.height = SAFE_SHORT + 'px';
         els.appContainer.style.webkitTransform = 'translate(-50%, -50%) rotate(90deg)';
         els.appContainer.style.transform = 'translate(-50%, -50%) rotate(90deg)';
+        
         els.timerText.style.fontSize = '250px';
         els.timerText.style.margin = '-15px 0';
       }
+
       forceLayoutRecalc();
     }
 
     function forceLayoutRecalc() {
+      // 老版WebKit在JS改动布局尺寸后，有时不会立即重算viewport缩放比例，
+      // 表现为画面整体缩小，要等用户手动触摸屏幕才恢复正常。
+      // 这里用 scrollTo 归零 + 强制读取尺寸，模拟一次"触摸后触发重排"的效果，
+      // 顺带把可能存在的1px滚动偏移也归零。
       window.scrollTo(0, 1);
       window.scrollTo(0, 0);
       void document.body.offsetHeight;
@@ -396,10 +417,14 @@
     function initSavedSettings() {
       isPortraitMode = false;
       applyOrientationLogic();
+
       try {
         var savedFont = localStorage.getItem('kindle_pomodoro_font');
-        if (savedFont !== null) { currentFontIndex = parseInt(savedFont, 10) % TOTAL_FONTS || 0; }
+        if (savedFont !== null) {
+          currentFontIndex = parseInt(savedFont, 10) % TOTAL_FONTS || 0;
+        }
       } catch (e) {}
+
       applyFont();
     }
 
@@ -407,6 +432,7 @@
       currentFontIndex = (currentFontIndex + 1) % TOTAL_FONTS;
       try { localStorage.setItem('kindle_pomodoro_font', currentFontIndex); } catch(e) {}
       applyFont();
+      
       handleEasterEgg('FONT');
     }
 
@@ -471,6 +497,7 @@
       }
       
       var currentMins = Math.round(totalTime / 60) + mins;
+      
       if (currentMins > 120) { currentMins = 5; } else if (currentMins < 5) { currentMins = 120; }
       
       totalTime = currentMins * 60;
@@ -479,7 +506,9 @@
       updateDayNightMode();
       updateDisplay();
 
-      if (isEggTriggered) showRestScreen();
+      if (isEggTriggered) {
+        showRestScreen();
+      }
     }
 
     function updateDisplay() {
@@ -504,16 +533,22 @@
       lastLeadIndex = leadIndex;
 
       var count = currentAnimal.feetCount;
-      for (var i = 0; i < trackSlots.length; i++) { trackSlots[i].className = 'track-slot'; }
+      for (var i = 0; i < trackSlots.length; i++) {
+        trackSlots[i].className = 'track-slot';
+      }
       for (var k = 0; k < count; k++) {
         var pos = leadIndex - k;
-        if (pos >= 0 && pos < TOTAL_SLOTS) { trackSlots[pos].className = 'track-slot active'; }
+        if (pos >= 0 && pos < TOTAL_SLOTS) {
+            trackSlots[pos].className = 'track-slot active';
+        }
       }
     }
 
     function forceScreenRefresh() {
       document.body.style.backgroundColor = '#000000';
-      setTimeout(function() { document.body.style.backgroundColor = '#ffffff'; }, 120);
+      setTimeout(function() {
+        document.body.style.backgroundColor = '#ffffff';
+      }, 120);
     }
 
     function updateDayNightMode() {
@@ -563,32 +598,50 @@
       restAnimState.index = Math.floor(Math.random() * els.restPanels.length);
       updateActiveRestPanel();
       els.restScreen.className = 'rest-screen active';
-      forceScreenRefresh();
+      forceScreenRefresh(); // 切到休息页，整屏内容大面积变化，触发一次强刷清除残影
+
+      if (restAnimState.timer) clearInterval(restAnimState.timer);
+      restAnimState.timer = setInterval(animateRestPanel, 1800);
     }
 
     function hideRestScreen(e) {
       if (e) e.stopPropagation();
       els.restScreen.className = 'rest-screen';
-      forceScreenRefresh();
+      forceScreenRefresh(); // 切回倒计时页，同样整屏内容大面积变化，触发一次强刷清除残影
+      if (restAnimState.timer) clearInterval(restAnimState.timer);
     }
 
     function resetIdleTimer() {
       if (idleTimer) clearTimeout(idleTimer);
       idleTimer = setTimeout(function() {
-        if (!hasStarted && els.restScreen.className.indexOf('active') === -1 && els.standbyScreen.className.indexOf('active') === -1) {
+        // 触发时刻再次确认状态：没点过开始 && 不在休息页 && 待机画面还没显示
+        if (!hasStarted &&
+            els.restScreen.className.indexOf('active') === -1 &&
+            els.standbyScreen.className.indexOf('active') === -1) {
           showStandbyScreen();
         }
       }, IDLE_TIMEOUT_MS);
     }
 
     function showStandbyScreen() {
+      standbyCatStep = 0;
+      els.standbyCats[0].className = 'cat-frame active';
+      els.standbyCats[1].className = 'cat-frame';
       els.standbyScreen.className = 'standby-screen active';
       forceScreenRefresh();
+
+      if (standbyAnimTimer) clearInterval(standbyAnimTimer);
+      standbyAnimTimer = setInterval(function() {
+        standbyCatStep = 1 - standbyCatStep;
+        els.standbyCats[0].className = standbyCatStep === 0 ? 'cat-frame active' : 'cat-frame';
+        els.standbyCats[1].className = standbyCatStep === 1 ? 'cat-frame active' : 'cat-frame';
+      }, 1800); // 与休息页动画间隔保持一致
     }
 
     function hideStandbyScreen(e) {
       if (e) e.stopPropagation();
       els.standbyScreen.className = 'standby-screen';
+      if (standbyAnimTimer) { clearInterval(standbyAnimTimer); standbyAnimTimer = null; }
       forceScreenRefresh();
       resetIdleTimer();
     }
@@ -599,8 +652,32 @@
       }
     }
 
+    function animateRestPanel() {
+      if (els.restScreen.className.indexOf('active') === -1) return;
+
+      var idx = restAnimState.index;
+      if (idx === 0) {
+        restAnimState.coffeeStep = 1 - restAnimState.coffeeStep;
+        els.coffees[0].className = restAnimState.coffeeStep === 0 ? 'coffee-frame active' : 'coffee-frame';
+        els.coffees[1].className = restAnimState.coffeeStep === 1 ? 'coffee-frame active' : 'coffee-frame';
+      } else if (idx === 1) {
+        restAnimState.fwStep = (restAnimState.fwStep + 1) % fwFrames.length;
+        for (var k = 0; k < fwFrames.length; k++) {
+          fwFrames[k].className = (k === restAnimState.fwStep) ? 'fw-frame active' : 'fw-frame';
+        }
+      } else if (idx === 2) {
+        restAnimState.catStep = 1 - restAnimState.catStep;
+        els.cats[0].className = restAnimState.catStep === 0 ? 'cat-frame active' : 'cat-frame';
+        els.cats[1].className = restAnimState.catStep === 1 ? 'cat-frame active' : 'cat-frame';
+      }
+    }
+
     window.addEventListener('load', function() {
         setTimeout(init, 50);
+
+        // 部分老机型在load触发的瞬间，浏览器的viewport尺寸/缩放比例还没完全稳定下来，
+        // 直接读取到的clientWidth/innerWidth可能不准。这里延迟300ms后重新测量一次屏幕尺寸，
+        // 并重新套用当前的横/竖屏布局 + 强制重排，相当于自动补上"用户交互才会触发的修正"。
         setTimeout(function() {
           var w = document.documentElement.clientWidth || window.innerWidth;
           var h = document.documentElement.clientHeight || window.innerHeight;
