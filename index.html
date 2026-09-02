@@ -514,7 +514,7 @@
     var lastDisplayedText = '';
     var lastLeadIndex = -1;
     
-    // 配置各个面板专属的动画频率
+    // 面板专属频率 (小鸟1000ms, 蝴蝶花丛180ms, 睡觉猫咪1800ms)
     var REST_ANIM_INTERVALS = [1000, 180, 1800]; 
     var restAnimState = { timer: null, index: 0, birdStep: 0, comboStep: 0, catStep: 0 };
 
@@ -539,7 +539,7 @@
       els.tracksBottom.innerHTML = slotsHtml;
       trackSlots = els.tracksBottom.querySelectorAll('.track-slot');
       
-      // 提取最新的动画帧节点
+      // 提取最新的两套动画帧节点
       els.birdFrames = document.getElementById('stage-bird-coffee').querySelectorAll('.anim-frame');
       els.flowerFrames = document.getElementById('flower-layer').querySelectorAll('.anim-frame');
       els.butterflyFrames = document.getElementById('butterfly-layer').querySelectorAll('.anim-frame');
@@ -845,8 +845,8 @@
 
       var idx = restAnimState.index;
       if (idx === 0) {
-        // 小鸟深蹲与热气交替 (4帧循环: 0-1-2-3)
-        els.birdFrames[restAnimState.birdStep].className = 'anim-frame';
+        // 小鸟深蹲咖啡 (4帧循环)
+        for (var i = 0; i < 4; i++) { els.birdFrames[i].className = 'anim-frame'; }
         restAnimState.birdStep = (restAnimState.birdStep + 1) % 4;
         els.birdFrames[restAnimState.birdStep].className = 'anim-frame active';
       } else if (idx === 1) {
@@ -860,7 +860,7 @@
         els.butterflyFrames[restAnimState.comboStep % 16].className = 'anim-frame active';
         els.flowerFrames[Math.floor(restAnimState.comboStep / 4) % 8].className = 'anim-frame active';
       } else if (idx === 2) {
-        // 像素猫咪 (2帧)
+        // 猫咪 (2帧循环)
         restAnimState.catStep = 1 - restAnimState.catStep;
         els.cats[0].className = restAnimState.catStep === 0 ? 'cat-frame active' : 'cat-frame';
         els.cats[1].className = restAnimState.catStep === 1 ? 'cat-frame active' : 'cat-frame';
