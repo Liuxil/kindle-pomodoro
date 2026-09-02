@@ -181,69 +181,87 @@
     <div id="safe-area">
       <div id="app-container">
         <div class="sky-badge" id="btn-orientation" title="点击切换横/竖屏">
-          <!-- 重绘的像素太阳，具备外围射线伸缩效果 -->
+          
+          <!-- 升级到 64x64 的高精度饱满太阳 -->
           <div class="sun-box" id="sun-box">
-            <svg viewBox="0 0 32 32" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000">
-              <!-- Sun Center -->
-              <rect x="12" y="10" width="8" height="12" />
-              <rect x="10" y="12" width="12" height="8" />
-              <!-- Base Rays -->
-              <rect x="15" y="4" width="2" height="4" />
-              <rect x="15" y="24" width="2" height="4" />
-              <rect x="4" y="15" width="4" height="2" />
-              <rect x="24" y="15" width="4" height="2" />
-              <rect x="7" y="7" width="2" height="2" />
-              <rect x="9" y="9" width="2" height="2" />
-              <rect x="23" y="7" width="2" height="2" />
-              <rect x="21" y="9" width="2" height="2" />
-              <rect x="7" y="23" width="2" height="2" />
-              <rect x="9" y="21" width="2" height="2" />
-              <rect x="23" y="23" width="2" height="2" />
-              <rect x="21" y="21" width="2" height="2" />
-              <!-- Extended Rays (Toggled for ticking) -->
+            <svg viewBox="0 0 64 64" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000">
+              <!-- 饱满的太阳核心 -->
+              <rect x="24" y="18" width="16" height="2" />
+              <rect x="20" y="20" width="24" height="2" />
+              <rect x="18" y="22" width="28" height="2" />
+              <rect x="16" y="24" width="32" height="16" />
+              <rect x="18" y="40" width="28" height="2" />
+              <rect x="20" y="42" width="24" height="2" />
+              <rect x="24" y="44" width="16" height="2" />
+              
+              <!-- 固定的内侧光线 -->
+              <rect x="30" y="6" width="4" height="8" />
+              <rect x="30" y="50" width="4" height="8" />
+              <rect x="6" y="30" width="8" height="4" />
+              <rect x="50" y="30" width="8" height="4" />
+              <rect x="16" y="16" width="4" height="4" />
+              <rect x="12" y="12" width="4" height="4" />
+              <rect x="44" y="16" width="4" height="4" />
+              <rect x="48" y="12" width="4" height="4" />
+              <rect x="16" y="44" width="4" height="4" />
+              <rect x="12" y="48" width="4" height="4" />
+              <rect x="44" y="44" width="4" height="4" />
+              <rect x="48" y="48" width="4" height="4" />
+
+              <!-- 会随秒针闪烁伸缩的外侧光线 -->
               <g id="sun-rays-ext">
-                <rect x="15" y="0" width="2" height="2" />
-                <rect x="15" y="30" width="2" height="2" />
-                <rect x="0" y="15" width="2" height="2" />
-                <rect x="30" y="15" width="2" height="2" />
-                <rect x="3" y="3" width="2" height="2" />
-                <rect x="27" y="3" width="2" height="2" />
-                <rect x="3" y="27" width="2" height="2" />
-                <rect x="27" y="27" width="2" height="2" />
+                <rect x="30" y="0" width="4" height="4" />
+                <rect x="30" y="60" width="4" height="4" />
+                <rect x="0" y="30" width="4" height="4" />
+                <rect x="60" y="30" width="4" height="4" />
+                <rect x="8" y="8" width="4" height="4" />
+                <rect x="52" y="8" width="4" height="4" />
+                <rect x="8" y="52" width="4" height="4" />
+                <rect x="52" y="52" width="4" height="4" />
               </g>
             </svg>
           </div>
-          <!-- 重绘的像素月亮与交替闪烁星空 -->
+
+          <!-- 升级到 64x64 的高精度饱满月亮与交替星空 -->
           <div class="moon-box" id="moon-box">
-            <svg viewBox="0 0 32 32" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000">
-              <!-- Moon Body -->
-              <rect x="14" y="4" width="6" height="2" />
-              <rect x="12" y="6" width="4" height="2" />
-              <rect x="20" y="6" width="2" height="2" />
-              <rect x="10" y="8" width="4" height="2" />
-              <rect x="16" y="8" width="2" height="2" />
-              <rect x="8" y="10" width="4" height="2" />
-              <rect x="8" y="12" width="4" height="8" />
-              <rect x="8" y="20" width="4" height="2" />
-              <rect x="10" y="22" width="4" height="2" />
-              <rect x="16" y="22" width="2" height="2" />
-              <rect x="12" y="24" width="4" height="2" />
-              <rect x="20" y="24" width="2" height="2" />
-              <rect x="14" y="26" width="6" height="2" />
-              <!-- Stars Group 1 -->
+            <svg viewBox="0 0 64 64" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000">
+              <!-- 饱满的完美新月 -->
+              <rect x="28" y="8" width="12" height="2" />
+              <rect x="28" y="50" width="12" height="2" />
+              <rect x="24" y="10" width="18" height="2" />
+              <rect x="24" y="48" width="18" height="2" />
+              <rect x="20" y="12" width="20" height="2" />
+              <rect x="20" y="46" width="20" height="2" />
+              <rect x="18" y="14" width="18" height="2" />
+              <rect x="18" y="44" width="18" height="2" />
+              <rect x="16" y="16" width="16" height="2" />
+              <rect x="16" y="42" width="16" height="2" />
+              <rect x="14" y="18" width="16" height="2" />
+              <rect x="14" y="40" width="16" height="2" />
+              <rect x="14" y="20" width="14" height="2" />
+              <rect x="14" y="38" width="14" height="2" />
+              <rect x="12" y="22" width="14" height="2" />
+              <rect x="12" y="36" width="14" height="2" />
+              <rect x="12" y="24" width="14" height="12" />
+
+              <!-- 第一组星星：偶数秒显示 -->
               <g id="moon-stars-1">
-                <rect x="6" y="4" width="2" height="6" />
-                <rect x="4" y="6" width="6" height="2" />
-                <rect x="26" y="6" width="2" height="2" />
-                <rect x="24" y="22" width="2" height="6" />
-                <rect x="22" y="24" width="6" height="2" />
+                <rect x="6" y="10" width="2" height="6" />
+                <rect x="4" y="12" width="6" height="2" />
+                <rect x="50" y="26" width="2" height="6" />
+                <rect x="48" y="28" width="6" height="2" />
+                <rect x="14" y="54" width="2" height="2" />
+                <rect x="46" y="12" width="2" height="2" />
               </g>
-              <!-- Stars Group 2 -->
+
+              <!-- 第二组星星：奇数秒显示 -->
               <g id="moon-stars-2" style="display:none;">
-                <rect x="6" y="26" width="2" height="2" />
-                <rect x="24" y="12" width="2" height="6" />
-                <rect x="22" y="14" width="6" height="2" />
-                <rect x="2" y="14" width="2" height="2" />
+                <rect x="8" y="46" width="2" height="6" />
+                <rect x="6" y="48" width="6" height="2" />
+                <rect x="48" y="14" width="2" height="6" />
+                <rect x="46" y="16" width="6" height="2" />
+                <rect x="16" y="6" width="2" height="2" />
+                <rect x="44" y="48" width="2" height="2" />
               </g>
             </svg>
           </div>
@@ -408,7 +426,7 @@
                   <svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="30" y="120" width="140" height="15"/><rect x="35" y="110" width="5" height="10"/><rect x="95" y="115" width="5" height="5"/><rect x="105" y="110" width="5" height="10"/><rect x="145" y="115" width="5" height="5"/><rect x="160" y="105" width="5" height="15"/><rect x="40" y="135" width="10" height="5"/><rect x="55" y="135" width="15" height="5"/><rect x="65" y="140" width="5" height="10"/><rect x="55" y="150" width="15" height="5"/><rect x="105" y="135" width="20" height="5"/><rect x="120" y="140" width="5" height="15"/><rect x="105" y="155" width="20" height="5"/><rect x="105" y="160" width="5" height="20"/><rect x="155" y="135" width="5" height="15"/><rect x="55" y="90" width="5" height="30"/><rect x="50" y="100" width="5" height="5"/><rect x="60" y="90" width="5" height="5"/><rect x="95" y="105" width="5" height="15"/><rect x="90" y="105" width="5" height="5"/><rect x="135" y="85" width="5" height="35"/><rect x="130" y="95" width="5" height="5"/><rect x="140" y="85" width="5" height="5"/><rect x="60" y="75" width="5" height="15"/><rect x="60" y="70" width="15" height="5"/><rect x="65" y="65" width="5" height="15"/><rect x="100" y="95" width="5" height="10"/><rect x="95" y="85" width="5" height="10"/><rect x="105" y="85" width="5" height="10"/><rect x="95" y="95" width="15" height="5"/><rect x="140" y="65" width="5" height="20"/><path d="M140 50 h15 v15 h-15 z M145 55 h5 v5 h-5 z" fill-rule="evenodd"/></svg>
                 </div>
                 <div class="anim-frame">
-                  <svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="30" y="120" width="140" height="15"/><rect x="35" y="110" width="5" height="10"/><rect x="95" y="115" width="5" height="5"/><rect x="105" y="110" width="5" height="10"/><rect x="145" y="115" width="5" height="5"/><rect x="160" y="105" width="5" height="15"/><rect x="40" y="135" width="10" height="5"/><rect x="55" y="135" width="15" height="5"/><rect x="65" y="140" width="5" height="10"/><rect x="55" y="150" width="15" height="5"/><rect x="105" y="135" width="20" height="5"/><rect x="120" y="140" width="5" height="15"/><rect x="105" y="155" width="20" height="5"/><rect x="105" y="160" width="5" height="20"/><rect x="155" y="135" width="5" height="15"/><rect x="55" y="90" width="5" height="30"/><rect x="50" y="100" width="5" height="5"/><rect x="60" y="90" width="5" height="5"/><rect x="95" y="105" width="5" height="15"/><rect x="90" y="105" width="5" height="5"/><rect x="135" y="85" width="5" height="35"/><rect x="130" y="95" width="5" height="5"/><rect x="140" y="85" width="5" height="5"/><rect x="55" y="75" width="5" height="15"/><rect x="55" y="70" width="15" height="5"/><rect x="60" y="65" width="5" height="15"/><rect x="100" y="95" width="5" height="10"/><rect x="95" y="85" width="5" height="10"/><rect x="105" y="85" width="5" height="10"/><rect x="95" y="95" width="15" height="5"/><rect x="135" y="65" width="5" height="20"/><path d="M135 50 h15 v15 h-15 z M140 55 h5 v5 h-5 z" fill-rule="evenodd"/></svg>
+                  <svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="30" y="120" width="140" height="15"/><rect x="35" y="110" width="5" height="10"/><rect x="95" y="115" width="5" height="5"/><rect x="105" y="110" width="5" height="10"/><rect x="145" y="115" width="5" height="5"/><rect x="160" y="105" width="5" height="15"/><rect x="40" y="135" width="10" height="5"/><rect x="55" y="135" width="15" height="5"/><rect x="65" y="140" width="5" height="10"/><rect x="55" y="150" width="15" height="5"/><rect x="105" y="135" width="20" height="5"/><rect x="120" y="140" width="5" height="15"/><rect x="105" y="155" width="20" height="5"/><rect x="105" y="160" width="5" height="20"/><rect x="155" y="135" width="5" height="15"/><rect x="55" y="90" width="5" height="30"/><rect x="50" y="100" width="5" height="5"/><rect x="60" y="90" width="5" height="5"/><rect x="95" y="105" width="5" height="15"/><rect x="90" y="105" width="5" height="5"/><rect x="135" y="85" width="5" height="35"/><rect x="130" y="95" width="5" height="5"/><rect x="140" y="85" width="5" height="5"/><rect x="55" y="75" width="5" height="15"/><rect x="50" y="70" width="15" height="5"/><rect x="55" y="65" width="5" height="15"/><rect x="95" y="95" width="5" height="10"/><rect x="90" y="85" width="5" height="10"/><rect x="100" y="85" width="5" height="10"/><rect x="90" y="95" width="15" height="5"/><rect x="135" y="65" width="5" height="20"/><path d="M130 50 h15 v15 h-15 z M135 55 h5 v5 h-5 z" fill-rule="evenodd"/></svg>
                 </div>
                 <div class="anim-frame">
                   <svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="30" y="120" width="140" height="15"/><rect x="35" y="110" width="5" height="10"/><rect x="95" y="115" width="5" height="5"/><rect x="105" y="110" width="5" height="10"/><rect x="145" y="115" width="5" height="5"/><rect x="160" y="105" width="5" height="15"/><rect x="40" y="135" width="10" height="5"/><rect x="55" y="135" width="15" height="5"/><rect x="65" y="140" width="5" height="10"/><rect x="55" y="150" width="15" height="5"/><rect x="105" y="135" width="20" height="5"/><rect x="120" y="140" width="5" height="15"/><rect x="105" y="155" width="20" height="5"/><rect x="105" y="160" width="5" height="20"/><rect x="155" y="135" width="5" height="15"/><rect x="55" y="90" width="5" height="30"/><rect x="50" y="100" width="5" height="5"/><rect x="60" y="90" width="5" height="5"/><rect x="95" y="105" width="5" height="15"/><rect x="90" y="105" width="5" height="5"/><rect x="135" y="85" width="5" height="35"/><rect x="130" y="95" width="5" height="5"/><rect x="140" y="85" width="5" height="5"/><rect x="55" y="75" width="5" height="15"/><rect x="50" y="70" width="15" height="5"/><rect x="55" y="65" width="5" height="15"/><rect x="95" y="95" width="5" height="10"/><rect x="90" y="85" width="5" height="10"/><rect x="100" y="85" width="5" height="10"/><rect x="90" y="95" width="15" height="5"/><rect x="135" y="65" width="5" height="20"/><path d="M130 50 h15 v15 h-15 z M135 55 h5 v5 h-5 z" fill-rule="evenodd"/></svg>
@@ -475,7 +493,7 @@
     
     var TOTAL_SLOTS = 16;
     var TOTAL_FONTS = 3;
-    var SKY_INTERVAL = 1; // 调整为 1，满足准确的一秒心跳效果
+    var SKY_INTERVAL = 1;
 
     var totalTime = 25 * 60;
     var timeLeft = totalTime;
@@ -676,7 +694,7 @@
       }
     }
 
-    // 更新后的读秒逻辑：通过切换 DOM 的 display 控制长短射线或星星编组
+    // 更新后的天象读秒逻辑：通过切换 DOM display 控制长短射线与星星编组
     function tickSkyBadge() {
       starToggled = !starToggled;
       if (isDayTime) {
