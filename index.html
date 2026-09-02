@@ -486,8 +486,8 @@
     var easterEggStep = 0;
     var SCREEN_LONG = 0;
     var SCREEN_SHORT = 0;
-    var REFRESH_INTERVAL_SEC = 300;
-    var secondsSinceRefresh = 0;
+    var FIRST_REFRESH_DELAY_SEC = 60; // 开始运行1分钟后强刷一次，给误触开始留容错，整个倒计时只刷这一次
+    var hasRefreshedThisRun = false;
 
     var IDLE_TIMEOUT_MS = 60000;
     var idleTimer = null;
@@ -647,6 +647,7 @@
       } else { 
         if (timeLeft <= 0 || !hasStarted) {
           timeLeft = totalTime;
+          hasRefreshedThisRun = false; // 新一轮倒计时开始，重置"是否已强刷过"标记
           startAnimalTracks();
         }
         updateDayNightMode();
@@ -667,9 +668,10 @@
         if (elapsedSeconds % SKY_INTERVAL === 0) tickSkyBadge();
         updateDisplay();
 
-        secondsSinceRefresh++;
-        if (secondsSinceRefresh >= REFRESH_INTERVAL_SEC) {
-          secondsSinceRefresh = 0;
+        // 开始运行满1分钟(累计实际运行时长，暂停期间不计入)时强刷一次，
+        // 整个倒计时只刷这一次；误触开始后1分钟内就暂停/结束的话，不会触发这次刷新
+        if (!hasRefreshedThisRun && elapsedSeconds >= FIRST_REFRESH_DELAY_SEC) {
+          hasRefreshedThisRun = true;
           forceScreenRefresh();
         }
 
