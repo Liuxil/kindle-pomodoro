@@ -10,7 +10,6 @@
   <link rel="apple-touch-icon" href="icon.png">
   <title>Pomodoro</title>
   
-  <!-- 引入类似 7段式液晶的电子字体 -->
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
   </style>
@@ -36,7 +35,6 @@
     }
     ::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
 
-    /* 物理屏幕边界，负责内缩让出安全区(刘海/底部横条) */
     #screen-bounds {
       position: absolute;
       top: 0; left: 0; width: 100vw; height: 100vh;
@@ -45,13 +43,11 @@
       box-sizing: border-box;
     }
 
-    /* 相对定位的安全区域参考层 */
     #safe-area {
       position: relative;
       width: 100%; height: 100%;
     }
 
-    /* 真正的应用容器，它的中心现在是绝对安全的中心 */
     #app-container {
       position: absolute;
       top: 50%; left: 50%;
@@ -63,20 +59,17 @@
       transition: transform 0.3s ease-out, width 0.3s, height 0.3s;
     }
 
-    /* 状态 A: 物理方向与逻辑显示一致 (正常渲染，0度) */
     #app-container.orient-match {
       width: 100%; height: 100%;
       transform: translate(-50%, -50%);
     }
 
-    /* 状态 B: 手机物理竖向，强制横版 (转90度并精准交换安全区扣除量) */
     #app-container.orient-force-landscape {
       width: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
       height: calc(100vw - env(safe-area-inset-left) - env(safe-area-inset-right));
       transform: translate(-50%, -50%) rotate(90deg);
     }
 
-    /* 状态 C: 手机物理横向，强制竖版 (转-90度并精准交换安全区扣除量) */
     #app-container.orient-force-portrait {
       width: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
       height: calc(100vw - env(safe-area-inset-left) - env(safe-area-inset-right));
@@ -85,13 +78,6 @@
 
     .sky-badge { width: 60px; height: 60px; position: relative; cursor: pointer; flex-shrink: 0; }
     .sun-box, .moon-box { width: 100%; height: 100%; position: relative; display: none; }
-    .sun-rays { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transition: transform 0.5s linear; }
-    .sun-face {
-      position: absolute; top: 50%; left: 50%; width: 30px; height: 30px; margin: -15px 0 0 -15px;
-      background: #ffffff; border: 2.5px solid #000000; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .moon-star { position: absolute; top: 6px; right: 6px; width: 18px; height: 18px; transition: transform 0.3s ease; }
 
     .main-section {
       width: 100%; flex: 1;
@@ -128,7 +114,6 @@
 
     .font-style-0 { font-family: "Helvetica Neue Light", "Helvetica Neue", "Arial Narrow", sans-serif; font-weight: 200; color: transparent !important; -webkit-text-fill-color: transparent !important; -webkit-text-stroke: 1.5px #000000; }
     .font-style-1 { font-family: "Helvetica Neue Light", "Helvetica Neue", "Arial Narrow", sans-serif; font-weight: 200; color: #000000 !important; -webkit-text-fill-color: #000000 !important; -webkit-text-stroke: 0 !important; }
-    
     .font-style-2 { 
       font-family: 'Share Tech Mono', monospace; 
       font-weight: 400; 
@@ -185,11 +170,8 @@
     .rest-panel.active { display: flex; }
     
     .pixel-stage, .pixel-cat-stage { width: 280px; height: 280px; position: relative; }
-    
-    /* 修复蝴蝶丢失：图层层级恢复展示 */
     .anim-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
     .anim-frame, .cat-frame { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; }
-    
     .anim-frame.active, .cat-frame.active { display: block; }
   </style>
 </head>
@@ -199,20 +181,71 @@
     <div id="safe-area">
       <div id="app-container">
         <div class="sky-badge" id="btn-orientation" title="点击切换横/竖屏">
+          <!-- 重绘的像素太阳，具备外围射线伸缩效果 -->
           <div class="sun-box" id="sun-box">
-            <div class="sun-rays" id="sun-rays">
-              <svg viewBox="0 0 100 100" stroke="#000" stroke-linecap="round">
-                <path d="M50 4 L50 16" stroke-width="4.5"/><path d="M50 84 L50 96" stroke-width="4.5"/><path d="M4 50 L16 50" stroke-width="4.5"/><path d="M84 50 L96 50" stroke-width="4.5"/>
-                <path d="M17 17 L26 26" stroke-width="4"/><path d="M74 74 L83 83" stroke-width="4"/><path d="M17 83 L26 74" stroke-width="4"/><path d="M74 26 L83 17" stroke-width="4"/>
-              </svg>
-            </div>
-            <div class="sun-face"></div>
+            <svg viewBox="0 0 32 32" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000">
+              <!-- Sun Center -->
+              <rect x="12" y="10" width="8" height="12" />
+              <rect x="10" y="12" width="12" height="8" />
+              <!-- Base Rays -->
+              <rect x="15" y="4" width="2" height="4" />
+              <rect x="15" y="24" width="2" height="4" />
+              <rect x="4" y="15" width="4" height="2" />
+              <rect x="24" y="15" width="4" height="2" />
+              <rect x="7" y="7" width="2" height="2" />
+              <rect x="9" y="9" width="2" height="2" />
+              <rect x="23" y="7" width="2" height="2" />
+              <rect x="21" y="9" width="2" height="2" />
+              <rect x="7" y="23" width="2" height="2" />
+              <rect x="9" y="21" width="2" height="2" />
+              <rect x="23" y="23" width="2" height="2" />
+              <rect x="21" y="21" width="2" height="2" />
+              <!-- Extended Rays (Toggled for ticking) -->
+              <g id="sun-rays-ext">
+                <rect x="15" y="0" width="2" height="2" />
+                <rect x="15" y="30" width="2" height="2" />
+                <rect x="0" y="15" width="2" height="2" />
+                <rect x="30" y="15" width="2" height="2" />
+                <rect x="3" y="3" width="2" height="2" />
+                <rect x="27" y="3" width="2" height="2" />
+                <rect x="3" y="27" width="2" height="2" />
+                <rect x="27" y="27" width="2" height="2" />
+              </g>
+            </svg>
           </div>
+          <!-- 重绘的像素月亮与交替闪烁星空 -->
           <div class="moon-box" id="moon-box">
-            <svg viewBox="0 0 68 68" style="width:100%;height:100%;"><path d="M38 12 C24 12 12 24 12 38 C12 48 18 56 26 59 C23 54 22 48 22 42 C22 28 32 17 46 16 C43 13 40 12 38 12 Z" fill="#000"/></svg>
-            <div class="moon-star" id="moon-star">
-              <svg viewBox="0 0 24 24"><path d="M12 2 Q 12 12 2 12 Q 12 12 12 22 Q 12 12 22 12 Q 12 12 12 2 Z" fill="#000"/></svg>
-            </div>
+            <svg viewBox="0 0 32 32" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000">
+              <!-- Moon Body -->
+              <rect x="14" y="4" width="6" height="2" />
+              <rect x="12" y="6" width="4" height="2" />
+              <rect x="20" y="6" width="2" height="2" />
+              <rect x="10" y="8" width="4" height="2" />
+              <rect x="16" y="8" width="2" height="2" />
+              <rect x="8" y="10" width="4" height="2" />
+              <rect x="8" y="12" width="4" height="8" />
+              <rect x="8" y="20" width="4" height="2" />
+              <rect x="10" y="22" width="4" height="2" />
+              <rect x="16" y="22" width="2" height="2" />
+              <rect x="12" y="24" width="4" height="2" />
+              <rect x="20" y="24" width="2" height="2" />
+              <rect x="14" y="26" width="6" height="2" />
+              <!-- Stars Group 1 -->
+              <g id="moon-stars-1">
+                <rect x="6" y="4" width="2" height="6" />
+                <rect x="4" y="6" width="6" height="2" />
+                <rect x="26" y="6" width="2" height="2" />
+                <rect x="24" y="22" width="2" height="6" />
+                <rect x="22" y="24" width="6" height="2" />
+              </g>
+              <!-- Stars Group 2 -->
+              <g id="moon-stars-2" style="display:none;">
+                <rect x="6" y="26" width="2" height="2" />
+                <rect x="24" y="12" width="2" height="6" />
+                <rect x="22" y="14" width="6" height="2" />
+                <rect x="2" y="14" width="2" height="2" />
+              </g>
+            </svg>
           </div>
         </div>
 
@@ -381,7 +414,7 @@
                   <svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="30" y="120" width="140" height="15"/><rect x="35" y="110" width="5" height="10"/><rect x="95" y="115" width="5" height="5"/><rect x="105" y="110" width="5" height="10"/><rect x="145" y="115" width="5" height="5"/><rect x="160" y="105" width="5" height="15"/><rect x="40" y="135" width="10" height="5"/><rect x="55" y="135" width="15" height="5"/><rect x="65" y="140" width="5" height="10"/><rect x="55" y="150" width="15" height="5"/><rect x="105" y="135" width="20" height="5"/><rect x="120" y="140" width="5" height="15"/><rect x="105" y="155" width="20" height="5"/><rect x="105" y="160" width="5" height="20"/><rect x="155" y="135" width="5" height="15"/><rect x="55" y="90" width="5" height="30"/><rect x="50" y="100" width="5" height="5"/><rect x="60" y="90" width="5" height="5"/><rect x="95" y="105" width="5" height="15"/><rect x="90" y="105" width="5" height="5"/><rect x="135" y="85" width="5" height="35"/><rect x="130" y="95" width="5" height="5"/><rect x="140" y="85" width="5" height="5"/><rect x="55" y="75" width="5" height="15"/><rect x="50" y="70" width="15" height="5"/><rect x="55" y="65" width="5" height="15"/><rect x="95" y="95" width="5" height="10"/><rect x="90" y="85" width="5" height="10"/><rect x="100" y="85" width="5" height="10"/><rect x="90" y="95" width="15" height="5"/><rect x="135" y="65" width="5" height="20"/><path d="M130 50 h15 v15 h-15 z M135 55 h5 v5 h-5 z" fill-rule="evenodd"/></svg>
                 </div>
                 <div class="anim-frame">
-                  <svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="30" y="120" width="140" height="15"/><rect x="35" y="110" width="5" height="10"/><rect x="95" y="115" width="5" height="5"/><rect x="105" y="110" width="5" height="10"/><rect x="145" y="115" width="5" height="5"/><rect x="160" y="105" width="5" height="15"/><rect x="40" y="135" width="10" height="5"/><rect x="55" y="135" width="15" height="5"/><rect x="65" y="140" width="5" height="10"/><rect x="55" y="150" width="15" height="5"/><rect x="105" y="135" width="20" height="5"/><rect x="120" y="140" width="5" height="15"/><rect x="105" y="155" width="20" height="5"/><rect x="105" y="160" width="5" height="20"/><rect x="155" y="135" width="5" height="15"/><rect x="55" y="90" width="5" height="30"/><rect x="50" y="100" width="5" height="5"/><rect x="60" y="90" width="5" height="5"/><rect x="95" y="105" width="5" height="15"/><rect x="90" y="105" width="5" height="5"/><rect x="135" y="85" width="5" height="35"/><rect x="130" y="95" width="5" height="5"/><rect x="140" y="85" width="5" height="5"/><rect x="55" y="75" width="5" height="15"/><rect x="45" y="70" width="15" height="5"/><rect x="50" y="65" width="5" height="15"/><rect x="90" y="95" width="5" height="10"/><rect x="85" y="85" width="5" height="10"/><rect x="95" y="85" width="5" height="10"/><rect x="85" y="95" width="15" height="5"/><rect x="135" y="65" width="5" height="20"/><path d="M125 50 h15 v15 h-15 z M130 55 h5 v5 h-5 z" fill-rule="evenodd"/></svg>
+                  <svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="30" y="120" width="140" height="15"/><rect x="35" y="110" width="5" height="10"/><rect x="95" y="115" width="5" height="5"/><rect x="105" y="110" width="5" height="10"/><rect x="145" y="115" width="5" height="5"/><rect x="160" y="105" width="5" height="15"/><rect x="40" y="135" width="10" height="5"/><rect x="55" y="135" width="15" height="5"/><rect x="65" y="140" width="5" height="10"/><rect x="55" y="150" width="15" height="5"/><rect x="105" y="135" width="20" height="5"/><rect x="120" y="140" width="5" height="15"/><rect x="105" y="155" width="20" height="5"/><rect x="105" y="160" width="5" height="20"/><rect x="155" y="135" width="5" height="15"/><rect x="55" y="90" width="5" height="30"/><rect x="50" y="100" width="5" height="5"/><rect x="60" y="90" width="5" height="5"/><rect x="95" y="105" width="5" height="15"/><rect x="90" y="105" width="5" height="5"/><rect x="135" y="85" width="5" height="35"/><rect x="130" y="95" width="5" height="5"/><rect x="140" y="85" width="5" height="5"/><rect x="45" y="75" width="5" height="15"/><rect x="40" y="70" width="15" height="5"/><rect x="45" y="65" width="5" height="15"/><rect x="90" y="95" width="5" height="10"/><rect x="85" y="85" width="5" height="10"/><rect x="95" y="85" width="5" height="10"/><rect x="85" y="95" width="15" height="5"/><rect x="135" y="65" width="5" height="20"/><path d="M125 50 h15 v15 h-15 z M130 55 h5 v5 h-5 z" fill-rule="evenodd"/></svg>
                 </div>
                 <div class="anim-frame">
                   <svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="30" y="120" width="140" height="15"/><rect x="35" y="110" width="5" height="10"/><rect x="95" y="115" width="5" height="5"/><rect x="105" y="110" width="5" height="10"/><rect x="145" y="115" width="5" height="5"/><rect x="160" y="105" width="5" height="15"/><rect x="40" y="135" width="10" height="5"/><rect x="55" y="135" width="15" height="5"/><rect x="65" y="140" width="5" height="10"/><rect x="55" y="150" width="15" height="5"/><rect x="105" y="135" width="20" height="5"/><rect x="120" y="140" width="5" height="15"/><rect x="105" y="155" width="20" height="5"/><rect x="105" y="160" width="5" height="20"/><rect x="155" y="135" width="5" height="15"/><rect x="55" y="90" width="5" height="30"/><rect x="50" y="100" width="5" height="5"/><rect x="60" y="90" width="5" height="5"/><rect x="95" y="105" width="5" height="15"/><rect x="90" y="105" width="5" height="5"/><rect x="135" y="85" width="5" height="35"/><rect x="130" y="95" width="5" height="5"/><rect x="140" y="85" width="5" height="5"/><rect x="50" y="75" width="5" height="15"/><rect x="40" y="70" width="15" height="5"/><rect x="45" y="65" width="5" height="15"/><rect x="90" y="95" width="5" height="10"/><rect x="85" y="85" width="5" height="10"/><rect x="95" y="85" width="5" height="10"/><rect x="85" y="95" width="15" height="5"/><rect x="130" y="65" width="5" height="20"/><path d="M120 50 h15 v15 h-15 z M125 55 h5 v5 h-5 z" fill-rule="evenodd"/></svg>
@@ -442,7 +475,7 @@
     
     var TOTAL_SLOTS = 16;
     var TOTAL_FONTS = 3;
-    var SKY_INTERVAL = 2;
+    var SKY_INTERVAL = 1; // 调整为 1，满足准确的一秒心跳效果
 
     var totalTime = 25 * 60;
     var timeLeft = totalTime;
@@ -451,23 +484,19 @@
     var hasStarted = false;
     
     var isDayTime = true;
-    var sunAngle = 0;
     var starToggled = false;
     var currentAnimal = null;
     var currentFontIndex = 1; 
 
-    // 横竖屏逻辑状态
     var isPhysicalPortrait = true;
     var isLogicalPortrait = true;
 
-    // 彩蛋与待机定时状态
     var easterEggStep = 0;
     var IDLE_TIMEOUT_MS = 60000;
     var idleTimer = null;
     var standbyAnimTimer = null;
     var standbyCatStep = 0;
     
-    // 休息界面动画状态
     var REST_ANIM_INTERVALS = [1000, 180, 1800]; 
     var restAnimState = { timer: null, index: 0, birdStep: 0, comboStep: 0, catStep: 0 };
 
@@ -478,8 +507,6 @@
       restScreen: document.getElementById('rest-screen'),
       sunBox: document.getElementById('sun-box'),
       moonBox: document.getElementById('moon-box'),
-      sunRays: document.getElementById('sun-rays'),
-      moonStar: document.getElementById('moon-star'),
       tracksBottom: document.getElementById('tracks-bottom'),
       standbyScreen: document.getElementById('standby-screen')
     };
@@ -496,7 +523,7 @@
       clearTracks();
       updateDisplay();
       bindEvents();
-      resetIdleTimer(); // 初始化待机倒计时
+      resetIdleTimer();
     }
 
     function initOrientation() {
@@ -543,7 +570,6 @@
       trackSlots = els.tracksBottom.querySelectorAll('.track-slot');
       els.btnToggle.innerHTML = ICON_PLAY;
 
-      // 提取最新的动画帧节点
       els.restPanels = [document.getElementById('rest-panel-0'), document.getElementById('rest-panel-1'), document.getElementById('rest-panel-2')];
       els.birdFrames = document.getElementById('stage-bird-coffee').querySelectorAll('.anim-frame');
       els.flowerFrames = document.getElementById('flower-layer').querySelectorAll('.anim-frame');
@@ -650,16 +676,19 @@
       }
     }
 
+    // 更新后的读秒逻辑：通过切换 DOM 的 display 控制长短射线或星星编组
     function tickSkyBadge() {
+      starToggled = !starToggled;
       if (isDayTime) {
-        sunAngle = (sunAngle + 15) % 360;
-        els.sunRays.style.transform = 'rotate(' + sunAngle + 'deg)';
-        els.sunRays.style.webkitTransform = 'rotate(' + sunAngle + 'deg)';
+        var sunExt = document.getElementById('sun-rays-ext');
+        if (sunExt) sunExt.style.display = starToggled ? 'block' : 'none';
       } else {
-        starToggled = !starToggled;
-        var starAngle = starToggled ? 20 : 0;
-        els.moonStar.style.transform = 'rotate(' + starAngle + 'deg)';
-        els.moonStar.style.webkitTransform = 'rotate(' + starAngle + 'deg)';
+        var mStar1 = document.getElementById('moon-stars-1');
+        var mStar2 = document.getElementById('moon-stars-2');
+        if (mStar1 && mStar2) {
+          mStar1.style.display = starToggled ? 'block' : 'none';
+          mStar2.style.display = starToggled ? 'none' : 'block';
+        }
       }
     }
 
