@@ -144,10 +144,6 @@
       -webkit-box-pack: center; justify-content: center; -webkit-box-align: center; align-items: center;
     }
     .standby-screen.active { display: -webkit-box; display: flex; }
-    .standby-zzz { font-size: 30px; font-weight: bold; letter-spacing: 6px; margin-bottom: 4px; }
-    .standby-zzz span:nth-child(1) { font-size: 24px; opacity: 0.7; }
-    .standby-zzz span:nth-child(2) { font-size: 18px; opacity: 0.45; }
-    .standby-hint { margin-top: 16px; font-size: 16px; letter-spacing: 2px; }
   </style>
 </head>
 <body>
@@ -209,12 +205,10 @@
       </div>
 
       <div class="standby-screen" id="standby-screen">
-        <div class="standby-zzz">z<span>z</span><span>z</span></div>
         <div class="pixel-cat-stage">
           <div class="cat-frame active" id="standby-cat-p0"><svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="145" y="65" width="6" height="2"/><rect x="149" y="67" width="2" height="2"/><rect x="147" y="69" width="2" height="2"/><rect x="143" y="71" width="6" height="2"/><rect x="160" y="48" width="8" height="2"/><rect x="164" y="50" width="2" height="2"/><rect x="162" y="52" width="2" height="2"/><rect x="158" y="54" width="8" height="2"/><rect x="70" y="100" width="70" height="30"/><rect x="60" y="110" width="80" height="20"/><rect x="80" y="90" width="50" height="10"/><rect x="80" y="80" width="10" height="10"/><rect x="110" y="80" width="10" height="10"/><rect x="92" y="108" width="8" height="3" fill="#fff"/><rect x="116" y="108" width="8" height="3" fill="#fff"/><rect x="50" y="120" width="10" height="10"/><rect x="40" y="125" width="10" height="10"/><rect x="35" y="135" width="10" height="10"/><rect x="35" y="145" width="10" height="10"/></svg></div>
           <div class="cat-frame" id="standby-cat-p1"><svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="152" y="52" width="8" height="2"/><rect x="156" y="54" width="2" height="2"/><rect x="154" y="56" width="2" height="2"/><rect x="150" y="58" width="8" height="2"/><rect x="170" y="32" width="10" height="2"/><rect x="176" y="34" width="2" height="2"/><rect x="173" y="36" width="2" height="2"/><rect x="168" y="38" width="10" height="2"/><rect x="70" y="100" width="70" height="30"/><rect x="60" y="110" width="80" height="20"/><rect x="80" y="90" width="50" height="10"/><rect x="80" y="80" width="10" height="10"/><rect x="110" y="80" width="10" height="10"/><rect x="92" y="108" width="8" height="3" fill="#fff"/><rect x="116" y="108" width="8" height="3" fill="#fff"/><rect x="50" y="120" width="10" height="10"/><rect x="42" y="130" width="10" height="10"/><rect x="42" y="140" width="10" height="10"/><rect x="45" y="150" width="10" height="10"/></svg></div>
         </div>
-        <div class="standby-hint">轻触唤醒</div>
       </div>
 
     </div>
@@ -612,7 +606,7 @@
       forceScreenRefresh(); // 切到休息页，整屏内容大面积变化，触发一次强刷清除残影
 
       if (restAnimState.timer) clearInterval(restAnimState.timer);
-      restAnimState.timer = setInterval(animateRestPanel, 1400);
+      restAnimState.timer = setInterval(animateRestPanel, 1800);
     }
 
     function hideRestScreen(e) {
@@ -646,7 +640,7 @@
         standbyCatStep = 1 - standbyCatStep;
         els.standbyCats[0].className = standbyCatStep === 0 ? 'cat-frame active' : 'cat-frame';
         els.standbyCats[1].className = standbyCatStep === 1 ? 'cat-frame active' : 'cat-frame';
-      }, 1800); // 待机时动作比休息页放慢一些，更像打盹
+      }, 1800); // 与休息页动画间隔保持一致
     }
 
     function hideStandbyScreen(e) {
