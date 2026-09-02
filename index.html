@@ -137,6 +137,17 @@
     .pixel-cat-stage { width: 280px; height: 280px; position: relative; }
     .cat-frame { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; }
     .cat-frame.active { display: block; }
+
+    .standby-screen {
+      display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #ffffff; z-index: 90; cursor: pointer;
+      -webkit-box-orient: vertical; flex-direction: column;
+      -webkit-box-pack: center; justify-content: center; -webkit-box-align: center; align-items: center;
+    }
+    .standby-screen.active { display: -webkit-box; display: flex; }
+    .standby-zzz { font-size: 30px; font-weight: bold; letter-spacing: 6px; margin-bottom: 4px; }
+    .standby-zzz span:nth-child(1) { font-size: 24px; opacity: 0.7; }
+    .standby-zzz span:nth-child(2) { font-size: 18px; opacity: 0.45; }
+    .standby-hint { margin-top: 16px; font-size: 16px; letter-spacing: 2px; }
   </style>
 </head>
 <body>
@@ -197,6 +208,15 @@
         </div>
       </div>
 
+      <div class="standby-screen" id="standby-screen">
+        <div class="standby-zzz">z<span>z</span><span>z</span></div>
+        <div class="pixel-cat-stage">
+          <div class="cat-frame active" id="standby-cat-p0"><svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="145" y="65" width="6" height="2"/><rect x="149" y="67" width="2" height="2"/><rect x="147" y="69" width="2" height="2"/><rect x="143" y="71" width="6" height="2"/><rect x="160" y="48" width="8" height="2"/><rect x="164" y="50" width="2" height="2"/><rect x="162" y="52" width="2" height="2"/><rect x="158" y="54" width="8" height="2"/><rect x="70" y="100" width="70" height="30"/><rect x="60" y="110" width="80" height="20"/><rect x="80" y="90" width="50" height="10"/><rect x="80" y="80" width="10" height="10"/><rect x="110" y="80" width="10" height="10"/><rect x="92" y="108" width="8" height="3" fill="#fff"/><rect x="116" y="108" width="8" height="3" fill="#fff"/><rect x="50" y="120" width="10" height="10"/><rect x="40" y="125" width="10" height="10"/><rect x="35" y="135" width="10" height="10"/><rect x="35" y="145" width="10" height="10"/></svg></div>
+          <div class="cat-frame" id="standby-cat-p1"><svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="152" y="52" width="8" height="2"/><rect x="156" y="54" width="2" height="2"/><rect x="154" y="56" width="2" height="2"/><rect x="150" y="58" width="8" height="2"/><rect x="170" y="32" width="10" height="2"/><rect x="176" y="34" width="2" height="2"/><rect x="173" y="36" width="2" height="2"/><rect x="168" y="38" width="10" height="2"/><rect x="70" y="100" width="70" height="30"/><rect x="60" y="110" width="80" height="20"/><rect x="80" y="90" width="50" height="10"/><rect x="80" y="80" width="10" height="10"/><rect x="110" y="80" width="10" height="10"/><rect x="92" y="108" width="8" height="3" fill="#fff"/><rect x="116" y="108" width="8" height="3" fill="#fff"/><rect x="50" y="120" width="10" height="10"/><rect x="42" y="130" width="10" height="10"/><rect x="42" y="140" width="10" height="10"/><rect x="45" y="150" width="10" height="10"/></svg></div>
+        </div>
+        <div class="standby-hint">轻触唤醒</div>
+      </div>
+
     </div>
   </div>
 
@@ -248,6 +268,11 @@
     var REFRESH_INTERVAL_SEC = 300;
     var secondsSinceRefresh = 0;
 
+    var IDLE_TIMEOUT_MS = 60000; // 静置1分钟无操作后进入待机(仅在未点击开始时生效)
+    var idleTimer = null;
+    var standbyAnimTimer = null;
+    var standbyCatStep = 0;
+
     var els = {
       appContainer: document.getElementById('app-container'),
       timerText: document.getElementById('timer-text'),
@@ -261,7 +286,9 @@
       steam: [document.getElementById('steam-1'), document.getElementById('steam-2'), document.getElementById('steam-3')],
       fwStage: document.getElementById('fw-stage'),
       restPanels: [document.getElementById('rest-panel-0'), document.getElementById('rest-panel-1'), document.getElementById('rest-panel-2')],
-      cats: [document.getElementById('cat-p0'), document.getElementById('cat-p1')]
+      cats: [document.getElementById('cat-p0'), document.getElementById('cat-p1')],
+      standbyScreen: document.getElementById('standby-screen'),
+      standbyCats: [document.getElementById('standby-cat-p0'), document.getElementById('standby-cat-p1')]
     };
 
     var trackSlots = [];
@@ -282,6 +309,7 @@
       clearTracks();
       updateDisplay();
       bindEvents();
+      resetIdleTimer(); // 首次进入页面就开始计时，1分钟不点开始就待机
     }
 
     function initDOM() {
@@ -318,6 +346,12 @@
           e.target.blur(); // 兜底：防止点击后焦点虚线框停留
         });
       }
+
+      els.standbyScreen.addEventListener('click', hideStandbyScreen);
+
+      // 捕获阶段监听整个文档的点击：任何一次交互都重新计时，
+      // 这样不用在每个按钮的处理函数里都手动加一遍
+      document.addEventListener('click', resetIdleTimer, true);
     }
 
     function handleEasterEgg(action) {
@@ -586,6 +620,41 @@
       els.restScreen.className = 'rest-screen';
       forceScreenRefresh(); // 切回倒计时页，同样整屏内容大面积变化，触发一次强刷清除残影
       if (restAnimState.timer) clearInterval(restAnimState.timer);
+    }
+
+    function resetIdleTimer() {
+      if (idleTimer) clearTimeout(idleTimer);
+      idleTimer = setTimeout(function() {
+        // 触发时刻再次确认状态：没点过开始 && 不在休息页 && 待机画面还没显示
+        if (!hasStarted &&
+            els.restScreen.className.indexOf('active') === -1 &&
+            els.standbyScreen.className.indexOf('active') === -1) {
+          showStandbyScreen();
+        }
+      }, IDLE_TIMEOUT_MS);
+    }
+
+    function showStandbyScreen() {
+      standbyCatStep = 0;
+      els.standbyCats[0].className = 'cat-frame active';
+      els.standbyCats[1].className = 'cat-frame';
+      els.standbyScreen.className = 'standby-screen active';
+      forceScreenRefresh();
+
+      if (standbyAnimTimer) clearInterval(standbyAnimTimer);
+      standbyAnimTimer = setInterval(function() {
+        standbyCatStep = 1 - standbyCatStep;
+        els.standbyCats[0].className = standbyCatStep === 0 ? 'cat-frame active' : 'cat-frame';
+        els.standbyCats[1].className = standbyCatStep === 1 ? 'cat-frame active' : 'cat-frame';
+      }, 1800); // 待机时动作比休息页放慢一些，更像打盹
+    }
+
+    function hideStandbyScreen(e) {
+      if (e) e.stopPropagation();
+      els.standbyScreen.className = 'standby-screen';
+      if (standbyAnimTimer) { clearInterval(standbyAnimTimer); standbyAnimTimer = null; }
+      forceScreenRefresh();
+      resetIdleTimer();
     }
 
     function updateActiveRestPanel() {
