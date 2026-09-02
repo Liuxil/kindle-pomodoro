@@ -38,31 +38,39 @@
       box-sizing: border-box;
     }
 
-    /* 纯 CSS 驱动的横竖屏容器：默认横屏模式（整体旋转90度适配） */
+    /* 
+      1. 基础容器，加入过渡动画让旋转更平滑 
+    */
     #app-container {
       position: absolute;
       top: 50%; left: 50%;
-      width: 100vh;
-      height: 100vw;
-      max-width: 100vh;
-      max-height: 100vw;
-      -webkit-transform: translate(-50%, -50%) rotate(90deg);
-      transform: translate(-50%, -50%) rotate(90deg);
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       align-items: center;
       padding: 12px 8px;
+      transition: transform 0.3s ease-out, width 0.3s, height 0.3s;
     }
 
-    /* 竖屏模式类：取消旋转，恢复正常宽高 */
-    #app-container.portrait-mode {
-      width: 100vw;
-      height: 100vh;
-      max-width: 100vw;
-      max-height: 100vh;
-      -webkit-transform: translate(-50%, -50%);
+    /* 状态 A: 物理方向与逻辑显示一致 (正常渲染，0度) */
+    #app-container.orient-match {
+      width: 100vw; height: 100vh;
+      max-width: 100vw; max-height: 100vh;
       transform: translate(-50%, -50%);
+    }
+
+    /* 状态 B: 手机物理是竖向，但用户强制切到横版 (需要转90度) */
+    #app-container.orient-force-landscape {
+      width: 100vh; height: 100vw;
+      max-width: 100vh; max-height: 100vw;
+      transform: translate(-50%, -50%) rotate(90deg);
+    }
+
+    /* 状态 C: 手机物理是横向，但用户强制切到竖版 (需要转-90度) */
+    #app-container.orient-force-portrait {
+      width: 100vh; height: 100vw;
+      max-width: 100vh; max-height: 100vw;
+      transform: translate(-50%, -50%) rotate(-90deg);
     }
 
     .sky-badge { width: 60px; height: 60px; position: relative; cursor: pointer; flex-shrink: 0; }
@@ -89,6 +97,9 @@
       align-items: center;
     }
     
+    /* 
+      2. 默认横屏文字样式 
+    */
     .timer-text {
       font-size: 250px;
       line-height: 1;
@@ -100,10 +111,15 @@
       white-space: nowrap;
     }
 
-    /* 竖屏下的字体大小微调 */
-    #app-container.portrait-mode .timer-text {
-      font-size: 215px;
-      margin: -10px 0;
+    /* 
+      3. 竖屏文字样式 (减小字号，调整行距适应两行) 
+    */
+    .portrait-format .timer-text {
+      font-size: 190px;
+      line-height: 0.85; 
+      margin: 0;
+      letter-spacing: -2px;
+      white-space: normal;
     }
 
     .font-style-0 { font-family: "Helvetica Neue Light", "Helvetica Neue", "Arial Narrow", sans-serif; font-weight: 200; color: transparent !important; -webkit-text-fill-color: transparent !important; -webkit-text-stroke: 1.5px #000000; }
@@ -198,7 +214,7 @@
         </div>
       </div>
 
-      <!-- 休息与待机屏幕省略或保持原本 SVG 结构 -->
+      <!-- 省略了中间的休息界面 SVG 动画以保持简练，请原样保留你原本拥有的 rest-panel 动画节点 -->
       <div class="rest-screen" id="rest-screen">
         <div class="rest-panel active" id="rest-panel-0">
           <div class="pixel-stage">
@@ -239,7 +255,10 @@
     var starToggled = false;
     var currentAnimal = null;
     var currentFontIndex = 1; 
-    var isPortraitMode = false;
+
+    // 新增两个状态变量追踪横竖屏逻辑
+    var isPhysicalPortrait = true;  // 手机真实的物理状态（竖着拿还是横着拿）
+    var isLogicalPortrait = true;   // 页面希望渲染的视觉状态
 
     var els = {
       appContainer: document.getElementById('app-container'),
@@ -259,12 +278,60 @@
     var lastLeadIndex = -1;
 
     function init() {
+      initOrientation(); // 优先初始化陀螺仪监听
       initDOM();
       initSavedSettings();
       updateDayNightMode();
       clearTracks();
       updateDisplay();
       bindEvents();
+    }
+
+    /* ====================================================
+       1. 陀螺仪与自适应横竖屏逻辑 
+       ==================================================== */
+    function initOrientation() {
+      var mql = window.matchMedia("(orientation: portrait)");
+      isPhysicalPortrait = mql.matches;
+      // 页面初次加载时，逻辑排版直接跟随手机的物理姿态
+      isLogicalPortrait = isPhysicalPortrait; 
+      
+      // 监听手机陀螺仪/横竖屏变化
+      mql.addEventListener("change", function(e) {
+        isPhysicalPortrait = e.matches;
+        // 当手机物理翻转时，解除用户的强制设定，自动归位自适应
+        isLogicalPortrait = isPhysicalPortrait;
+        applyOrientationLogic();
+      });
+    }
+
+    function applyOrientationLogic() {
+      // 重置类名
+      els.appContainer.className = "";
+      
+      // 依据当前物理姿态和逻辑需求，分发 CSS 布局状态
+      if (isLogicalPortrait === isPhysicalPortrait) {
+        els.appContainer.classList.add("orient-match");           // 无需强制旋转
+      } else if (isPhysicalPortrait && !isLogicalPortrait) {
+        els.appContainer.classList.add("orient-force-landscape"); // 物理竖向，强制横版视图
+      } else {
+        els.appContainer.classList.add("orient-force-portrait");  // 物理横向，强制竖版视图
+      }
+
+      // 控制内部元素的排版结构 (竖版还是横版)
+      if (isLogicalPortrait) {
+        els.appContainer.classList.add("portrait-format");
+      } else {
+        els.appContainer.classList.remove("portrait-format");
+      }
+
+      updateDisplay(); // 触发数字换行重新渲染
+    }
+
+    // 保留手动点击切换功能
+    function toggleOrientation() {
+      isLogicalPortrait = !isLogicalPortrait;
+      applyOrientationLogic();
     }
 
     function initDOM() {
@@ -294,19 +361,8 @@
       }
     }
 
-    /* 纯 CSS 类切换控制横竖屏，彻底告别 JS 像素测量计算 */
-    function toggleOrientation() {
-      isPortraitMode = !isPortraitMode;
-      if (isPortraitMode) {
-        els.appContainer.classList.add('portrait-mode');
-      } else {
-        els.appContainer.classList.remove('portrait-mode');
-      }
-    }
-
     function initSavedSettings() {
-      isPortraitMode = false;
-      els.appContainer.classList.remove('portrait-mode');
+      applyOrientationLogic(); // 初始化正确姿态
       try {
         var savedFont = localStorage.getItem('kindle_pomodoro_font');
         if (savedFont !== null) { currentFontIndex = parseInt(savedFont, 10) % TOTAL_FONTS || 0; }
@@ -375,6 +431,9 @@
       updateDisplay();
     }
 
+    /* ====================================================
+       2. 时钟双行渲染逻辑 
+       ==================================================== */
     function updateDisplay() {
       var totalMinutes = Math.ceil(timeLeft / 60);
       var hours = Math.floor(totalMinutes / 60);
@@ -382,10 +441,12 @@
       
       var strH = (hours < 10 ? '0' : '') + hours;
       var strM = (mins < 10 ? '0' : '') + mins;
-      var newText = strH + ':' + strM;
+      
+      // 判断当前是不是逻辑竖屏，如果是竖屏则去掉冒号，用 <br> 断行
+      var newText = isLogicalPortrait ? (strH + '<br>' + strM) : (strH + ':' + strM);
 
       if (newText !== lastDisplayedText) {
-        els.timerText.innerText = newText;
+        els.timerText.innerHTML = newText; // 使用 innerHTML 使 <br> 标签生效
         lastDisplayedText = newText;
       }
       
