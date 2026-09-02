@@ -106,8 +106,14 @@
       -webkit-box-align: center; align-items: center;
     }
     .btn-adjust-group { display: -webkit-box; display: flex; gap: 10px; }
-    button { background: #ffffff; color: #000000; border: 3px solid #000000; font-weight: bold; border-radius: 8px; cursor: pointer; }
+    button {
+      background: #ffffff; color: #000000; border: 3px solid #000000; font-weight: bold; border-radius: 8px; cursor: pointer;
+      outline: none;
+      -webkit-tap-highlight-color: transparent;
+    }
     button:active { background: #000000; color: #ffffff; }
+    button:focus { outline: none; }
+    button::-moz-focus-inner { border: 0; }
     .btn-adjust { font-size: 18px; padding: 5px 14px; }
     
     .btn-start {
@@ -301,6 +307,7 @@
       els.btnToggle.addEventListener('click', function(e) {
         if (e) e.preventDefault();
         toggleTimer();
+        this.blur(); // 兜底：防止部分老内核仅靠CSS outline:none 无法彻底清除点击后的焦点虚线框
       });
       els.restScreen.addEventListener('click', hideRestScreen);
       
@@ -308,6 +315,7 @@
       for (var m = 0; m < adjustBtns.length; m++) {
         adjustBtns[m].addEventListener('click', function(e) {
           addMinutes(parseInt(e.target.getAttribute('data-adj'), 10));
+          e.target.blur(); // 兜底：防止点击后焦点虚线框停留
         });
       }
     }
