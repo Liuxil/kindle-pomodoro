@@ -748,6 +748,7 @@
         if (savedMode === 'night') { document.body.classList.add('night-mode'); }
       } catch (e) {}
       syncThemeColor();
+      forceIOSRepaint();
     }
 
     function toggleDisplayMode() {
@@ -756,6 +757,22 @@
       try { localStorage.setItem('pomodoro_display_mode', mode); } catch (e) {}
       syncThemeColor();
       updateDayNightMode();
+      forceIOSRepaint();
+    }
+
+    function forceIOSRepaint() {
+      // 模拟"旋转屏幕"这个动作附带触发的强制重绘/重新合成效果，
+      // 不需要用户真的转一下设备。几种常见手段一起上，做双保险：
+      // 1. 滚动一下再归零，强制触发一次布局计算
+      window.scrollTo(0, 1);
+      window.scrollTo(0, 0);
+      // 2. 短暂给body加一个transform，强制它单独成为一个合成层再撤销，
+      //    这个动作通常会让WebKit重新合成整个页面(包括状态栏区域)
+      document.body.style.webkitTransform = 'translateZ(0)';
+      void document.body.offsetHeight; // 强制同步读取一次布局，逼浏览器立刻算完，不能拖到下一帧
+      requestAnimationFrame(function () {
+        document.body.style.webkitTransform = '';
+      });
     }
 
     function switchFont() {
