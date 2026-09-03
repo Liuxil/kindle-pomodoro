@@ -5,10 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
   <title>Pomodoro</title>
   <style>
-    :root {
-      /* 以Kindle 7代(短边600px)为基准的缩放系数，JS会在运行时按实际屏幕尺寸重新计算 */
-      --k-scale: 1;
-    }
     * {
       box-sizing: border-box;
       margin: 0;
@@ -46,18 +42,13 @@
       -webkit-box-orient: vertical; flex-direction: column;
       -webkit-box-pack: justify; justify-content: space-between;
       -webkit-box-align: center; align-items: center;
-      padding: calc(12px * var(--k-scale)) calc(8px * var(--k-scale));
+      padding: 12px 8px;
     }
 
-    .sky-badge { width: calc(60px * var(--k-scale)); height: calc(60px * var(--k-scale)); position: relative; cursor: pointer; flex-shrink: 0; }
+    .sky-badge { width: 60px; height: 60px; position: relative; cursor: pointer; flex-shrink: 0; }
     .sun-box, .moon-box { width: 100%; height: 100%; position: relative; display: none; }
     .sun-rays { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
-    .sun-face {
-      position: absolute; top: 50%; left: 50%; width: calc(30px * var(--k-scale)); height: calc(30px * var(--k-scale)); margin: calc(-15px * var(--k-scale)) 0 0 calc(-15px * var(--k-scale));
-      background: #ffffff; border: calc(2.5px * var(--k-scale)) solid #000000; border-radius: 50%;
-      display: -webkit-box; display: flex; -webkit-box-align: center; align-items: center; -webkit-box-pack: center; justify-content: center;
-    }
-    .moon-star { position: absolute; top: calc(6px * var(--k-scale)); right: calc(6px * var(--k-scale)); width: calc(18px * var(--k-scale)); height: calc(18px * var(--k-scale)); }
+    .moon-star { position: absolute; top: 6px; right: 6px; width: 18px; height: 18px; }
 
     .main-section {
       width: 100%; -webkit-box-flex: 1; flex: 1;
@@ -74,30 +65,30 @@
     }
     
     .timer-text {
-      font-size: calc(210px * var(--k-scale));
+      font-size: 210px;
       line-height: 1;
-      margin: calc(-10px * var(--k-scale)) 0; 
+      margin: -10px 0; 
       text-align: center;
       width: 100%;
       display: block;
-      letter-spacing: calc(-6px * var(--k-scale));
+      letter-spacing: -6px;
       white-space: nowrap;
     }
 
-    .font-style-0 { font-family: "Helvetica Neue Light", "Helvetica Neue", "Arial Narrow", sans-serif; font-weight: 200; color: transparent !important; -webkit-text-fill-color: transparent !important; -webkit-text-stroke: calc(1.5px * var(--k-scale)) #000000; }
+    .font-style-0 { font-family: "Helvetica Neue Light", "Helvetica Neue", "Arial Narrow", sans-serif; font-weight: 200; color: transparent !important; -webkit-text-fill-color: transparent !important; -webkit-text-stroke: 1.5px #000000; }
     .font-style-1 { font-family: "Helvetica Neue Light", "Helvetica Neue", "Arial Narrow", sans-serif; font-weight: 200; color: #000000 !important; -webkit-text-fill-color: #000000 !important; -webkit-text-stroke: 0 !important; }
-    .font-style-2 { font-family: "Baskerville", "Bookerly Light", "Georgia", serif; font-weight: 200; letter-spacing: calc(-1px * var(--k-scale)); color: #000000; -webkit-text-fill-color: #000000; -webkit-text-stroke: 0; }
+    .font-style-2 { color: #000000; -webkit-text-fill-color: #000000; -webkit-text-stroke: 0; }
 
     .tracks-container {
-      width: 96%; height: calc(26px * var(--k-scale)); margin-top: calc(10px * var(--k-scale));
+      width: 96%; height: 26px; margin-top: 10px;
       display: -webkit-box; display: flex;
       -webkit-box-pack: justify; justify-content: space-between;
       -webkit-box-align: center; align-items: center;
     }
-    .track-slot { width: calc(20px * var(--k-scale)); height: calc(20px * var(--k-scale)); display: -webkit-box; display: flex; -webkit-box-pack: center; justify-content: center; -webkit-box-align: center; align-items: center; }
-    .track-slot svg { width: calc(18px * var(--k-scale)); height: calc(18px * var(--k-scale)); fill: #000000; display: none; }
-    .track-slot:nth-child(even) svg { margin-top: calc(4px * var(--k-scale)); -webkit-transform: rotate(6deg); transform: rotate(6deg); }
-    .track-slot:nth-child(odd) svg { margin-top: calc(-4px * var(--k-scale)); -webkit-transform: rotate(-6deg); transform: rotate(-6deg); }
+    .track-slot { width: 20px; height: 20px; display: -webkit-box; display: flex; -webkit-box-pack: center; justify-content: center; -webkit-box-align: center; align-items: center; }
+    .track-slot svg { width: 18px; height: 18px; fill: #000000; display: none; }
+    .track-slot:nth-child(even) svg { margin-top: 4px; -webkit-transform: rotate(6deg); transform: rotate(6deg); }
+    .track-slot:nth-child(odd) svg { margin-top: -4px; -webkit-transform: rotate(-6deg); transform: rotate(-6deg); }
     .track-slot.active svg { display: block; }
 
     .footer {
@@ -106,23 +97,23 @@
       -webkit-box-pack: justify; justify-content: space-between;
       -webkit-box-align: center; align-items: center;
     }
-    .btn-adjust-group { display: -webkit-box; display: flex; gap: calc(10px * var(--k-scale)); }
+    .btn-adjust-group { display: -webkit-box; display: flex; gap: 10px; }
     button {
-      background: #ffffff; color: #000000; border: calc(3px * var(--k-scale)) solid #000000; font-weight: bold; border-radius: calc(8px * var(--k-scale)); cursor: pointer;
+      background: #ffffff; color: #000000; border: 3px solid #000000; font-weight: bold; border-radius: 8px; cursor: pointer;
       outline: none;
       -webkit-tap-highlight-color: transparent;
     }
     button:active { background: #000000; color: #ffffff; }
     button:focus { outline: none; }
     button::-moz-focus-inner { border: 0; }
-    .btn-adjust { font-size: calc(18px * var(--k-scale)); padding: calc(5px * var(--k-scale)) calc(14px * var(--k-scale)); }
+    .btn-adjust { font-size: 18px; padding: 5px 14px; }
     
     .btn-start {
-      background: transparent !important; border: none !important; padding: calc(5px * var(--k-scale)); width: calc(72px * var(--k-scale)); height: calc(72px * var(--k-scale));
+      background: transparent !important; border: none !important; padding: 5px; width: 72px; height: 72px;
       display: -webkit-box; display: flex; -webkit-box-pack: center; justify-content: center; -webkit-box-align: center; align-items: center;
     }
     .btn-start:active { background: transparent !important; color: #000000 !important; opacity: 0.4; }
-    .btn-start svg { width: calc(42px * var(--k-scale)); height: calc(42px * var(--k-scale)); }
+    .btn-start svg { width: 42px; height: 42px; }
 
     .rest-screen {
       display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #ffffff; z-index: 100; cursor: pointer;
@@ -133,12 +124,12 @@
     .rest-panel.active { display: -webkit-box; display: flex; }
     
     /* 统一的动画舞台样式 */
-    .pixel-stage { width: calc(280px * var(--k-scale)); height: calc(280px * var(--k-scale)); position: relative; }
+    .pixel-stage { width: 280px; height: 280px; position: relative; }
     .anim-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
     .anim-frame { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; }
     .anim-frame.active { display: block; }
     
-    .pixel-cat-stage { width: calc(280px * var(--k-scale)); height: calc(280px * var(--k-scale)); position: relative; }
+    .pixel-cat-stage { width: 280px; height: 280px; position: relative; }
     .cat-frame { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; }
     .cat-frame.active { display: block; }
 
@@ -156,18 +147,59 @@
     <div id="app-container">
       <div class="sky-badge" id="btn-orientation" title="点击切换横/竖屏">
         <div class="sun-box" id="sun-box">
+          <svg viewBox="0 0 64 64" style="position:absolute;top:0;left:0;width:100%;height:100%; shape-rendering: crispEdges;" fill="#000">
+            <rect x="24" y="18" width="16" height="2"/>
+            <rect x="20" y="20" width="24" height="2"/>
+            <rect x="18" y="22" width="28" height="2"/>
+            <rect x="16" y="24" width="32" height="16"/>
+            <rect x="18" y="40" width="28" height="2"/>
+            <rect x="20" y="42" width="24" height="2"/>
+            <rect x="24" y="44" width="16" height="2"/>
+          </svg>
           <div class="sun-rays" id="sun-rays">
-            <svg viewBox="0 0 100 100" stroke="#000" stroke-linecap="round">
-              <path d="M50 4 L50 16" stroke-width="4.5"/><path d="M50 84 L50 96" stroke-width="4.5"/><path d="M4 50 L16 50" stroke-width="4.5"/><path d="M84 50 L96 50" stroke-width="4.5"/>
-              <path d="M17 17 L26 26" stroke-width="4"/><path d="M74 74 L83 83" stroke-width="4"/><path d="M17 83 L26 74" stroke-width="4"/><path d="M74 26 L83 17" stroke-width="4"/>
+            <svg viewBox="0 0 64 64" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000">
+              <rect x="30" y="6" width="4" height="8"/>
+              <rect x="30" y="50" width="4" height="8"/>
+              <rect x="6" y="30" width="8" height="4"/>
+              <rect x="50" y="30" width="8" height="4"/>
+              <rect x="16" y="16" width="4" height="4"/>
+              <rect x="12" y="12" width="4" height="4"/>
+              <rect x="44" y="16" width="4" height="4"/>
+              <rect x="48" y="12" width="4" height="4"/>
+              <rect x="16" y="44" width="4" height="4"/>
+              <rect x="12" y="48" width="4" height="4"/>
+              <rect x="44" y="44" width="4" height="4"/>
+              <rect x="48" y="48" width="4" height="4"/>
             </svg>
           </div>
-          <div class="sun-face"></div>
         </div>
         <div class="moon-box" id="moon-box">
-          <svg viewBox="0 0 68 68" style="width:100%;height:100%;"><path d="M38 12 C24 12 12 24 12 38 C12 48 18 56 26 59 C23 54 22 48 22 42 C22 28 32 17 46 16 C43 13 40 12 38 12 Z" fill="#000"/></svg>
+          <svg viewBox="0 0 64 64" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000">
+            <rect x="28" y="8" width="12" height="2"/>
+            <rect x="28" y="50" width="12" height="2"/>
+            <rect x="24" y="10" width="18" height="2"/>
+            <rect x="24" y="48" width="18" height="2"/>
+            <rect x="20" y="12" width="20" height="2"/>
+            <rect x="20" y="46" width="20" height="2"/>
+            <rect x="18" y="14" width="18" height="2"/>
+            <rect x="18" y="44" width="18" height="2"/>
+            <rect x="16" y="16" width="16" height="2"/>
+            <rect x="16" y="42" width="16" height="2"/>
+            <rect x="14" y="18" width="16" height="2"/>
+            <rect x="14" y="40" width="16" height="2"/>
+            <rect x="14" y="20" width="14" height="2"/>
+            <rect x="14" y="38" width="14" height="2"/>
+            <rect x="12" y="22" width="14" height="2"/>
+            <rect x="12" y="36" width="14" height="2"/>
+            <rect x="12" y="24" width="14" height="12"/>
+          </svg>
           <div class="moon-star" id="moon-star">
-            <svg viewBox="0 0 24 24"><path d="M12 2 Q 12 12 2 12 Q 12 12 12 22 Q 12 12 22 12 Q 12 12 12 2 Z" fill="#000"/></svg>
+            <svg viewBox="0 0 24 24" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000">
+              <rect x="10" y="2" width="4" height="8"/>
+              <rect x="10" y="14" width="4" height="8"/>
+              <rect x="2" y="10" width="8" height="4"/>
+              <rect x="14" y="10" width="8" height="4"/>
+            </svg>
           </div>
         </div>
       </div>
@@ -474,6 +506,44 @@
     var SKY_INTERVAL = 2;
     var TOTAL_FONTS = 3;
 
+    // 像素字体字形数据，与iOS版完全一致，用于第三种字体(font-style-2)
+    var PIXEL_FONT = {
+      '0': { w: 6, d: ["011110","110011","110011","110011","110011","110011","110011","011110"] },
+      '1': { w: 4, d: ["0011","0111","1111","0011","0011","0011","0011","1111"] },
+      '2': { w: 6, d: ["011110","110011","000011","000110","001100","011000","110000","111111"] },
+      '3': { w: 6, d: ["011110","110011","000011","001110","000011","000011","110011","011110"] },
+      '4': { w: 6, d: ["000011","000111","001111","011011","110011","111111","000011","000011"] },
+      '5': { w: 6, d: ["111111","110000","111110","000011","000011","000011","110011","011110"] },
+      '6': { w: 6, d: ["001111","011000","110000","111110","110011","110011","110011","011110"] },
+      '7': { w: 6, d: ["111111","110011","000011","000110","001100","011000","011000","011000"] },
+      '8': { w: 6, d: ["011110","110011","110011","011110","110011","110011","110011","011110"] },
+      '9': { w: 6, d: ["011110","110011","110011","110011","011111","000011","000110","111100"] },
+      ':': { w: 2, d: ["00","11","11","00","00","11","11","00"] }
+    };
+
+    function pixelTextToSVG(text) {
+      var currentX = 0;
+      var svgContent = '';
+      for (var i = 0; i < text.length; i++) {
+        var glyph = PIXEL_FONT[text[i]];
+        if (glyph) {
+          for (var r = 0; r < glyph.d.length; r++) {
+            for (var c = 0; c < glyph.w; c++) {
+              if (glyph.d[r][c] === '1') {
+                svgContent += '<rect x="' + (currentX + c) + '" y="' + r + '" width="1" height="1"/>';
+              }
+            }
+          }
+          currentX += glyph.w + 1;
+        }
+      }
+      var maxWidth = currentX - 1;
+      var glyphUnitH = 8;
+      // 单行场景下viewBox高度就是字形高度本身，0.71em与实心字体(font-style-1)的视觉高度对齐，
+      // 这个比例和iOS版是同一套换算依据(fontTools实测metric兼容字体得出)
+      return '<svg viewBox="0 0 ' + maxWidth + ' ' + glyphUnitH + '" style="height:0.71em;width:auto;display:inline-block;fill:currentColor;shape-rendering:crispEdges;">' + svgContent + '</svg>';
+    }
+
     var totalTime = 25 * 60;
     var timeLeft = totalTime;
     var targetEndTime = null;
@@ -530,7 +600,42 @@
       if (!isFinite(raw) || raw <= 0) raw = 1;
       // 限制在合理范围内，避免极端测量值把画面缩得没法看或者撑爆屏幕
       K_SCALE = Math.max(0.5, Math.min(3, raw));
-      document.documentElement.style.setProperty('--k-scale', K_SCALE);
+      applyScaleStyles();
+    }
+
+    function applyScaleStyles() {
+      var s = K_SCALE;
+      // 直接拼出算好的字面量像素值，不用CSS自定义属性(var())——
+      // Kindle 7代这类老WebKit不认识var()，整条声明会被判定无效直接丢弃，
+      // 用普通的、写死数值的CSS文本才能保证在老浏览器上正常生效
+      var css = ''
+        + '#app-container{padding:' + (12*s) + 'px ' + (8*s) + 'px;}'
+        + '.sky-badge{width:' + (60*s) + 'px;height:' + (60*s) + 'px;}'
+        + '.moon-star{top:' + (6*s) + 'px;right:' + (6*s) + 'px;width:' + (18*s) + 'px;height:' + (18*s) + 'px;}'
+        + '.timer-text{font-size:' + (210*s) + 'px;margin:' + (-10*s) + 'px 0;letter-spacing:' + (-6*s) + 'px;}'
+        + '.font-style-0{-webkit-text-stroke-width:' + (1.5*s) + 'px;}'
+        + '.tracks-container{height:' + (26*s) + 'px;margin-top:' + (10*s) + 'px;}'
+        + '.track-slot{width:' + (20*s) + 'px;height:' + (20*s) + 'px;}'
+        + '.track-slot svg{width:' + (18*s) + 'px;height:' + (18*s) + 'px;}'
+        + '.track-slot:nth-child(even) svg{margin-top:' + (4*s) + 'px;}'
+        + '.track-slot:nth-child(odd) svg{margin-top:' + (-4*s) + 'px;}'
+        + '.btn-adjust-group{gap:' + (10*s) + 'px;}'
+        + 'button{border-width:' + (3*s) + 'px;border-radius:' + (8*s) + 'px;}'
+        + '.btn-adjust{font-size:' + (18*s) + 'px;padding:' + (5*s) + 'px ' + (14*s) + 'px;}'
+        + '.btn-start{padding:' + (5*s) + 'px;width:' + (72*s) + 'px;height:' + (72*s) + 'px;}'
+        + '.btn-start svg{width:' + (42*s) + 'px;height:' + (42*s) + 'px;}'
+        + '.pixel-stage{width:' + (280*s) + 'px;height:' + (280*s) + 'px;}'
+        + '.pixel-cat-stage{width:' + (280*s) + 'px;height:' + (280*s) + 'px;}';
+
+      var styleEl = document.getElementById('k-scale-style');
+      if (!styleEl) {
+        styleEl = document.createElement('style');
+        styleEl.id = 'k-scale-style';
+        document.getElementsByTagName('head')[0].appendChild(styleEl);
+      }
+      // 用最传统的DOM API写文本内容(而不是textContent/innerHTML)，兼容性最保险
+      while (styleEl.firstChild) { styleEl.removeChild(styleEl.firstChild); }
+      styleEl.appendChild(document.createTextNode(css));
     }
 
     function init() {
@@ -653,6 +758,10 @@
 
     function applyFont() {
       els.timerText.className = 'timer-text font-style-' + currentFontIndex;
+      // 字体类型切换了，纯文字/像素SVG的渲染方式不一样，光换className内容不会自动更新，
+      // 强制让updateDisplay()按"内容变了"重新渲染一次
+      lastDisplayedText = '';
+      updateDisplay();
     }
 
     function toggleTimer() {
@@ -735,7 +844,11 @@
       var newText = strH + ':' + strM;
 
       if (newText !== lastDisplayedText) {
-        els.timerText.innerText = newText;
+        if (currentFontIndex === 2) {
+          els.timerText.innerHTML = pixelTextToSVG(newText);
+        } else {
+          els.timerText.innerText = newText;
+        }
         lastDisplayedText = newText;
       }
       
