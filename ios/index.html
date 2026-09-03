@@ -10,9 +10,10 @@
   <link rel="apple-touch-icon" href="icon.png">
   <title>Pomodoro</title>
   
-  <!-- 引入像素字体(Silkscreen)与液晶字体(Share Tech Mono) -->
+  <!-- 引入高辨识度像素字体 (VT323) 和 真正的7段数码管字体 (DS-Digital) -->
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Silkscreen&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+    @import url('https://fonts.cdnfonts.com/css/ds-digital');
   </style>
 
   <style>
@@ -111,30 +112,31 @@
       white-space: normal;
     }
 
-    /* ================= 字体切换配置 ================= */
-    /* 0: 像素字体 (Silkscreen) */
+    /* ================= 4种字体样式配置 ================= */
+    
+    /* 0: 像素字体 (VT323 - 辨识度高，类似早期游戏/终端) */
     .font-style-0 { 
-      font-family: 'Silkscreen', monospace; 
+      font-family: 'VT323', monospace; 
       font-weight: 400; 
       color: #000000 !important; 
       -webkit-text-fill-color: #000000 !important; 
       -webkit-text-stroke: 0 !important; 
-      letter-spacing: -6px; 
+      letter-spacing: -2px; 
     }
-    .portrait-format .font-style-0 { letter-spacing: -2px; font-size: 170px; } /* 像素字体较宽，竖向缩减字号防溢出 */
+    .portrait-format .font-style-0 { font-size: 220px; letter-spacing: -2px; }
 
-    /* 1: 7段液晶字体 (Share Tech Mono) */
+    /* 1: 7段液晶电子字体 (DS-Digital - 完美复刻电子表) */
     .font-style-1 { 
-      font-family: 'Share Tech Mono', monospace; 
+      font-family: 'DS-Digital', sans-serif; 
       font-weight: 400; 
       color: #000000 !important; 
       -webkit-text-fill-color: #000000 !important; 
       -webkit-text-stroke: 0 !important; 
-      letter-spacing: -8px; 
+      letter-spacing: 0px; 
     }
-    .portrait-format .font-style-1 { letter-spacing: -4px; }
+    .portrait-format .font-style-1 { font-size: 200px; letter-spacing: 0px; }
 
-    /* 2: 苹果实心字体 (Apple Heavy) */
+    /* 2: 苹果实心粗体 (Apple System Heavy) */
     .font-style-2 { 
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Helvetica, Arial, sans-serif; 
       font-weight: 900; 
@@ -145,9 +147,9 @@
     }
     .portrait-format .font-style-2 { letter-spacing: -4px; }
 
-    /* 3: 苹果空心字体 (Apple Hollow) */
+    /* 3: 苹果空心粗体 (为避免 iOS Variable Font 重叠描边Bug，去除 apple-system，强制使用无重叠路径的 Helvetica Neue) */
     .font-style-3 { 
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Helvetica, Arial, sans-serif; 
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; 
       font-weight: 900; 
       color: transparent !important; 
       -webkit-text-fill-color: transparent !important; 
@@ -213,7 +215,7 @@
       <div id="app-container">
         <div class="sky-badge" id="btn-orientation" title="点击切换横/竖屏">
           
-          <!-- 升级到 64x64 的高精度饱满太阳 -->
+          <!-- 太阳 -->
           <div class="sun-box" id="sun-box">
             <svg viewBox="0 0 64 64" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000">
               <rect x="24" y="18" width="16" height="2" />
@@ -250,7 +252,7 @@
             </svg>
           </div>
 
-          <!-- 升级到 64x64 的高精度饱满月亮与交替星空 -->
+          <!-- 月亮 -->
           <div class="moon-box" id="moon-box">
             <svg viewBox="0 0 64 64" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000">
               <rect x="28" y="8" width="12" height="2" />
@@ -293,8 +295,8 @@
         </div>
 
         <div class="main-section">
-          <!-- 默认应用 font-style-0 (像素字体) -->
           <div class="timer-container" id="btn-font-switch">
+            <!-- 默认起始字体为0号(像素) -->
             <div class="timer-text font-style-0" id="timer-text">00:25</div>
           </div>
           <div class="tracks-container" id="tracks-bottom"></div>
@@ -515,7 +517,7 @@
     ];
     
     var TOTAL_SLOTS = 16;
-    var TOTAL_FONTS = 4; // 更新为 4 种字体切换
+    var TOTAL_FONTS = 4; // 一共 4 种字体切换
     var SKY_INTERVAL = 1;
 
     var totalTime = 25 * 60;
