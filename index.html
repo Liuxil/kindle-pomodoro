@@ -85,7 +85,7 @@
       -webkit-box-orient: horizontal; -webkit-box-direction: normal;
       -webkit-box-align: center; align-items: center;
       -webkit-box-pack: center; justify-content: center;
-      height: 0.71em;
+      height: 0.80em;
       width: 100%;
     }
     .pixel-timer.active { display: -webkit-box; display: flex; }
@@ -734,7 +734,10 @@
         els.timerText.style.fontSize = (215 * K_SCALE) + 'px';
         els.timerText.style.margin = (-10 * K_SCALE) + 'px 0';
         els.pixelTimer.style.fontSize = (215 * K_SCALE) + 'px';
-        els.pixelTimer.style.margin = (-10 * K_SCALE) + 'px 0';
+        // 像素字用上下不对称的margin才能真正往上挪位置——
+        // 对称的负margin在flex居中布局下数学上互相抵消，不会产生任何位移
+        els.pixelTimer.style.marginTop = ((-10 - 13) * K_SCALE) + 'px';
+        els.pixelTimer.style.marginBottom = ((-10 + 13) * K_SCALE) + 'px';
       } else {
         els.appContainer.style.width = SAFE_LONG + 'px';
         els.appContainer.style.height = SAFE_SHORT + 'px';
@@ -743,7 +746,8 @@
         els.timerText.style.fontSize = (250 * K_SCALE) + 'px';
         els.timerText.style.margin = (-15 * K_SCALE) + 'px 0';
         els.pixelTimer.style.fontSize = (250 * K_SCALE) + 'px';
-        els.pixelTimer.style.margin = (-15 * K_SCALE) + 'px 0';
+        els.pixelTimer.style.marginTop = ((-15 - 15) * K_SCALE) + 'px';
+        els.pixelTimer.style.marginBottom = ((-15 + 15) * K_SCALE) + 'px';
       }
       forceLayoutRecalc();
     }
