@@ -85,6 +85,7 @@
       -webkit-box-orient: horizontal; -webkit-box-direction: normal;
       -webkit-box-align: center; align-items: center;
       -webkit-box-pack: center; justify-content: center;
+      /* 高度比例由JS按横竖屏分别设置(见applyOrientationLogic)，这里只是兜底默认值 */
       height: 0.80em;
       width: 100%;
     }
@@ -734,6 +735,7 @@
         els.timerText.style.fontSize = (215 * K_SCALE) + 'px';
         els.timerText.style.margin = (-10 * K_SCALE) + 'px 0';
         els.pixelTimer.style.fontSize = (215 * K_SCALE) + 'px';
+        els.pixelTimer.style.height = '0.80em';
         // 像素字用上下不对称的margin才能真正往上挪位置——
         // 对称的负margin在flex居中布局下数学上互相抵消，不会产生任何位移
         els.pixelTimer.style.marginTop = ((-10 - 13) * K_SCALE) + 'px';
@@ -746,8 +748,9 @@
         els.timerText.style.fontSize = (250 * K_SCALE) + 'px';
         els.timerText.style.margin = (-15 * K_SCALE) + 'px 0';
         els.pixelTimer.style.fontSize = (250 * K_SCALE) + 'px';
-        els.pixelTimer.style.marginTop = ((-15 - 15) * K_SCALE) + 'px';
-        els.pixelTimer.style.marginBottom = ((-15 + 15) * K_SCALE) + 'px';
+        els.pixelTimer.style.height = '0.92em'; // 横屏单独用更大的高度比例，跟竖屏(0.80em)解耦
+        els.pixelTimer.style.marginTop = ((-15 - 7) * K_SCALE) + 'px';
+        els.pixelTimer.style.marginBottom = ((-15 + 7) * K_SCALE) + 'px';
       }
       forceLayoutRecalc();
     }
