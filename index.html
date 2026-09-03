@@ -870,11 +870,17 @@
 
     function toggleOrientation() {
       isPortraitMode = !isPortraitMode;
+      try { localStorage.setItem('kindle_pomodoro_orient', isPortraitMode ? 'portrait' : 'landscape'); } catch (e) {}
       applyOrientationLogic();
     }
 
     function initSavedSettings() {
+      // 横竖屏模式跟字体一样做记忆：读得到就用上次保存的，读不到(第一次打开)才用默认横屏
       isPortraitMode = false;
+      try {
+        var savedOrient = localStorage.getItem('kindle_pomodoro_orient');
+        if (savedOrient === 'portrait') { isPortraitMode = true; }
+      } catch (e) {}
       applyOrientationLogic();
       try {
         var savedFont = localStorage.getItem('kindle_pomodoro_font');
