@@ -10,8 +10,9 @@
   <link rel="apple-touch-icon" href="icon.png">
   <title>Pomodoro</title>
   
+  <!-- 引入像素字体(Silkscreen)与液晶字体(Share Tech Mono) -->
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Silkscreen&display=swap');
   </style>
 
   <style>
@@ -100,7 +101,6 @@
       text-align: center;
       width: 100%;
       display: block;
-      letter-spacing: -6px;
       white-space: nowrap;
     }
 
@@ -108,24 +108,55 @@
       font-size: 190px;
       line-height: 0.85; 
       margin: 0;
-      letter-spacing: -2px;
       white-space: normal;
     }
 
-    .font-style-0 { font-family: "Helvetica Neue Light", "Helvetica Neue", "Arial Narrow", sans-serif; font-weight: 200; color: transparent !important; -webkit-text-fill-color: transparent !important; -webkit-text-stroke: 1.5px #000000; }
-    .font-style-1 { font-family: "Helvetica Neue Light", "Helvetica Neue", "Arial Narrow", sans-serif; font-weight: 200; color: #000000 !important; -webkit-text-fill-color: #000000 !important; -webkit-text-stroke: 0 !important; }
-    .font-style-2 { 
-      font-family: 'Share Tech Mono', monospace; 
+    /* ================= 字体切换配置 ================= */
+    /* 0: 像素字体 (Silkscreen) */
+    .font-style-0 { 
+      font-family: 'Silkscreen', monospace; 
       font-weight: 400; 
-      letter-spacing: -8px; 
       color: #000000 !important; 
       -webkit-text-fill-color: #000000 !important; 
       -webkit-text-stroke: 0 !important; 
+      letter-spacing: -6px; 
     }
-    .portrait-format .font-style-2 {
-      letter-spacing: -4px;
-    }
+    .portrait-format .font-style-0 { letter-spacing: -2px; font-size: 170px; } /* 像素字体较宽，竖向缩减字号防溢出 */
 
+    /* 1: 7段液晶字体 (Share Tech Mono) */
+    .font-style-1 { 
+      font-family: 'Share Tech Mono', monospace; 
+      font-weight: 400; 
+      color: #000000 !important; 
+      -webkit-text-fill-color: #000000 !important; 
+      -webkit-text-stroke: 0 !important; 
+      letter-spacing: -8px; 
+    }
+    .portrait-format .font-style-1 { letter-spacing: -4px; }
+
+    /* 2: 苹果实心字体 (Apple Heavy) */
+    .font-style-2 { 
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Helvetica, Arial, sans-serif; 
+      font-weight: 900; 
+      color: #000000 !important; 
+      -webkit-text-fill-color: #000000 !important; 
+      -webkit-text-stroke: 0 !important; 
+      letter-spacing: -8px; 
+    }
+    .portrait-format .font-style-2 { letter-spacing: -4px; }
+
+    /* 3: 苹果空心字体 (Apple Hollow) */
+    .font-style-3 { 
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Helvetica, Arial, sans-serif; 
+      font-weight: 900; 
+      color: transparent !important; 
+      -webkit-text-fill-color: transparent !important; 
+      -webkit-text-stroke: 4px #000000 !important; 
+      letter-spacing: -8px; 
+    }
+    .portrait-format .font-style-3 { letter-spacing: -4px; -webkit-text-stroke: 3px #000000 !important; }
+
+    /* ================= 轨道及按钮配置 ================= */
     .tracks-container {
       width: 96%; height: 26px; margin-top: 10px;
       display: flex;
@@ -185,7 +216,6 @@
           <!-- 升级到 64x64 的高精度饱满太阳 -->
           <div class="sun-box" id="sun-box">
             <svg viewBox="0 0 64 64" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000">
-              <!-- 饱满的太阳核心 -->
               <rect x="24" y="18" width="16" height="2" />
               <rect x="20" y="20" width="24" height="2" />
               <rect x="18" y="22" width="28" height="2" />
@@ -194,7 +224,6 @@
               <rect x="20" y="42" width="24" height="2" />
               <rect x="24" y="44" width="16" height="2" />
               
-              <!-- 固定的内侧光线 -->
               <rect x="30" y="6" width="4" height="8" />
               <rect x="30" y="50" width="4" height="8" />
               <rect x="6" y="30" width="8" height="4" />
@@ -208,7 +237,6 @@
               <rect x="44" y="44" width="4" height="4" />
               <rect x="48" y="48" width="4" height="4" />
 
-              <!-- 会随秒针闪烁伸缩的外侧光线 -->
               <g id="sun-rays-ext">
                 <rect x="30" y="0" width="4" height="4" />
                 <rect x="30" y="60" width="4" height="4" />
@@ -225,7 +253,6 @@
           <!-- 升级到 64x64 的高精度饱满月亮与交替星空 -->
           <div class="moon-box" id="moon-box">
             <svg viewBox="0 0 64 64" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000">
-              <!-- 饱满的完美新月 -->
               <rect x="28" y="8" width="12" height="2" />
               <rect x="28" y="50" width="12" height="2" />
               <rect x="24" y="10" width="18" height="2" />
@@ -244,7 +271,6 @@
               <rect x="12" y="36" width="14" height="2" />
               <rect x="12" y="24" width="14" height="12" />
 
-              <!-- 第一组星星：偶数秒显示 -->
               <g id="moon-stars-1">
                 <rect x="6" y="10" width="2" height="6" />
                 <rect x="4" y="12" width="6" height="2" />
@@ -254,7 +280,6 @@
                 <rect x="46" y="12" width="2" height="2" />
               </g>
 
-              <!-- 第二组星星：奇数秒显示 -->
               <g id="moon-stars-2" style="display:none;">
                 <rect x="8" y="46" width="2" height="6" />
                 <rect x="6" y="48" width="6" height="2" />
@@ -268,8 +293,9 @@
         </div>
 
         <div class="main-section">
+          <!-- 默认应用 font-style-0 (像素字体) -->
           <div class="timer-container" id="btn-font-switch">
-            <div class="timer-text font-style-1" id="timer-text">00:25</div>
+            <div class="timer-text font-style-0" id="timer-text">00:25</div>
           </div>
           <div class="tracks-container" id="tracks-bottom"></div>
         </div>
@@ -429,10 +455,7 @@
                   <svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="30" y="120" width="140" height="15"/><rect x="35" y="110" width="5" height="10"/><rect x="95" y="115" width="5" height="5"/><rect x="105" y="110" width="5" height="10"/><rect x="145" y="115" width="5" height="5"/><rect x="160" y="105" width="5" height="15"/><rect x="40" y="135" width="10" height="5"/><rect x="55" y="135" width="15" height="5"/><rect x="65" y="140" width="5" height="10"/><rect x="55" y="150" width="15" height="5"/><rect x="105" y="135" width="20" height="5"/><rect x="120" y="140" width="5" height="15"/><rect x="105" y="155" width="20" height="5"/><rect x="105" y="160" width="5" height="20"/><rect x="155" y="135" width="5" height="15"/><rect x="55" y="90" width="5" height="30"/><rect x="50" y="100" width="5" height="5"/><rect x="60" y="90" width="5" height="5"/><rect x="95" y="105" width="5" height="15"/><rect x="90" y="105" width="5" height="5"/><rect x="135" y="85" width="5" height="35"/><rect x="130" y="95" width="5" height="5"/><rect x="140" y="85" width="5" height="5"/><rect x="55" y="75" width="5" height="15"/><rect x="50" y="70" width="15" height="5"/><rect x="55" y="65" width="5" height="15"/><rect x="95" y="95" width="5" height="10"/><rect x="90" y="85" width="5" height="10"/><rect x="100" y="85" width="5" height="10"/><rect x="90" y="95" width="15" height="5"/><rect x="135" y="65" width="5" height="20"/><path d="M130 50 h15 v15 h-15 z M135 55 h5 v5 h-5 z" fill-rule="evenodd"/></svg>
                 </div>
                 <div class="anim-frame">
-                  <svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="30" y="120" width="140" height="15"/><rect x="35" y="110" width="5" height="10"/><rect x="95" y="115" width="5" height="5"/><rect x="105" y="110" width="5" height="10"/><rect x="145" y="115" width="5" height="5"/><rect x="160" y="105" width="5" height="15"/><rect x="40" y="135" width="10" height="5"/><rect x="55" y="135" width="15" height="5"/><rect x="65" y="140" width="5" height="10"/><rect x="55" y="150" width="15" height="5"/><rect x="105" y="135" width="20" height="5"/><rect x="120" y="140" width="5" height="15"/><rect x="105" y="155" width="20" height="5"/><rect x="105" y="160" width="5" height="20"/><rect x="155" y="135" width="5" height="15"/><rect x="55" y="90" width="5" height="30"/><rect x="50" y="100" width="5" height="5"/><rect x="60" y="90" width="5" height="5"/><rect x="95" y="105" width="5" height="15"/><rect x="90" y="105" width="5" height="5"/><rect x="135" y="85" width="5" height="35"/><rect x="130" y="95" width="5" height="5"/><rect x="140" y="85" width="5" height="5"/><rect x="55" y="75" width="5" height="15"/><rect x="50" y="70" width="15" height="5"/><rect x="55" y="65" width="5" height="15"/><rect x="95" y="95" width="5" height="10"/><rect x="90" y="85" width="5" height="10"/><rect x="100" y="85" width="5" height="10"/><rect x="90" y="95" width="15" height="5"/><rect x="135" y="65" width="5" height="20"/><path d="M130 50 h15 v15 h-15 z M135 55 h5 v5 h-5 z" fill-rule="evenodd"/></svg>
-                </div>
-                <div class="anim-frame">
-                  <svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="30" y="120" width="140" height="15"/><rect x="35" y="110" width="5" height="10"/><rect x="95" y="115" width="5" height="5"/><rect x="105" y="110" width="5" height="10"/><rect x="145" y="115" width="5" height="5"/><rect x="160" y="105" width="5" height="15"/><rect x="40" y="135" width="10" height="5"/><rect x="55" y="135" width="15" height="5"/><rect x="65" y="140" width="5" height="10"/><rect x="55" y="150" width="15" height="5"/><rect x="105" y="135" width="20" height="5"/><rect x="120" y="140" width="5" height="15"/><rect x="105" y="155" width="20" height="5"/><rect x="105" y="160" width="5" height="20"/><rect x="155" y="135" width="5" height="15"/><rect x="55" y="90" width="5" height="30"/><rect x="50" y="100" width="5" height="5"/><rect x="60" y="90" width="5" height="5"/><rect x="95" y="105" width="5" height="15"/><rect x="90" y="105" width="5" height="5"/><rect x="135" y="85" width="5" height="35"/><rect x="130" y="95" width="5" height="5"/><rect x="140" y="85" width="5" height="5"/><rect x="45" y="75" width="5" height="15"/><rect x="40" y="70" width="15" height="5"/><rect x="45" y="65" width="5" height="15"/><rect x="90" y="95" width="5" height="10"/><rect x="85" y="85" width="5" height="10"/><rect x="95" y="85" width="5" height="10"/><rect x="85" y="95" width="15" height="5"/><rect x="135" y="65" width="5" height="20"/><path d="M125 50 h15 v15 h-15 z M130 55 h5 v5 h-5 z" fill-rule="evenodd"/></svg>
+                  <svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="30" y="120" width="140" height="15"/><rect x="35" y="110" width="5" height="10"/><rect x="95" y="115" width="5" height="5"/><rect x="105" y="110" width="5" height="10"/><rect x="145" y="115" width="5" height="5"/><rect x="160" y="105" width="5" height="15"/><rect x="40" y="135" width="10" height="5"/><rect x="55" y="135" width="15" height="5"/><rect x="65" y="140" width="5" height="10"/><rect x="55" y="150" width="15" height="5"/><rect x="105" y="135" width="20" height="5"/><rect x="120" y="140" width="5" height="15"/><rect x="105" y="155" width="20" height="5"/><rect x="105" y="160" width="5" height="20"/><rect x="155" y="135" width="5" height="15"/><rect x="55" y="90" width="5" height="30"/><rect x="50" y="100" width="5" height="5"/><rect x="60" y="90" width="5" height="5"/><rect x="95" y="105" width="5" height="15"/><rect x="90" y="105" width="5" height="5"/><rect x="135" y="85" width="5" height="35"/><rect x="130" y="95" width="5" height="5"/><rect x="140" y="85" width="5" height="5"/><rect x="55" y="75" width="5" height="15"/><rect x="45" y="70" width="15" height="5"/><rect x="50" y="65" width="5" height="15"/><rect x="90" y="95" width="5" height="10"/><rect x="85" y="85" width="5" height="10"/><rect x="95" y="85" width="5" height="10"/><rect x="85" y="95" width="15" height="5"/><rect x="135" y="65" width="5" height="20"/><path d="M125 50 h15 v15 h-15 z M130 55 h5 v5 h-5 z" fill-rule="evenodd"/></svg>
                 </div>
                 <div class="anim-frame">
                   <svg viewBox="0 0 200 200" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000"><rect x="30" y="120" width="140" height="15"/><rect x="35" y="110" width="5" height="10"/><rect x="95" y="115" width="5" height="5"/><rect x="105" y="110" width="5" height="10"/><rect x="145" y="115" width="5" height="5"/><rect x="160" y="105" width="5" height="15"/><rect x="40" y="135" width="10" height="5"/><rect x="55" y="135" width="15" height="5"/><rect x="65" y="140" width="5" height="10"/><rect x="55" y="150" width="15" height="5"/><rect x="105" y="135" width="20" height="5"/><rect x="120" y="140" width="5" height="15"/><rect x="105" y="155" width="20" height="5"/><rect x="105" y="160" width="5" height="20"/><rect x="155" y="135" width="5" height="15"/><rect x="55" y="90" width="5" height="30"/><rect x="50" y="100" width="5" height="5"/><rect x="60" y="90" width="5" height="5"/><rect x="95" y="105" width="5" height="15"/><rect x="90" y="105" width="5" height="5"/><rect x="135" y="85" width="5" height="35"/><rect x="130" y="95" width="5" height="5"/><rect x="140" y="85" width="5" height="5"/><rect x="50" y="75" width="5" height="15"/><rect x="40" y="70" width="15" height="5"/><rect x="45" y="65" width="5" height="15"/><rect x="90" y="95" width="5" height="10"/><rect x="85" y="85" width="5" height="10"/><rect x="95" y="85" width="5" height="10"/><rect x="85" y="95" width="15" height="5"/><rect x="130" y="65" width="5" height="20"/><path d="M120 50 h15 v15 h-15 z M125 55 h5 v5 h-5 z" fill-rule="evenodd"/></svg>
@@ -492,7 +515,7 @@
     ];
     
     var TOTAL_SLOTS = 16;
-    var TOTAL_FONTS = 3;
+    var TOTAL_FONTS = 4; // 更新为 4 种字体切换
     var SKY_INTERVAL = 1;
 
     var totalTime = 25 * 60;
@@ -504,7 +527,7 @@
     var isDayTime = true;
     var starToggled = false;
     var currentAnimal = null;
-    var currentFontIndex = 1; 
+    var currentFontIndex = 0; 
 
     var isPhysicalPortrait = true;
     var isLogicalPortrait = true;
@@ -694,7 +717,6 @@
       }
     }
 
-    // 更新后的天象读秒逻辑：通过切换 DOM display 控制长短射线与星星编组
     function tickSkyBadge() {
       starToggled = !starToggled;
       if (isDayTime) {
