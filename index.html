@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- Kindle版本号: v1 (从本次开始启用版本追溯，之前的迭代不计入编号) -->
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
@@ -708,11 +709,14 @@
       document.body.appendChild(box);
     }
 
+    var BUILD_VERSION = 'v1';
+
     function showDebugInfo(w, h) {
       var box = document.createElement('div');
       box.style.cssText = 'position:fixed;top:2px;left:2px;z-index:9999;background:#fff;color:#000;font-size:11px;line-height:1.4;padding:3px 5px;border:1px solid #000;font-family:monospace;';
       var dpr = window.devicePixelRatio || 1;
       box.innerHTML =
+        '<b>' + BUILD_VERSION + '</b><br>' +
         'clientW/H: ' + w + ' x ' + h + '<br>' +
         'innerW/H: ' + window.innerWidth + ' x ' + window.innerHeight + '<br>' +
         'screen.w/h: ' + screen.width + ' x ' + screen.height + '<br>' +
