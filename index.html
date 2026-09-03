@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Kindle版本号: v1 (从本次开始启用版本追溯，之前的迭代不计入编号) -->
+<!-- Kindle版本号: v2 (像素字layoutPixelTimer还原为用户上传的checkpoint版本：TARGET_RATIO=0.71, margin-bottom=h*0.15) -->
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
@@ -709,7 +709,7 @@
       document.body.appendChild(box);
     }
 
-    var BUILD_VERSION = 'v1';
+    var BUILD_VERSION = 'v2';
 
     function showDebugInfo(w, h) {
       var box = document.createElement('div');
@@ -800,7 +800,7 @@
     // 掐架导致的瓶颈问题——之前不管怎么调高度比例都没用，就是因为宽度百分比是
     // 独立写死的，实际显示大小从头到尾都被宽度卡住了，跟高度设多少完全无关。
     function layoutPixelTimer(fontSizePx, containerWidthPx) {
-      var TARGET_RATIO = 0.745; // 用canvas measureText在两台真实设备上实测得出(0.7464/0.7440平均)，比之前用替代字体估算的0.71更准确
+      var TARGET_RATIO = 0.71; // 用fontTools实测Helvetica系字体数字高度/字号的比例
       var GLYPH_ASPECT = 6 / 8; // 数字字形本身的宽高比
       var GAP_RATIO = 0.12; // 数字间距，相对高度的比例
 
@@ -818,15 +818,9 @@
       }
 
       els.pixelTimer.style.height = h + 'px';
-      // 精确推导公式(用DevTools实测数据反推得出)：
-      // 文字版字体用的是对称margin(-30.9px上下)，其box高度就是fontSizePx本身(line-height:1)，
-      // 对称margin不影响flex居中位置。像素钟的box高度是h(通常比fontSizePx小)，
-      // 如果margin-top/bottom也对称，两者的flex居中点会因为box高度不同而错开。
-      // 要让像素钟的视觉位置跟文字版对齐，需要 margin-bottom - margin-top = fontSizePx - h，
-      // 这里简化令margin-top=0，margin-bottom直接等于这个差值。
-      // 副作用是这个差值天然比之前粗略估算的(h*0.15)大很多，正好顺带解决了脚印贴得太近的问题。
-      els.pixelTimer.style.marginTop = '0px';
-      els.pixelTimer.style.marginBottom = (fontSizePx - h) + 'px';
+      // 像素字形是贴边绘制的，没有文字天然带的下方留白(descender空间)，
+      // 不补一个下边距的话，脚印进度条会显得贴得特别近
+      els.pixelTimer.style.marginBottom = (h * 0.15) + 'px';
       for (var i = 0; i < els.digitSlots.length; i++) {
         els.digitSlots[i].style.width = digitW + 'px';
         els.digitSlots[i].style.height = h + 'px';
