@@ -89,7 +89,7 @@
       width: 100%;
     }
     .pixel-timer.active { display: -webkit-box; display: flex; }
-    .pixel-digit-slot { position: relative; height: 100%; width: 20%; flex-shrink: 0; -webkit-box-flex: 0; }
+    .pixel-digit-slot { position: relative; height: 100%; width: 18%; margin: 0 1%; flex-shrink: 0; -webkit-box-flex: 0; }
     .pixel-digit { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; }
     .pixel-digit.active { display: block; }
     .pixel-colon { position: relative; height: 100%; width: 6%; flex-shrink: 0; -webkit-box-flex: 0; margin: 0 1%; }
@@ -734,6 +734,7 @@
         els.timerText.style.fontSize = (215 * K_SCALE) + 'px';
         els.timerText.style.margin = (-10 * K_SCALE) + 'px 0';
         els.pixelTimer.style.fontSize = (215 * K_SCALE) + 'px';
+        els.pixelTimer.style.margin = (-10 * K_SCALE) + 'px 0';
       } else {
         els.appContainer.style.width = SAFE_LONG + 'px';
         els.appContainer.style.height = SAFE_SHORT + 'px';
@@ -742,6 +743,7 @@
         els.timerText.style.fontSize = (250 * K_SCALE) + 'px';
         els.timerText.style.margin = (-15 * K_SCALE) + 'px 0';
         els.pixelTimer.style.fontSize = (250 * K_SCALE) + 'px';
+        els.pixelTimer.style.margin = (-15 * K_SCALE) + 'px 0';
       }
       forceLayoutRecalc();
     }
