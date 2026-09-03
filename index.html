@@ -654,12 +654,25 @@
       styleEl.appendChild(document.createTextNode(css));
     }
 
+    function showDebugInfo(w, h) {
+      var box = document.createElement('div');
+      box.style.cssText = 'position:fixed;top:2px;left:2px;z-index:9999;background:#fff;color:#000;font-size:11px;line-height:1.4;padding:3px 5px;border:1px solid #000;font-family:monospace;';
+      var dpr = window.devicePixelRatio || 1;
+      box.innerHTML =
+        'clientW/H: ' + w + ' x ' + h + '<br>' +
+        'innerW/H: ' + window.innerWidth + ' x ' + window.innerHeight + '<br>' +
+        'screen.w/h: ' + screen.width + ' x ' + screen.height + '<br>' +
+        'dpr: ' + dpr;
+      document.body.appendChild(box);
+    }
+
     function init() {
       var w = document.documentElement.clientWidth || window.innerWidth;
       var h = document.documentElement.clientHeight || window.innerHeight;
       SCREEN_LONG = Math.max(w, h);
       SCREEN_SHORT = Math.min(w, h);
       updateScaleFactor();
+      showDebugInfo(w, h);
 
       initDOM();
       initSavedSettings();
