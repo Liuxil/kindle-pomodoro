@@ -24,6 +24,12 @@
       --bg: #121212;
     }
 
+    /* 像素格子扫动过渡：格子从完全不透明瞬间跳到完全透明，不做渐变，
+       配合steps(1)保持"一格一格消失"的像素颗粒感，露出下面早已切换好的真实内容 */
+    @keyframes pixelDissolve {
+      to { opacity: 0; }
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -41,7 +47,7 @@
       background-color: var(--bg);
       color: var(--ink);
       font-family: sans-serif;
-      transition: background-color 0.25s ease;
+      transition: background-color 0.6s ease-in-out, color 0.6s ease-in-out;
     }
     ::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
 
@@ -188,6 +194,7 @@
       background: var(--bg); color: var(--ink); border: 3px solid var(--ink); font-weight: bold; border-radius: 8px; cursor: pointer;
       outline: none;
       -webkit-tap-highlight-color: transparent;
+      transition: background-color 0.6s ease-in-out, color 0.6s ease-in-out, border-color 0.6s ease-in-out;
     }
     button:active { background: var(--ink); color: var(--bg); }
     .btn-adjust { font-size: 18px; padding: 5px 14px; }
@@ -748,31 +755,62 @@
         if (savedMode === 'night') { document.body.classList.add('night-mode'); }
       } catch (e) {}
       syncThemeColor();
-      forceIOSRepaint();
     }
 
     function toggleDisplayMode() {
+      var goingNight = !document.body.classList.contains('night-mode');
+      playPixelTransition(goingNight);
+    }
+
+    // 像素格子扫动过渡：先瞬间把真正的主题切换掉(这时候界面内容已经是新主题了，
+    // 只是被盖住看不见)，再铺一层"旧主题颜色"的格子盖住整个屏幕(跟切换前的画面
+    // 无缝衔接，没有跳变感)。格子按扫动方向逐个瞬间消失(不是渐隐)，露出下面早已经
+    // 切好的真实内容——扫到哪、哪里就立刻显示新主题下的真实数字和按钮，而不是等
+    // 整个动画播完才一次性露出来。黑夜模式从上往下扫黑，白天模式从下往上扫白；
+    // 每列的扫动快慢单独错开一点，做出参差不齐的锯齿边缘。
+    function playPixelTransition(goingNight) {
+      var COLS = 12, ROWS = 16;
+      var TOTAL_MS = 700;
+      var STEP_MS = 60; // 每个格子从"实色"跳到"透明"这一下的时长(瞬间跳变，保持像素颗粒感)
+      var JITTER_ROWS = 3; // 每列的错落幅度，单位:格子行数
+
+      var oldBg = getComputedStyle(document.body).backgroundColor;
+
+      // 先切主题，内容立刻是新样子了(暂时被下面铺的格子盖住)
       document.body.classList.toggle('night-mode');
       var mode = document.body.classList.contains('night-mode') ? 'night' : 'day';
       try { localStorage.setItem('pomodoro_display_mode', mode); } catch (e) {}
       syncThemeColor();
       updateDayNightMode();
-      forceIOSRepaint();
-    }
 
-    function forceIOSRepaint() {
-      // 模拟"旋转屏幕"这个动作附带触发的强制重绘/重新合成效果，
-      // 不需要用户真的转一下设备。几种常见手段一起上，做双保险：
-      // 1. 滚动一下再归零，强制触发一次布局计算
-      window.scrollTo(0, 1);
-      window.scrollTo(0, 0);
-      // 2. 短暂给body加一个transform，强制它单独成为一个合成层再撤销，
-      //    这个动作通常会让WebKit重新合成整个页面(包括状态栏区域)
-      document.body.style.webkitTransform = 'translateZ(0)';
-      void document.body.offsetHeight; // 强制同步读取一次布局，逼浏览器立刻算完，不能拖到下一帧
-      requestAnimationFrame(function () {
-        document.body.style.webkitTransform = '';
-      });
+      var overlay = document.createElement('div');
+      overlay.id = 'pixel-transition-overlay';
+      overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:99998;pointer-events:none;';
+
+      var cellW = 100 / COLS, cellH = 100 / ROWS;
+      var html = '';
+      for (var c = 0; c < COLS; c++) {
+        // 每列一个固定的随机错落量，让扫动边缘参差不齐(锯齿感)
+        var colJitter = (Math.random() * 2 - 1) * JITTER_ROWS;
+        for (var r = 0; r < ROWS; r++) {
+          // 黑夜模式：从第0行(顶部)往第ROWS-1行(底部)扫；白天模式反过来，从底部往顶部扫
+          var sweepRow = goingNight ? r : (ROWS - 1 - r);
+          var progress = (sweepRow + colJitter) / ROWS;
+          if (progress < 0) progress = 0;
+          if (progress > 1) progress = 1;
+          var delay = Math.round(progress * (TOTAL_MS - STEP_MS));
+          html += '<div style="position:absolute;left:' + c * cellW + '%;top:' + r * cellH + '%;width:' +
+            (cellW + 0.5) + '%;height:' + (cellH + 0.5) + '%;background:' + oldBg +
+            ';animation:pixelDissolve ' + STEP_MS + 'ms steps(1) forwards;animation-delay:' + delay + 'ms;"></div>';
+        }
+      }
+      overlay.innerHTML = html;
+      document.body.appendChild(overlay);
+
+      // 全部格子消散完之后，清掉这个覆盖层，不占用后续任何布局/事件
+      setTimeout(function () {
+        if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+      }, TOTAL_MS + 100);
     }
 
     function switchFont() {
