@@ -727,6 +727,13 @@
       return false;
     }
 
+    function syncThemeColor() {
+      var meta = document.querySelector('meta[name="theme-color"]');
+      if (!meta) return;
+      var isNight = document.body.classList.contains('night-mode');
+      meta.setAttribute('content', isNight ? '#121212' : '#ffffff');
+    }
+
     function initSavedSettings() {
       applyOrientationLogic(); 
       try {
@@ -739,12 +746,14 @@
         var savedMode = localStorage.getItem('pomodoro_display_mode');
         if (savedMode === 'night') { document.body.classList.add('night-mode'); }
       } catch (e) {}
+      syncThemeColor();
     }
 
     function toggleDisplayMode() {
       document.body.classList.toggle('night-mode');
       var mode = document.body.classList.contains('night-mode') ? 'night' : 'day';
       try { localStorage.setItem('pomodoro_display_mode', mode); } catch (e) {}
+      syncThemeColor();
       updateDayNightMode();
     }
 
