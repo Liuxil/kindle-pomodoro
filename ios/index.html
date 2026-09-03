@@ -9,12 +9,6 @@
   <meta name="apple-mobile-web-app-title" content="番茄钟">
   <link rel="apple-touch-icon" href="icon.png">
   <title>Pomodoro</title>
-  
-  <!-- 引入纯正方块像素字体 (Minecraft) 和 7段数码管字体 (DS-Digital) -->
-  <style>
-    @import url('https://fonts.cdnfonts.com/css/minecraft-4');
-    @import url('https://fonts.cdnfonts.com/css/ds-digital');
-  </style>
 
   <style>
     * {
@@ -110,43 +104,29 @@
       white-space: normal;
     }
 
-    /* ================= 4种字体样式精确配置 ================= */
+    /* ================= 4种字体样式配置 ================= */
     
-    /* 0: 纯正像素字体 (Minecraft - 干净方块轮廓，高辨识度) */
+    /* 0: 像素字体 (通过 JS 直出 SVG，绝对锐利) */
     .font-style-0 { 
-      font-family: 'Minecraft', monospace, sans-serif; 
-      font-weight: 400; 
       color: #000000 !important; 
-      -webkit-text-fill-color: #000000 !important; 
-      -webkit-text-stroke: 0 !important; 
-      letter-spacing: -4px; 
-      font-size: 220px;
     }
-    .portrait-format .font-style-0 { font-size: 160px; letter-spacing: -4px; }
 
-    /* 1: 7段液晶电子字体 (DS-Digital - 完美复刻电子表) */
+    /* 1: 7段液晶字体 (通过 JS 直出 SVG，完美切割) */
     .font-style-1 { 
-      font-family: 'DS-Digital', sans-serif; 
-      font-weight: 400; 
       color: #000000 !important; 
-      -webkit-text-fill-color: #000000 !important; 
-      -webkit-text-stroke: 0 !important; 
-      letter-spacing: 0px; 
-      font-size: 250px;
     }
-    .portrait-format .font-style-1 { font-size: 200px; letter-spacing: 0px; }
 
-    /* 2: 苹果实心粗体 (统一使用 Helvetica Neue 保持和空心字绝对一致) */
+    /* 2: 苹果实心粗体 (严格对齐) */
     .font-style-2 { 
       font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; 
       font-weight: 900; 
       color: #000000 !important; 
       -webkit-text-fill-color: #000000 !important; 
       -webkit-text-stroke: 0 !important; 
-      letter-spacing: -8px; 
+      letter-spacing: -6px; 
       font-size: 250px;
     }
-    .portrait-format .font-style-2 { font-size: 190px; letter-spacing: -4px; }
+    .portrait-format .font-style-2 { font-size: 190px; letter-spacing: -2px; }
 
     /* 3: 苹果空心粗体 (严格对齐样式 2，彻底解决大小抖动和重叠描边 bug) */
     .font-style-3 { 
@@ -155,10 +135,10 @@
       color: transparent !important; 
       -webkit-text-fill-color: transparent !important; 
       -webkit-text-stroke: 4px #000000 !important; 
-      letter-spacing: -8px; 
+      letter-spacing: -6px; 
       font-size: 250px;
     }
-    .portrait-format .font-style-3 { font-size: 190px; letter-spacing: -4px; -webkit-text-stroke: 3px #000000 !important; }
+    .portrait-format .font-style-3 { font-size: 190px; letter-spacing: -2px; -webkit-text-stroke: 3px #000000 !important; }
 
     /* ================= 轨道及按钮配置 ================= */
     .tracks-container {
@@ -216,7 +196,6 @@
     <div id="safe-area">
       <div id="app-container">
         <div class="sky-badge" id="btn-orientation" title="点击切换横/竖屏">
-          
           <!-- 太阳 -->
           <div class="sun-box" id="sun-box">
             <svg viewBox="0 0 64 64" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000">
@@ -227,7 +206,6 @@
               <rect x="18" y="40" width="28" height="2" />
               <rect x="20" y="42" width="24" height="2" />
               <rect x="24" y="44" width="16" height="2" />
-              
               <rect x="30" y="6" width="4" height="8" />
               <rect x="30" y="50" width="4" height="8" />
               <rect x="6" y="30" width="8" height="4" />
@@ -240,7 +218,6 @@
               <rect x="12" y="48" width="4" height="4" />
               <rect x="44" y="44" width="4" height="4" />
               <rect x="48" y="48" width="4" height="4" />
-
               <g id="sun-rays-ext">
                 <rect x="30" y="0" width="4" height="4" />
                 <rect x="30" y="60" width="4" height="4" />
@@ -253,7 +230,6 @@
               </g>
             </svg>
           </div>
-
           <!-- 月亮 -->
           <div class="moon-box" id="moon-box">
             <svg viewBox="0 0 64 64" style="width:100%;height:100%; shape-rendering: crispEdges;" fill="#000">
@@ -274,7 +250,6 @@
               <rect x="12" y="22" width="14" height="2" />
               <rect x="12" y="36" width="14" height="2" />
               <rect x="12" y="24" width="14" height="12" />
-
               <g id="moon-stars-1">
                 <rect x="6" y="10" width="2" height="6" />
                 <rect x="4" y="12" width="6" height="2" />
@@ -283,7 +258,6 @@
                 <rect x="14" y="54" width="2" height="2" />
                 <rect x="46" y="12" width="2" height="2" />
               </g>
-
               <g id="moon-stars-2" style="display:none;">
                 <rect x="8" y="46" width="2" height="6" />
                 <rect x="6" y="48" width="6" height="2" />
@@ -298,7 +272,7 @@
 
         <div class="main-section">
           <div class="timer-container" id="btn-font-switch">
-            <!-- 默认起始字体为0号(像素) -->
+            <!-- 默认起始字体为0号 -->
             <div class="timer-text font-style-0" id="timer-text">00:25</div>
           </div>
           <div class="tracks-container" id="tracks-bottom"></div>
@@ -317,7 +291,6 @@
 
         <!-- ================= 休息页面与动画面板 ================= -->
         <div class="rest-screen" id="rest-screen">
-          
           <div class="rest-panel" id="rest-panel-0">
             <div class="pixel-stage" id="stage-bird-coffee">
               <div class="anim-frame active">
@@ -517,7 +490,42 @@
       { feetCount: 4, svg: '<svg viewBox="0 0 24 24"><ellipse cx="9" cy="12" rx="4.5" ry="5.5"/><circle cx="16" cy="7" r="2"/><circle cx="19" cy="12" r="2.2"/><circle cx="16" cy="17" r="2"/></svg>' },
       { feetCount: 2, svg: '<svg viewBox="0 0 24 24"><path d="M5 12 L19 12 M13 12 L19 6 M13 12 L19 18" stroke="#000" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>' }
     ];
-    
+
+    /* ========================================================= 
+       SVG 矢量渲染矩阵：基于美咲 (Misaki) 等级的高清阵列
+       ========================================================= */
+    // 1. 完美复刻的 8 像素高 Misaki 风格阵列
+    var PIXEL_FONT = {
+      '0': { w: 6, d: ["011110","110011","110011","110011","110011","110011","110011","011110"] },
+      '1': { w: 4, d: ["0011","0111","1111","0011","0011","0011","0011","1111"] },
+      '2': { w: 6, d: ["011110","110011","000011","000110","001100","011000","110000","111111"] },
+      '3': { w: 6, d: ["011110","110011","000011","001110","000011","000011","110011","011110"] },
+      '4': { w: 6, d: ["000011","000111","001111","011011","110011","111111","000011","000011"] },
+      '5': { w: 6, d: ["111111","110000","111110","000011","000011","000011","110011","011110"] },
+      '6': { w: 6, d: ["001111","011000","110000","111110","110011","110011","110011","011110"] },
+      '7': { w: 6, d: ["111111","110011","000011","000110","001100","011000","011000","011000"] },
+      '8': { w: 6, d: ["011110","110011","110011","011110","110011","110011","110011","011110"] },
+      '9': { w: 6, d: ["011110","110011","110011","110011","011111","000011","000110","111100"] },
+      ':': { w: 2, d: ["00","11","11","00","00","11","11","00"] }
+    };
+
+    // 2. 完美复刻的 7段数码管矢量路径
+    var LCD_SEGMENTS = {
+      'A': "M 2 0 l 6 0 l 1 1 l -1 1 l -6 0 l -1 -1 Z",
+      'B': "M 9 1 l 1 1 l 0 6 l -1 1 l -1 -1 l 0 -6 Z",
+      'C': "M 9 9 l 1 1 l 0 6 l -1 1 l -1 -1 l 0 -6 Z",
+      'D': "M 2 16 l 6 0 l 1 1 l -1 1 l -6 0 l -1 -1 Z",
+      'E': "M 1 9 l 1 1 l 0 6 l -1 1 l -1 -1 l 0 -6 Z",
+      'F': "M 1 1 l 1 1 l 0 6 l -1 1 l -1 -1 l 0 -6 Z",
+      'G': "M 2 8 l 6 0 l 1 1 l -1 1 l -6 0 l -1 -1 Z"
+    };
+    var LCD_DIGIT_MAP = {
+      '0': ['A','B','C','D','E','F'], '1': ['B','C'], '2': ['A','B','G','E','D'],
+      '3': ['A','B','C','D','G'], '4': ['F','B','G','C'], '5': ['A','F','G','C','D'],
+      '6': ['A','F','E','D','C','G'], '7': ['A','B','C'], '8': ['A','B','C','D','E','F','G'],
+      '9': ['A','B','C','D','F','G']
+    };
+
     var TOTAL_SLOTS = 16;
     var TOTAL_FONTS = 4;
     var SKY_INTERVAL = 1;
@@ -679,6 +687,8 @@
 
     function applyFont() {
       els.timerText.className = 'timer-text font-style-' + currentFontIndex;
+      lastDisplayedText = ''; // 强行清除缓存以触发 SVG 引擎重绘
+      updateDisplay();
     }
 
     function toggleTimer() {
@@ -756,6 +766,73 @@
       if (isEggTriggered) showRestScreen();
     }
 
+    /* ========================================================= 
+       核心渲染引擎：将文本通过矩阵转换为纯正 SVG，告别模糊
+       ========================================================= */
+    function textToSVG(lines, type) {
+      var svgContent = '';
+      var maxWidth = 0;
+      var lineData = [];
+      
+      // 精确测算每行宽度以实现居中
+      for (var l = 0; l < lines.length; l++) {
+        var w = 0;
+        var line = lines[l];
+        for (var i = 0; i < line.length; i++) {
+          if (type === 'pixel') {
+            w += (PIXEL_FONT[line[i]] ? PIXEL_FONT[line[i]].w : 0) + 1;
+          } else {
+            w += (line[i] === ':' ? 4 : 10) + 2;
+          }
+        }
+        w -= (type === 'pixel' ? 1 : 2); 
+        lineData.push({ text: line, width: w });
+        if (w > maxWidth) maxWidth = w;
+      }
+      
+      var currentY = 0;
+      for (var l = 0; l < lineData.length; l++) {
+        var startX = (maxWidth - lineData[l].width) / 2; 
+        var currentX = startX;
+        var line = lineData[l].text;
+        
+        for (var i = 0; i < line.length; i++) {
+          var char = line[i];
+          if (type === 'pixel') {
+            var glyph = PIXEL_FONT[char];
+            if (glyph) {
+              for (var r = 0; r < glyph.d.length; r++) {
+                for (var c = 0; c < glyph.w; c++) {
+                  if (glyph.d[r][c] === '1') {
+                    svgContent += '<rect x="'+(currentX + c)+'" y="'+(currentY + r)+'" width="1" height="1" />';
+                  }
+                }
+              }
+              currentX += glyph.w + 1;
+            }
+          } else {
+            if (char === ':') {
+              svgContent += '<path d="M '+(currentX+1)+' '+(currentY+5)+' h 2 v 2 h -2 Z M '+(currentX+1)+' '+(currentY+11)+' h 2 v 2 h -2 Z" />';
+              currentX += 4 + 2;
+            } else {
+              var segs = LCD_DIGIT_MAP[char] || [];
+              for(var s = 0; s < segs.length; s++) {
+                svgContent += '<path transform="translate('+currentX+','+currentY+')" d="'+LCD_SEGMENTS[segs[s]]+'" />';
+              }
+              currentX += 10 + 2;
+            }
+          }
+        }
+        currentY += (type === 'pixel' ? 10 : 22); // 行高与间距适配
+      }
+      
+      var h = currentY - (type === 'pixel' ? 2 : 4);
+      var shapeRender = type === 'pixel' ? 'crispEdges' : 'auto';
+      var heightScale = type === 'pixel' ? '0.75em' : '0.85em';
+      
+      return '<svg viewBox="0 0 ' + maxWidth + ' ' + h + '" style="height: ' + heightScale + '; width: auto; display: inline-block; fill: currentColor; shape-rendering: ' + shapeRender + ';">' + svgContent + '</svg>';
+    }
+
     function updateDisplay() {
       var totalMinutes = Math.ceil(timeLeft / 60);
       var hours = Math.floor(totalMinutes / 60);
@@ -764,7 +841,17 @@
       var strH = (hours < 10 ? '0' : '') + hours;
       var strM = (mins < 10 ? '0' : '') + mins;
       
-      var newText = isLogicalPortrait ? (strH + '<br>' + strM) : (strH + ':' + strM);
+      var newText;
+      var arrLines = isLogicalPortrait ? [strH, strM] : [strH + ':' + strM];
+
+      // 前两种字体采用 SVG 直绘引擎，后两种原生排版
+      if (currentFontIndex === 0) {
+        newText = textToSVG(arrLines, 'pixel');
+      } else if (currentFontIndex === 1) {
+        newText = textToSVG(arrLines, 'lcd');
+      } else {
+        newText = isLogicalPortrait ? (strH + '<br>' + strM) : (strH + ':' + strM);
+      }
 
       if (newText !== lastDisplayedText) {
         els.timerText.innerHTML = newText;
