@@ -616,7 +616,7 @@
       var raw = SCREEN_SHORT / REFERENCE_SHORT;
       if (!isFinite(raw) || raw <= 0) raw = 1;
       // 限制在合理范围内，避免极端测量值把画面缩得没法看或者撑爆屏幕
-      K_SCALE = Math.max(0.5, Math.min(3, raw));
+      K_SCALE = Math.max(0.5, Math.min(4, raw));
       applyScaleStyles();
     }
 
