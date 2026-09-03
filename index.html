@@ -541,7 +541,7 @@
       var glyphUnitH = 8;
       // 单行场景下viewBox高度就是字形高度本身，0.71em与实心字体(font-style-1)的视觉高度对齐，
       // 这个比例和iOS版是同一套换算依据(fontTools实测metric兼容字体得出)
-      return '<svg viewBox="0 0 ' + maxWidth + ' ' + glyphUnitH + '" style="height:0.71em;width:auto;display:inline-block;fill:currentColor;shape-rendering:crispEdges;">' + svgContent + '</svg>';
+      return '<svg viewBox="0 0 ' + maxWidth + ' ' + glyphUnitH + '" style="height:0.71em;width:auto;display:inline-block;shape-rendering:crispEdges;" fill="#000000">' + svgContent + '</svg>';
     }
 
     var totalTime = 25 * 60;
