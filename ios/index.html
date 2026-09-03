@@ -24,10 +24,15 @@
       --bg: #121212;
     }
 
-    /* 像素格子扫动过渡：格子从完全不透明瞬间跳到完全透明，不做渐变，
-       配合steps(1)保持"一格一格消失"的像素颗粒感，露出下面早已切换好的真实内容 */
-    @keyframes pixelDissolve {
-      to { opacity: 0; }
+    /* 像素竖条阶梯裁剪过渡：用clip-path配合steps()做出"一格一格露出"的阶梯感，
+       只需要每列一个元素、一个连续动画，比192个独立格子对渲染友好得多 */
+    @keyframes pixelWipeTop {
+      from { clip-path: inset(0 0 0 0); }
+      to { clip-path: inset(100% 0 0 0); }
+    }
+    @keyframes pixelWipeBottom {
+      from { clip-path: inset(0 0 0 0); }
+      to { clip-path: inset(0 0 100% 0); }
     }
 
     * {
@@ -771,12 +776,11 @@
     function playPixelTransition(goingNight) {
       var COLS = 12, ROWS = 16;
       var TOTAL_MS = 700;
-      var STEP_MS = 60; // 每个格子从"实色"跳到"透明"这一下的时长(瞬间跳变，保持像素颗粒感)
-      var JITTER_ROWS = 3; // 每列的错落幅度，单位:格子行数
+      var JITTER_MS = Math.round((3 / ROWS) * TOTAL_MS); // 锯齿错落幅度，换算成时间(原来是3行的幅度)
 
       var oldBg = getComputedStyle(document.body).backgroundColor;
 
-      // 先切主题，内容立刻是新样子了(暂时被下面铺的格子盖住)
+      // 先切主题，内容立刻是新样子了(暂时被下面铺的竖条盖住)
       document.body.classList.toggle('night-mode');
       var mode = document.body.classList.contains('night-mode') ? 'night' : 'day';
       try { localStorage.setItem('pomodoro_display_mode', mode); } catch (e) {}
@@ -787,30 +791,30 @@
       overlay.id = 'pixel-transition-overlay';
       overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:99998;pointer-events:none;';
 
-      var cellW = 100 / COLS, cellH = 100 / ROWS;
+      // 用12根竖条(每根一个连续的clip-path阶梯裁剪动画)代替192个独立格子，
+      // 视觉上还是"一格一格露出来"的阶梯感(靠steps(ROWS)实现)，但DOM元素少了
+      // 16倍，手机端也能流畅跑完，不会因为同时调度太多元素而掉帧花屏。
+      // 黑夜模式：竖条从顶部开始被裁剪掉，露出下面真实内容(自上而下)；
+      // 白天模式反过来，从底部开始裁剪(自下而上)。
+      var animName = goingNight ? 'pixelWipeTop' : 'pixelWipeBottom';
+      var cellW = 100 / COLS;
       var html = '';
       for (var c = 0; c < COLS; c++) {
-        // 每列一个固定的随机错落量，让扫动边缘参差不齐(锯齿感)
-        var colJitter = (Math.random() * 2 - 1) * JITTER_ROWS;
-        for (var r = 0; r < ROWS; r++) {
-          // 黑夜模式：从第0行(顶部)往第ROWS-1行(底部)扫；白天模式反过来，从底部往顶部扫
-          var sweepRow = goingNight ? r : (ROWS - 1 - r);
-          var progress = (sweepRow + colJitter) / ROWS;
-          if (progress < 0) progress = 0;
-          if (progress > 1) progress = 1;
-          var delay = Math.round(progress * (TOTAL_MS - STEP_MS));
-          html += '<div style="position:absolute;left:' + c * cellW + '%;top:' + r * cellH + '%;width:' +
-            (cellW + 0.5) + '%;height:' + (cellH + 0.5) + '%;background:' + oldBg +
-            ';animation:pixelDissolve ' + STEP_MS + 'ms steps(1) forwards;animation-delay:' + delay + 'ms;"></div>';
-        }
+        // 每列一个固定的随机延迟(可正可负)，让扫动边缘参差不齐(锯齿感)，
+        // 负延迟表示这根竖条一开始就已经"跑掉一段"，效果等同于提前触发
+        var delay = Math.round((Math.random() * 2 - 1) * JITTER_MS);
+        html += '<div style="position:absolute;left:' + c * cellW + '%;top:0;width:' +
+          (cellW + 0.5) + '%;height:100%;background:' + oldBg +
+          ';animation:' + animName + ' ' + TOTAL_MS + 'ms steps(' + ROWS + ') forwards;animation-delay:' + delay + 'ms;"></div>';
       }
       overlay.innerHTML = html;
       document.body.appendChild(overlay);
 
-      // 全部格子消散完之后，清掉这个覆盖层，不占用后续任何布局/事件
+      // 动画播完(留一点余量给负延迟的竖条也跑完)之后，清掉这个覆盖层，
+      // 不占用后续任何布局/事件
       setTimeout(function () {
         if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
-      }, TOTAL_MS + 100);
+      }, TOTAL_MS + JITTER_MS + 100);
     }
 
     function switchFont() {
