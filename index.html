@@ -85,15 +85,13 @@
       -webkit-box-orient: horizontal; -webkit-box-direction: normal;
       -webkit-box-align: center; align-items: center;
       -webkit-box-pack: center; justify-content: center;
-      /* 高度比例由JS按横竖屏分别设置(见applyOrientationLogic)，这里只是兜底默认值 */
-      height: 0.80em;
       width: 100%;
     }
     .pixel-timer.active { display: -webkit-box; display: flex; }
-    .pixel-digit-slot { position: relative; height: 100%; width: 18%; margin: 0 1%; flex-shrink: 0; -webkit-box-flex: 0; }
+    .pixel-digit-slot { position: relative; flex-shrink: 0; -webkit-box-flex: 0; }
     .pixel-digit { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; }
     .pixel-digit.active { display: block; }
-    .pixel-colon { position: relative; height: 100%; width: 6%; flex-shrink: 0; -webkit-box-flex: 0; margin: 0 1%; }
+    .pixel-colon { position: relative; flex-shrink: 0; -webkit-box-flex: 0; }
 
     .tracks-container {
       width: 96%; height: 26px; margin-top: 10px;
@@ -581,6 +579,7 @@
       appContainer: document.getElementById('app-container'),
       timerText: document.getElementById('timer-text'),
       pixelTimer: document.getElementById('pixel-timer'),
+      pixelColon: document.querySelector('.pixel-colon'),
       digitSlots: [
         document.getElementById('digit-h1'),
         document.getElementById('digit-h2'),
@@ -723,6 +722,41 @@
       return false;
     }
 
+    // 像素时钟的精确布局计算：直接用目标高度反推每个数字槽该有的px宽度(=高度×6/8)，
+    // 冒号宽度(=高度×2/8)，彻底避免"宽度用百分比写死、高度用em算"这种两套单位互相
+    // 掐架导致的瓶颈问题——之前不管怎么调高度比例都没用，就是因为宽度百分比是
+    // 独立写死的，实际显示大小从头到尾都被宽度卡住了，跟高度设多少完全无关。
+    function layoutPixelTimer(fontSizePx, containerWidthPx) {
+      var TARGET_RATIO = 0.71; // 用fontTools实测Helvetica系字体数字高度/字号的比例
+      var GLYPH_ASPECT = 6 / 8; // 数字字形本身的宽高比
+      var GAP_RATIO = 0.12; // 数字间距，相对高度的比例
+
+      var h = fontSizePx * TARGET_RATIO;
+      var digitW = h * GLYPH_ASPECT;
+      var colonW = h * (2 / 8);
+      var gap = h * GAP_RATIO;
+
+      // 4个数字槽+1个冒号，共5个元素、4个间隙
+      var totalW = digitW * 4 + colonW + gap * 4;
+      var maxW = containerWidthPx * 0.9; // 留10%安全余量，绝不会顶到屏幕边缘
+      if (totalW > maxW) {
+        var scale = maxW / totalW;
+        h *= scale; digitW *= scale; colonW *= scale; gap *= scale;
+      }
+
+      els.pixelTimer.style.height = h + 'px';
+      for (var i = 0; i < els.digitSlots.length; i++) {
+        els.digitSlots[i].style.width = digitW + 'px';
+        els.digitSlots[i].style.height = h + 'px';
+        els.digitSlots[i].style.margin = '0 ' + (gap / 2) + 'px';
+      }
+      if (els.pixelColon) {
+        els.pixelColon.style.width = colonW + 'px';
+        els.pixelColon.style.height = h + 'px';
+        els.pixelColon.style.margin = '0 ' + (gap / 2) + 'px';
+      }
+    }
+
     function applyOrientationLogic() {
       var SAFE_LONG = (SCREEN_LONG - 8) & ~1;
       var SAFE_SHORT = (SCREEN_SHORT - 8) & ~1;
@@ -734,12 +768,7 @@
         els.appContainer.style.transform = 'translate(-50%, -50%)';
         els.timerText.style.fontSize = (215 * K_SCALE) + 'px';
         els.timerText.style.margin = (-10 * K_SCALE) + 'px 0';
-        els.pixelTimer.style.fontSize = (215 * K_SCALE) + 'px';
-        els.pixelTimer.style.height = '0.80em';
-        // 像素字用上下不对称的margin才能真正往上挪位置——
-        // 对称的负margin在flex居中布局下数学上互相抵消，不会产生任何位移
-        els.pixelTimer.style.marginTop = ((-10 - 13) * K_SCALE) + 'px';
-        els.pixelTimer.style.marginBottom = ((-10 + 13) * K_SCALE) + 'px';
+        layoutPixelTimer(215 * K_SCALE, SAFE_SHORT);
       } else {
         els.appContainer.style.width = SAFE_LONG + 'px';
         els.appContainer.style.height = SAFE_SHORT + 'px';
@@ -747,10 +776,7 @@
         els.appContainer.style.transform = 'translate(-50%, -50%) rotate(90deg)';
         els.timerText.style.fontSize = (250 * K_SCALE) + 'px';
         els.timerText.style.margin = (-15 * K_SCALE) + 'px 0';
-        els.pixelTimer.style.fontSize = (250 * K_SCALE) + 'px';
-        els.pixelTimer.style.height = '0.92em'; // 横屏单独用更大的高度比例，跟竖屏(0.80em)解耦
-        els.pixelTimer.style.marginTop = ((-15 - 7) * K_SCALE) + 'px';
-        els.pixelTimer.style.marginBottom = ((-15 + 7) * K_SCALE) + 'px';
+        layoutPixelTimer(250 * K_SCALE, SAFE_LONG);
       }
       forceLayoutRecalc();
     }
