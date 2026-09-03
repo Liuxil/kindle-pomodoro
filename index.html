@@ -82,15 +82,17 @@
        只用class切换显示哪一个，完全不在运行时生成/插入SVG，兼容老内核 */
     .pixel-timer {
       display: none;
+      -webkit-box-orient: horizontal; -webkit-box-direction: normal;
       -webkit-box-align: center; align-items: center;
       -webkit-box-pack: center; justify-content: center;
       height: 0.71em;
+      width: 100%;
     }
     .pixel-timer.active { display: -webkit-box; display: flex; }
-    .pixel-digit-slot { position: relative; height: 100%; width: 0.62em; flex-shrink: 0; }
+    .pixel-digit-slot { position: relative; height: 100%; width: 0.62em; flex-shrink: 0; -webkit-box-flex: 0; }
     .pixel-digit { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; }
     .pixel-digit.active { display: block; }
-    .pixel-colon { height: 100%; width: 0.22em; flex-shrink: 0; margin: 0 0.06em; }
+    .pixel-colon { position: relative; height: 100%; width: 0.22em; flex-shrink: 0; -webkit-box-flex: 0; margin: 0 0.06em; }
 
     .tracks-container {
       width: 96%; height: 26px; margin-top: 10px;
