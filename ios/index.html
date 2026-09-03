@@ -106,17 +106,21 @@
 
     /* ================= 4种字体样式配置 ================= */
     
-    /* 0: 像素字体 (通过 JS 直出 SVG，绝对锐利) */
+    /* 0: 像素字体 (通过 JS 直出 SVG，恢复基准字号) */
     .font-style-0 { 
       color: #000000 !important; 
+      font-size: 250px;
     }
+    .portrait-format .font-style-0 { font-size: 210px; }
 
-    /* 1: 7段液晶字体 (通过 JS 直出 SVG，完美切割) */
+    /* 1: 7段液晶字体 (通过 JS 直出 SVG，恢复基准字号) */
     .font-style-1 { 
       color: #000000 !important; 
+      font-size: 250px;
     }
+    .portrait-format .font-style-1 { font-size: 210px; }
 
-    /* 2: 苹果实心粗体 (严格对齐) */
+    /* 2: 苹果实心粗体 */
     .font-style-2 { 
       font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; 
       font-weight: 900; 
@@ -128,7 +132,7 @@
     }
     .portrait-format .font-style-2 { font-size: 190px; letter-spacing: -2px; }
 
-    /* 3: 苹果空心粗体 (严格对齐样式 2，彻底解决大小抖动和重叠描边 bug) */
+    /* 3: 苹果空心粗体 */
     .font-style-3 { 
       font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; 
       font-weight: 900; 
@@ -272,7 +276,6 @@
 
         <div class="main-section">
           <div class="timer-container" id="btn-font-switch">
-            <!-- 默认起始字体为0号 -->
             <div class="timer-text font-style-0" id="timer-text">00:25</div>
           </div>
           <div class="tracks-container" id="tracks-bottom"></div>
@@ -687,7 +690,7 @@
 
     function applyFont() {
       els.timerText.className = 'timer-text font-style-' + currentFontIndex;
-      lastDisplayedText = ''; // 强行清除缓存以触发 SVG 引擎重绘
+      lastDisplayedText = ''; 
       updateDisplay();
     }
 
@@ -774,7 +777,6 @@
       var maxWidth = 0;
       var lineData = [];
       
-      // 精确测算每行宽度以实现居中
       for (var l = 0; l < lines.length; l++) {
         var w = 0;
         var line = lines[l];
@@ -823,12 +825,12 @@
             }
           }
         }
-        currentY += (type === 'pixel' ? 10 : 22); // 行高与间距适配
+        currentY += (type === 'pixel' ? 10 : 22); 
       }
       
       var h = currentY - (type === 'pixel' ? 2 : 4);
       var shapeRender = type === 'pixel' ? 'crispEdges' : 'auto';
-      var heightScale = type === 'pixel' ? '0.75em' : '0.85em';
+      var heightScale = type === 'pixel' ? '0.8em' : '1em';
       
       return '<svg viewBox="0 0 ' + maxWidth + ' ' + h + '" style="height: ' + heightScale + '; width: auto; display: inline-block; fill: currentColor; shape-rendering: ' + shapeRender + ';">' + svgContent + '</svg>';
     }
@@ -844,7 +846,6 @@
       var newText;
       var arrLines = isLogicalPortrait ? [strH, strM] : [strH + ':' + strM];
 
-      // 前两种字体采用 SVG 直绘引擎，后两种原生排版
       if (currentFontIndex === 0) {
         newText = textToSVG(arrLines, 'pixel');
       } else if (currentFontIndex === 1) {
