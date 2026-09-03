@@ -10,9 +10,9 @@
   <link rel="apple-touch-icon" href="icon.png">
   <title>Pomodoro</title>
   
-  <!-- 引入高辨识度像素字体 (VT323) 和 真正的7段数码管字体 (DS-Digital) -->
+  <!-- 引入纯正方块像素字体 (Minecraft) 和 7段数码管字体 (DS-Digital) -->
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+    @import url('https://fonts.cdnfonts.com/css/minecraft-4');
     @import url('https://fonts.cdnfonts.com/css/ds-digital');
   </style>
 
@@ -96,7 +96,6 @@
     }
     
     .timer-text {
-      font-size: 250px;
       line-height: 1;
       margin: -15px 0; 
       text-align: center;
@@ -106,24 +105,24 @@
     }
 
     .portrait-format .timer-text {
-      font-size: 190px;
       line-height: 0.85; 
       margin: 0;
       white-space: normal;
     }
 
-    /* ================= 4种字体样式配置 ================= */
+    /* ================= 4种字体样式精确配置 ================= */
     
-    /* 0: 像素字体 (VT323 - 辨识度高，类似早期游戏/终端) */
+    /* 0: 纯正像素字体 (Minecraft - 干净方块轮廓，高辨识度) */
     .font-style-0 { 
-      font-family: 'VT323', monospace; 
+      font-family: 'Minecraft', monospace, sans-serif; 
       font-weight: 400; 
       color: #000000 !important; 
       -webkit-text-fill-color: #000000 !important; 
       -webkit-text-stroke: 0 !important; 
-      letter-spacing: -2px; 
+      letter-spacing: -4px; 
+      font-size: 220px;
     }
-    .portrait-format .font-style-0 { font-size: 220px; letter-spacing: -2px; }
+    .portrait-format .font-style-0 { font-size: 160px; letter-spacing: -4px; }
 
     /* 1: 7段液晶电子字体 (DS-Digital - 完美复刻电子表) */
     .font-style-1 { 
@@ -133,21 +132,23 @@
       -webkit-text-fill-color: #000000 !important; 
       -webkit-text-stroke: 0 !important; 
       letter-spacing: 0px; 
+      font-size: 250px;
     }
     .portrait-format .font-style-1 { font-size: 200px; letter-spacing: 0px; }
 
-    /* 2: 苹果实心粗体 (Apple System Heavy) */
+    /* 2: 苹果实心粗体 (统一使用 Helvetica Neue 保持和空心字绝对一致) */
     .font-style-2 { 
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Helvetica, Arial, sans-serif; 
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; 
       font-weight: 900; 
       color: #000000 !important; 
       -webkit-text-fill-color: #000000 !important; 
       -webkit-text-stroke: 0 !important; 
       letter-spacing: -8px; 
+      font-size: 250px;
     }
-    .portrait-format .font-style-2 { letter-spacing: -4px; }
+    .portrait-format .font-style-2 { font-size: 190px; letter-spacing: -4px; }
 
-    /* 3: 苹果空心粗体 (为避免 iOS Variable Font 重叠描边Bug，去除 apple-system，强制使用无重叠路径的 Helvetica Neue) */
+    /* 3: 苹果空心粗体 (严格对齐样式 2，彻底解决大小抖动和重叠描边 bug) */
     .font-style-3 { 
       font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; 
       font-weight: 900; 
@@ -155,8 +156,9 @@
       -webkit-text-fill-color: transparent !important; 
       -webkit-text-stroke: 4px #000000 !important; 
       letter-spacing: -8px; 
+      font-size: 250px;
     }
-    .portrait-format .font-style-3 { letter-spacing: -4px; -webkit-text-stroke: 3px #000000 !important; }
+    .portrait-format .font-style-3 { font-size: 190px; letter-spacing: -4px; -webkit-text-stroke: 3px #000000 !important; }
 
     /* ================= 轨道及按钮配置 ================= */
     .tracks-container {
@@ -517,7 +519,7 @@
     ];
     
     var TOTAL_SLOTS = 16;
-    var TOTAL_FONTS = 4; // 一共 4 种字体切换
+    var TOTAL_FONTS = 4;
     var SKY_INTERVAL = 1;
 
     var totalTime = 25 * 60;
