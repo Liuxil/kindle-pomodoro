@@ -1015,13 +1015,26 @@
     // 注册Service Worker：第一次打开会正常走网络(这次还是会有短暂空白)，
     // 但缓存建立之后，之后每次从主屏幕图标打开都能直接读本地缓存秒开，
     // 不用再等一遍完整的网络请求
-    if ('serviceWorker' in navigator) {
+    (function () {
+      var box = document.createElement('div');
+      box.style.cssText = 'position:fixed;top:2px;left:2px;z-index:9999;background:#fff;color:#000;font-size:10px;line-height:1.4;padding:3px 5px;border:1px solid #000;font-family:monospace;max-width:90vw;word-break:break-all;';
+      box.textContent = 'SW: 检测中...';
+      document.body.appendChild(box);
+
+      if (!('serviceWorker' in navigator)) {
+        box.textContent = 'SW: 此环境不支持(可能不是HTTPS，或iOS版本过旧)';
+        return;
+      }
       window.addEventListener('load', function () {
-        navigator.serviceWorker.register('./sw.js').catch(function () {
-          // 注册失败(比如非HTTPS环境)不影响正常使用，静默即可
+        navigator.serviceWorker.register('./sw.js').then(function (reg) {
+          var controlled = navigator.serviceWorker.controller ? '是' : '否';
+          box.textContent = 'SW: 注册成功 / 本次是否被SW接管: ' + controlled +
+            ' / scope: ' + reg.scope;
+        }).catch(function (err) {
+          box.textContent = 'SW: 注册失败 - ' + (err && err.message ? err.message : String(err));
         });
       });
-    }
+    })();
   </script>
 </body>
 </html>
