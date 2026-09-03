@@ -9,6 +9,7 @@
   <meta name="apple-mobile-web-app-title" content="番茄钟">
   <link rel="apple-touch-icon" href="/ios/icon.png">
   <meta name="theme-color" content="#ffffff">
+  <link rel="manifest" href="/ios/manifest.json">
   <title>Pomodoro</title>
 
   <style>
@@ -42,6 +43,27 @@
       transition: background-color 0.25s ease;
     }
     ::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
+
+    #launch-splash {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: #ffffff;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      z-index: 99999;
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    #launch-splash img {
+      width: 96px; height: 96px; border-radius: 22px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+    }
+    .launch-splash-title {
+      margin-top: 14px; font-size: 15px; color: #000000; font-weight: 600;
+      letter-spacing: 1px;
+    }
+    #launch-splash.hide {
+      opacity: 0;
+      transform: scale(0.85);
+      pointer-events: none;
+    }
 
     #screen-bounds {
       position: absolute;
@@ -193,6 +215,14 @@
 </head>
 <body>
   
+  <!-- 启动过渡画面：作为body里第一个元素，浏览器解析HTML到这里就会立刻画出来，
+       完全不需要等JS执行/网络请求完成，从根本上避免"纯白屏空等"的观感。
+       等真正的应用初始化完成后，由JS加一个缩小淡出的过渡动画再移除它。 -->
+  <div id="launch-splash">
+    <img src="/ios/icon-192.png" alt="">
+    <div class="launch-splash-title">番茄钟</div>
+  </div>
+
   <div id="screen-bounds">
     <div id="safe-area">
       <div id="app-container">
@@ -576,6 +606,19 @@
       bindEvents();
       resetIdleTimer();
       initWakeLock();
+      hideLaunchSplash();
+    }
+
+    function hideLaunchSplash() {
+      var splash = document.getElementById('launch-splash');
+      if (!splash) return;
+      // 加一点点延迟再淡出，避免刚画完启动图立刻就消失、显得一闪而过
+      setTimeout(function () {
+        splash.className = 'hide';
+        setTimeout(function () {
+          if (splash.parentNode) splash.parentNode.removeChild(splash);
+        }, 450);
+      }, 200);
     }
 
     function initWakeLock() {
