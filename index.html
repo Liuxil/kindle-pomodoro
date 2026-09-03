@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
   <title>Pomodoro</title>
   <style>
+    :root {
+      /* 以Kindle 7代(短边600px)为基准的缩放系数，JS会在运行时按实际屏幕尺寸重新计算 */
+      --k-scale: 1;
+    }
     * {
       box-sizing: border-box;
       margin: 0;
@@ -42,18 +46,18 @@
       -webkit-box-orient: vertical; flex-direction: column;
       -webkit-box-pack: justify; justify-content: space-between;
       -webkit-box-align: center; align-items: center;
-      padding: 12px 8px;
+      padding: calc(12px * var(--k-scale)) calc(8px * var(--k-scale));
     }
 
-    .sky-badge { width: 60px; height: 60px; position: relative; cursor: pointer; flex-shrink: 0; }
+    .sky-badge { width: calc(60px * var(--k-scale)); height: calc(60px * var(--k-scale)); position: relative; cursor: pointer; flex-shrink: 0; }
     .sun-box, .moon-box { width: 100%; height: 100%; position: relative; display: none; }
     .sun-rays { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
     .sun-face {
-      position: absolute; top: 50%; left: 50%; width: 30px; height: 30px; margin: -15px 0 0 -15px;
-      background: #ffffff; border: 2.5px solid #000000; border-radius: 50%;
+      position: absolute; top: 50%; left: 50%; width: calc(30px * var(--k-scale)); height: calc(30px * var(--k-scale)); margin: calc(-15px * var(--k-scale)) 0 0 calc(-15px * var(--k-scale));
+      background: #ffffff; border: calc(2.5px * var(--k-scale)) solid #000000; border-radius: 50%;
       display: -webkit-box; display: flex; -webkit-box-align: center; align-items: center; -webkit-box-pack: center; justify-content: center;
     }
-    .moon-star { position: absolute; top: 6px; right: 6px; width: 18px; height: 18px; }
+    .moon-star { position: absolute; top: calc(6px * var(--k-scale)); right: calc(6px * var(--k-scale)); width: calc(18px * var(--k-scale)); height: calc(18px * var(--k-scale)); }
 
     .main-section {
       width: 100%; -webkit-box-flex: 1; flex: 1;
@@ -70,30 +74,30 @@
     }
     
     .timer-text {
-      font-size: 210px;
+      font-size: calc(210px * var(--k-scale));
       line-height: 1;
-      margin: -10px 0; 
+      margin: calc(-10px * var(--k-scale)) 0; 
       text-align: center;
       width: 100%;
       display: block;
-      letter-spacing: -6px;
+      letter-spacing: calc(-6px * var(--k-scale));
       white-space: nowrap;
     }
 
-    .font-style-0 { font-family: "Helvetica Neue Light", "Helvetica Neue", "Arial Narrow", sans-serif; font-weight: 200; color: transparent !important; -webkit-text-fill-color: transparent !important; -webkit-text-stroke: 1.5px #000000; }
+    .font-style-0 { font-family: "Helvetica Neue Light", "Helvetica Neue", "Arial Narrow", sans-serif; font-weight: 200; color: transparent !important; -webkit-text-fill-color: transparent !important; -webkit-text-stroke: calc(1.5px * var(--k-scale)) #000000; }
     .font-style-1 { font-family: "Helvetica Neue Light", "Helvetica Neue", "Arial Narrow", sans-serif; font-weight: 200; color: #000000 !important; -webkit-text-fill-color: #000000 !important; -webkit-text-stroke: 0 !important; }
-    .font-style-2 { font-family: "Baskerville", "Bookerly Light", "Georgia", serif; font-weight: 200; letter-spacing: -1px; color: #000000; -webkit-text-fill-color: #000000; -webkit-text-stroke: 0; }
+    .font-style-2 { font-family: "Baskerville", "Bookerly Light", "Georgia", serif; font-weight: 200; letter-spacing: calc(-1px * var(--k-scale)); color: #000000; -webkit-text-fill-color: #000000; -webkit-text-stroke: 0; }
 
     .tracks-container {
-      width: 96%; height: 26px; margin-top: 10px;
+      width: 96%; height: calc(26px * var(--k-scale)); margin-top: calc(10px * var(--k-scale));
       display: -webkit-box; display: flex;
       -webkit-box-pack: justify; justify-content: space-between;
       -webkit-box-align: center; align-items: center;
     }
-    .track-slot { width: 20px; height: 20px; display: -webkit-box; display: flex; -webkit-box-pack: center; justify-content: center; -webkit-box-align: center; align-items: center; }
-    .track-slot svg { width: 18px; height: 18px; fill: #000000; display: none; }
-    .track-slot:nth-child(even) svg { margin-top: 4px; -webkit-transform: rotate(6deg); transform: rotate(6deg); }
-    .track-slot:nth-child(odd) svg { margin-top: -4px; -webkit-transform: rotate(-6deg); transform: rotate(-6deg); }
+    .track-slot { width: calc(20px * var(--k-scale)); height: calc(20px * var(--k-scale)); display: -webkit-box; display: flex; -webkit-box-pack: center; justify-content: center; -webkit-box-align: center; align-items: center; }
+    .track-slot svg { width: calc(18px * var(--k-scale)); height: calc(18px * var(--k-scale)); fill: #000000; display: none; }
+    .track-slot:nth-child(even) svg { margin-top: calc(4px * var(--k-scale)); -webkit-transform: rotate(6deg); transform: rotate(6deg); }
+    .track-slot:nth-child(odd) svg { margin-top: calc(-4px * var(--k-scale)); -webkit-transform: rotate(-6deg); transform: rotate(-6deg); }
     .track-slot.active svg { display: block; }
 
     .footer {
@@ -102,23 +106,23 @@
       -webkit-box-pack: justify; justify-content: space-between;
       -webkit-box-align: center; align-items: center;
     }
-    .btn-adjust-group { display: -webkit-box; display: flex; gap: 10px; }
+    .btn-adjust-group { display: -webkit-box; display: flex; gap: calc(10px * var(--k-scale)); }
     button {
-      background: #ffffff; color: #000000; border: 3px solid #000000; font-weight: bold; border-radius: 8px; cursor: pointer;
+      background: #ffffff; color: #000000; border: calc(3px * var(--k-scale)) solid #000000; font-weight: bold; border-radius: calc(8px * var(--k-scale)); cursor: pointer;
       outline: none;
       -webkit-tap-highlight-color: transparent;
     }
     button:active { background: #000000; color: #ffffff; }
     button:focus { outline: none; }
     button::-moz-focus-inner { border: 0; }
-    .btn-adjust { font-size: 18px; padding: 5px 14px; }
+    .btn-adjust { font-size: calc(18px * var(--k-scale)); padding: calc(5px * var(--k-scale)) calc(14px * var(--k-scale)); }
     
     .btn-start {
-      background: transparent !important; border: none !important; padding: 5px; width: 72px; height: 72px;
+      background: transparent !important; border: none !important; padding: calc(5px * var(--k-scale)); width: calc(72px * var(--k-scale)); height: calc(72px * var(--k-scale));
       display: -webkit-box; display: flex; -webkit-box-pack: center; justify-content: center; -webkit-box-align: center; align-items: center;
     }
     .btn-start:active { background: transparent !important; color: #000000 !important; opacity: 0.4; }
-    .btn-start svg { width: 42px; height: 42px; }
+    .btn-start svg { width: calc(42px * var(--k-scale)); height: calc(42px * var(--k-scale)); }
 
     .rest-screen {
       display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #ffffff; z-index: 100; cursor: pointer;
@@ -129,12 +133,12 @@
     .rest-panel.active { display: -webkit-box; display: flex; }
     
     /* 统一的动画舞台样式 */
-    .pixel-stage { width: 280px; height: 280px; position: relative; }
+    .pixel-stage { width: calc(280px * var(--k-scale)); height: calc(280px * var(--k-scale)); position: relative; }
     .anim-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
     .anim-frame { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; }
     .anim-frame.active { display: block; }
     
-    .pixel-cat-stage { width: 280px; height: 280px; position: relative; }
+    .pixel-cat-stage { width: calc(280px * var(--k-scale)); height: calc(280px * var(--k-scale)); position: relative; }
     .cat-frame { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; }
     .cat-frame.active { display: block; }
 
@@ -518,11 +522,23 @@
     var REST_ANIM_INTERVALS = [1000, 180, 1800]; 
     var restAnimState = { timer: null, index: 0, birdStep: 0, comboStep: 0, catStep: 0 };
 
+    var K_SCALE = 1;
+    var REFERENCE_SHORT = 600; // Kindle 7代短边参考值(CSS像素)，缩放系数以此为基准换算
+
+    function updateScaleFactor() {
+      var raw = SCREEN_SHORT / REFERENCE_SHORT;
+      if (!isFinite(raw) || raw <= 0) raw = 1;
+      // 限制在合理范围内，避免极端测量值把画面缩得没法看或者撑爆屏幕
+      K_SCALE = Math.max(0.5, Math.min(3, raw));
+      document.documentElement.style.setProperty('--k-scale', K_SCALE);
+    }
+
     function init() {
       var w = document.documentElement.clientWidth || window.innerWidth;
       var h = document.documentElement.clientHeight || window.innerHeight;
       SCREEN_LONG = Math.max(w, h);
       SCREEN_SHORT = Math.min(w, h);
+      updateScaleFactor();
 
       initDOM();
       initSavedSettings();
@@ -594,15 +610,15 @@
         els.appContainer.style.height = SAFE_LONG + 'px';
         els.appContainer.style.webkitTransform = 'translate(-50%, -50%)';
         els.appContainer.style.transform = 'translate(-50%, -50%)';
-        els.timerText.style.fontSize = '215px';
-        els.timerText.style.margin = '-10px 0';
+        els.timerText.style.fontSize = (215 * K_SCALE) + 'px';
+        els.timerText.style.margin = (-10 * K_SCALE) + 'px 0';
       } else {
         els.appContainer.style.width = SAFE_LONG + 'px';
         els.appContainer.style.height = SAFE_SHORT + 'px';
         els.appContainer.style.webkitTransform = 'translate(-50%, -50%) rotate(90deg)';
         els.appContainer.style.transform = 'translate(-50%, -50%) rotate(90deg)';
-        els.timerText.style.fontSize = '250px';
-        els.timerText.style.margin = '-15px 0';
+        els.timerText.style.fontSize = (250 * K_SCALE) + 'px';
+        els.timerText.style.margin = (-15 * K_SCALE) + 'px 0';
       }
       forceLayoutRecalc();
     }
@@ -876,6 +892,7 @@
           var h = document.documentElement.clientHeight || window.innerHeight;
           SCREEN_LONG = Math.max(w, h);
           SCREEN_SHORT = Math.min(w, h);
+          updateScaleFactor();
           applyOrientationLogic();
         }, 300);
     });
