@@ -7,7 +7,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="番茄钟">
-  <link rel="apple-touch-icon" href="icon.png">
+  <link rel="apple-touch-icon" href="/ios/icon.png">
   <meta name="theme-color" content="#ffffff">
   <title>Pomodoro</title>
 
@@ -1026,7 +1026,7 @@
         return;
       }
       window.addEventListener('load', function () {
-        navigator.serviceWorker.register('./sw.js').then(function (reg) {
+        navigator.serviceWorker.register('/ios/sw.js').then(function (reg) {
           var controlled = navigator.serviceWorker.controller ? '是' : '否';
           box.textContent = 'SW: 注册成功 / 本次是否被SW接管: ' + controlled +
             ' / scope: ' + reg.scope;
