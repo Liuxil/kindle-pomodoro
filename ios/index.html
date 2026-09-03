@@ -8,6 +8,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="番茄钟">
   <link rel="apple-touch-icon" href="icon.png">
+  <meta name="theme-color" content="#ffffff">
   <title>Pomodoro</title>
 
   <style>
@@ -1010,6 +1011,17 @@
     }
 
     window.addEventListener('load', init);
+
+    // 注册Service Worker：第一次打开会正常走网络(这次还是会有短暂空白)，
+    // 但缓存建立之后，之后每次从主屏幕图标打开都能直接读本地缓存秒开，
+    // 不用再等一遍完整的网络请求
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('./sw.js').catch(function () {
+          // 注册失败(比如非HTTPS环境)不影响正常使用，静默即可
+        });
+      });
+    }
   </script>
 </body>
 </html>
