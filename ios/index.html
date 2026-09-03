@@ -15,10 +15,10 @@
       --ink: #000000;
       --bg: #ffffff;
     }
-    /* 夜间/剧院模式：黑底红字，类似Apple Watch剧院模式，弱光下不刺眼、保护夜视 */
+    /* 夜间/暗色模式 */
     body.night-mode {
-      --ink: #ff3b30;
-      --bg: #000000;
+      --ink: #E0E0E0;
+      --bg: #121212;
     }
 
     * {
@@ -701,6 +701,7 @@
       document.body.classList.toggle('night-mode');
       var mode = document.body.classList.contains('night-mode') ? 'night' : 'day';
       try { localStorage.setItem('pomodoro_display_mode', mode); } catch (e) {}
+      updateDayNightMode();
     }
 
     function switchFont() {
@@ -904,8 +905,8 @@
     }
 
     function updateDayNightMode() {
-      var hour = new Date().getHours();
-      isDayTime = (hour >= 6 && hour < 18);
+      // 不再按真实时钟判断，直接跟随当前的显示模式：夜间模式=月亮，白天模式=太阳
+      isDayTime = !document.body.classList.contains('night-mode');
       els.sunBox.style.display = isDayTime ? 'block' : 'none';
       els.moonBox.style.display = isDayTime ? 'none' : 'block';
     }
