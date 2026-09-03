@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Kindle版本号: v2 (像素字layoutPixelTimer还原为用户上传的checkpoint版本：TARGET_RATIO=0.71, margin-bottom=h*0.15) -->
+<!-- 特别感谢 ZYI 提供 Kindle Paperwhite 11代 的真机测试，帮助定位并修复了像素时钟在高分辨率设备上的显示问题 -->
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
@@ -659,78 +659,12 @@
       styleEl.appendChild(document.createTextNode(css));
     }
 
-    function measureFontDiscrepancy() {
-      var origIndex = currentFontIndex;
-
-      // 测量空心字(font-style-0)的真实渲染边界
-      currentFontIndex = 0;
-      applyFont();
-      var hollowRect = els.timerText.getBoundingClientRect();
-      var cs = getComputedStyle(els.timerText);
-      var fontSizePx = parseFloat(cs.fontSize);
-      var strokeW = parseFloat(cs.webkitTextStrokeWidth) || 0;
-
-      // 用canvas measureText量这台设备上"0"这个字形真实的墨迹高度(actualBoundingBox)，
-      // 这是设备本地实测，不依赖任何跨设备字体替代猜测
-      var canvas = document.createElement('canvas');
-      var ctx = canvas.getContext('2d');
-      ctx.font = cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
-      var metrics = ctx.measureText('0');
-      var inkTop = metrics.actualBoundingBoxAscent || 0;
-      var inkBottom = metrics.actualBoundingBoxDescent || 0;
-      var inkHeight = inkTop + inkBottom + strokeW * 2; // 加上描边往外扩的部分
-
-      // 测量像素钟当前的渲染边界
-      currentFontIndex = 2;
-      applyFont();
-      var slotRect = els.digitSlots[0].getBoundingClientRect();
-
-      currentFontIndex = origIndex;
-      applyFont();
-
-      var suggestedRatio = inkHeight / fontSizePx;
-      var hollowInkTopViewport = hollowRect.top + (hollowRect.height / 2) - inkHeight / 2;
-      var offsetNeeded = hollowInkTopViewport - slotRect.top;
-
-      var box = document.createElement('div');
-      box.style.cssText = 'position:fixed;top:80px;left:2px;z-index:9999;background:#fff;color:#000;font-size:10px;line-height:1.5;padding:4px 6px;border:2px solid #000;font-family:monospace;max-width:96vw;';
-      var posNote = isPortraitMode
-        ? ('需要再往下微调: <b>' + offsetNeeded.toFixed(1) + 'px</b>(竖屏测的，可信)')
-        : ('横屏(旋转90°)状态下测的，top/height被旋转搅乱，位置数据不可信——请切到竖屏再测一次');
-      box.innerHTML =
-        '当前方向: ' + (isPortraitMode ? '竖屏' : '横屏(旋转90°)') + '<br>' +
-        'fontSizePx: ' + fontSizePx.toFixed(2) + '<br>' +
-        'strokeW: ' + strokeW.toFixed(2) + '<br>' +
-        'canvas inkHeight(0): ' + inkHeight.toFixed(2) + '<br>' +
-        '建议TARGET_RATIO: <b>' + suggestedRatio.toFixed(4) + '</b><br>' +
-        'hollow box top/height: ' + hollowRect.top.toFixed(1) + ' / ' + hollowRect.height.toFixed(1) + '<br>' +
-        'pixel slot top/height: ' + slotRect.top.toFixed(1) + ' / ' + slotRect.height.toFixed(1) + '<br>' +
-        posNote;
-      document.body.appendChild(box);
-    }
-
-    var BUILD_VERSION = 'v2';
-
-    function showDebugInfo(w, h) {
-      var box = document.createElement('div');
-      box.style.cssText = 'position:fixed;top:2px;left:2px;z-index:9999;background:#fff;color:#000;font-size:11px;line-height:1.4;padding:3px 5px;border:1px solid #000;font-family:monospace;';
-      var dpr = window.devicePixelRatio || 1;
-      box.innerHTML =
-        '<b>' + BUILD_VERSION + '</b><br>' +
-        'clientW/H: ' + w + ' x ' + h + '<br>' +
-        'innerW/H: ' + window.innerWidth + ' x ' + window.innerHeight + '<br>' +
-        'screen.w/h: ' + screen.width + ' x ' + screen.height + '<br>' +
-        'dpr: ' + dpr;
-      document.body.appendChild(box);
-    }
-
     function init() {
       var w = document.documentElement.clientWidth || window.innerWidth;
       var h = document.documentElement.clientHeight || window.innerHeight;
       SCREEN_LONG = Math.max(w, h);
       SCREEN_SHORT = Math.min(w, h);
       updateScaleFactor();
-      showDebugInfo(w, h);
 
       initDOM();
       initSavedSettings();
@@ -739,8 +673,6 @@
       updateDisplay();
       bindEvents();
       resetIdleTimer();
-
-      setTimeout(measureFontDiscrepancy, 500);
     }
 
     function initDOM() {
