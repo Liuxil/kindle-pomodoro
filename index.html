@@ -59,6 +59,7 @@
     .timer-container {
       width: 100%; cursor: pointer;
       display: -webkit-box; display: flex;
+      -webkit-box-orient: horizontal; -webkit-box-direction: normal;
       -webkit-box-pack: center; justify-content: center;
       -webkit-box-align: center; align-items: center;
     }
@@ -96,10 +97,11 @@
     .tracks-container {
       width: 96%; height: 26px; margin-top: 10px;
       display: -webkit-box; display: flex;
+      -webkit-box-orient: horizontal; -webkit-box-direction: normal;
       -webkit-box-pack: justify; justify-content: space-between;
       -webkit-box-align: center; align-items: center;
     }
-    .track-slot { width: 20px; height: 20px; display: -webkit-box; display: flex; -webkit-box-pack: center; justify-content: center; -webkit-box-align: center; align-items: center; }
+    .track-slot { width: 20px; height: 20px; display: -webkit-box; display: flex; -webkit-box-orient: horizontal; -webkit-box-direction: normal; -webkit-box-pack: center; justify-content: center; -webkit-box-align: center; align-items: center; }
     .track-slot svg { width: 18px; height: 18px; fill: #000000; display: none; }
     .track-slot:nth-child(even) svg { margin-top: 4px; -webkit-transform: rotate(6deg); transform: rotate(6deg); }
     .track-slot:nth-child(odd) svg { margin-top: -4px; -webkit-transform: rotate(-6deg); transform: rotate(-6deg); }
@@ -108,10 +110,11 @@
     .footer {
       width: 94%; flex-shrink: 0;
       display: -webkit-box; display: flex;
+      -webkit-box-orient: horizontal; -webkit-box-direction: normal;
       -webkit-box-pack: justify; justify-content: space-between;
       -webkit-box-align: center; align-items: center;
     }
-    .btn-adjust-group { display: -webkit-box; display: flex; gap: 10px; }
+    .btn-adjust-group { display: -webkit-box; display: flex; -webkit-box-orient: horizontal; -webkit-box-direction: normal; gap: 10px; }
     button {
       background: #ffffff; color: #000000; border: 3px solid #000000; font-weight: bold; border-radius: 8px; cursor: pointer;
       outline: none;
@@ -124,17 +127,18 @@
     
     .btn-start {
       background: transparent !important; border: none !important; padding: 5px; width: 72px; height: 72px;
-      display: -webkit-box; display: flex; -webkit-box-pack: center; justify-content: center; -webkit-box-align: center; align-items: center;
+      display: -webkit-box; display: flex; -webkit-box-orient: horizontal; -webkit-box-direction: normal; -webkit-box-pack: center; justify-content: center; -webkit-box-align: center; align-items: center;
     }
     .btn-start:active { background: transparent !important; color: #000000 !important; opacity: 0.4; }
     .btn-start svg { width: 42px; height: 42px; }
 
     .rest-screen {
       display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #ffffff; z-index: 100; cursor: pointer;
+      -webkit-box-orient: horizontal; -webkit-box-direction: normal;
       -webkit-box-pack: center; justify-content: center; -webkit-box-align: center; align-items: center;
     }
     .rest-screen.active { display: -webkit-box; display: flex; }
-    .rest-panel { display: none; width: 100%; height: 100%; -webkit-box-pack: center; justify-content: center; -webkit-box-align: center; align-items: center; }
+    .rest-panel { display: none; width: 100%; height: 100%; -webkit-box-orient: horizontal; -webkit-box-direction: normal; -webkit-box-pack: center; justify-content: center; -webkit-box-align: center; align-items: center; }
     .rest-panel.active { display: -webkit-box; display: flex; }
     
     /* 统一的动画舞台样式 */
@@ -654,6 +658,56 @@
       styleEl.appendChild(document.createTextNode(css));
     }
 
+    function measureFontDiscrepancy() {
+      var origIndex = currentFontIndex;
+
+      // 测量空心字(font-style-0)的真实渲染边界
+      currentFontIndex = 0;
+      applyFont();
+      var hollowRect = els.timerText.getBoundingClientRect();
+      var cs = getComputedStyle(els.timerText);
+      var fontSizePx = parseFloat(cs.fontSize);
+      var strokeW = parseFloat(cs.webkitTextStrokeWidth) || 0;
+
+      // 用canvas measureText量这台设备上"0"这个字形真实的墨迹高度(actualBoundingBox)，
+      // 这是设备本地实测，不依赖任何跨设备字体替代猜测
+      var canvas = document.createElement('canvas');
+      var ctx = canvas.getContext('2d');
+      ctx.font = cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
+      var metrics = ctx.measureText('0');
+      var inkTop = metrics.actualBoundingBoxAscent || 0;
+      var inkBottom = metrics.actualBoundingBoxDescent || 0;
+      var inkHeight = inkTop + inkBottom + strokeW * 2; // 加上描边往外扩的部分
+
+      // 测量像素钟当前的渲染边界
+      currentFontIndex = 2;
+      applyFont();
+      var slotRect = els.digitSlots[0].getBoundingClientRect();
+
+      currentFontIndex = origIndex;
+      applyFont();
+
+      var suggestedRatio = inkHeight / fontSizePx;
+      var hollowInkTopViewport = hollowRect.top + (hollowRect.height / 2) - inkHeight / 2;
+      var offsetNeeded = hollowInkTopViewport - slotRect.top;
+
+      var box = document.createElement('div');
+      box.style.cssText = 'position:fixed;top:80px;left:2px;z-index:9999;background:#fff;color:#000;font-size:10px;line-height:1.5;padding:4px 6px;border:2px solid #000;font-family:monospace;max-width:96vw;';
+      var posNote = isPortraitMode
+        ? ('需要再往下微调: <b>' + offsetNeeded.toFixed(1) + 'px</b>(竖屏测的，可信)')
+        : ('横屏(旋转90°)状态下测的，top/height被旋转搅乱，位置数据不可信——请切到竖屏再测一次');
+      box.innerHTML =
+        '当前方向: ' + (isPortraitMode ? '竖屏' : '横屏(旋转90°)') + '<br>' +
+        'fontSizePx: ' + fontSizePx.toFixed(2) + '<br>' +
+        'strokeW: ' + strokeW.toFixed(2) + '<br>' +
+        'canvas inkHeight(0): ' + inkHeight.toFixed(2) + '<br>' +
+        '建议TARGET_RATIO: <b>' + suggestedRatio.toFixed(4) + '</b><br>' +
+        'hollow box top/height: ' + hollowRect.top.toFixed(1) + ' / ' + hollowRect.height.toFixed(1) + '<br>' +
+        'pixel slot top/height: ' + slotRect.top.toFixed(1) + ' / ' + slotRect.height.toFixed(1) + '<br>' +
+        posNote;
+      document.body.appendChild(box);
+    }
+
     function showDebugInfo(w, h) {
       var box = document.createElement('div');
       box.style.cssText = 'position:fixed;top:2px;left:2px;z-index:9999;background:#fff;color:#000;font-size:11px;line-height:1.4;padding:3px 5px;border:1px solid #000;font-family:monospace;';
@@ -681,6 +735,8 @@
       updateDisplay();
       bindEvents();
       resetIdleTimer();
+
+      setTimeout(measureFontDiscrepancy, 500);
     }
 
     function initDOM() {
@@ -740,7 +796,7 @@
     // 掐架导致的瓶颈问题——之前不管怎么调高度比例都没用，就是因为宽度百分比是
     // 独立写死的，实际显示大小从头到尾都被宽度卡住了，跟高度设多少完全无关。
     function layoutPixelTimer(fontSizePx, containerWidthPx) {
-      var TARGET_RATIO = 0.71; // 用fontTools实测Helvetica系字体数字高度/字号的比例
+      var TARGET_RATIO = 0.745; // 用canvas measureText在两台真实设备上实测得出(0.7464/0.7440平均)，比之前用替代字体估算的0.71更准确
       var GLYPH_ASPECT = 6 / 8; // 数字字形本身的宽高比
       var GAP_RATIO = 0.12; // 数字间距，相对高度的比例
 
@@ -758,9 +814,15 @@
       }
 
       els.pixelTimer.style.height = h + 'px';
-      // 像素字形是贴边绘制的，没有文字天然带的下方留白(descender空间)，
-      // 不补一个下边距的话，脚印进度条会显得贴得特别近
-      els.pixelTimer.style.marginBottom = (h * 0.15) + 'px';
+      // 精确推导公式(用DevTools实测数据反推得出)：
+      // 文字版字体用的是对称margin(-30.9px上下)，其box高度就是fontSizePx本身(line-height:1)，
+      // 对称margin不影响flex居中位置。像素钟的box高度是h(通常比fontSizePx小)，
+      // 如果margin-top/bottom也对称，两者的flex居中点会因为box高度不同而错开。
+      // 要让像素钟的视觉位置跟文字版对齐，需要 margin-bottom - margin-top = fontSizePx - h，
+      // 这里简化令margin-top=0，margin-bottom直接等于这个差值。
+      // 副作用是这个差值天然比之前粗略估算的(h*0.15)大很多，正好顺带解决了脚印贴得太近的问题。
+      els.pixelTimer.style.marginTop = '0px';
+      els.pixelTimer.style.marginBottom = (fontSizePx - h) + 'px';
       for (var i = 0; i < els.digitSlots.length; i++) {
         els.digitSlots[i].style.width = digitW + 'px';
         els.digitSlots[i].style.height = h + 'px';
@@ -774,8 +836,11 @@
     }
 
     function applyOrientationLogic() {
-      var SAFE_LONG = (SCREEN_LONG - 8) & ~1;
-      var SAFE_SHORT = (SCREEN_SHORT - 8) & ~1;
+      // 安全内边距按K_SCALE缩放，保证这圈边距在所有分辨率设备上占屏幕的比例一致，
+      // 而不是固定8px在高分辨率屏幕上显得"占比更小"、不同机型看起来不一样
+      var SAFE_INSET = Math.round(8 * K_SCALE);
+      var SAFE_LONG = (SCREEN_LONG - SAFE_INSET) & ~1;
+      var SAFE_SHORT = (SCREEN_SHORT - SAFE_INSET) & ~1;
 
       if (isPortraitMode) {
         els.appContainer.style.width = SAFE_SHORT + 'px';
