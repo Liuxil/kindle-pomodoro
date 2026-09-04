@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- iOS版本号: v8 (黑白切换动画回退到"12根竖条+clip-path阶梯裁剪"版本，其他功能不变) -->
+<!-- iOS版本号: v9 (footer宽度横竖屏分开设置：竖屏84%，横屏96%，用媒体查询区分，解决横屏按钮离边缘太远的问题) -->
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
@@ -196,6 +196,11 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+    }
+    /* 横屏下Safari自己的UI跟竖屏不一样，84%会让按钮离边缘太远，
+       横屏单独放宽到96%，更贴近屏幕左右边缘 */
+    @media (orientation: landscape) {
+      .footer { width: 96%; }
     }
     .btn-adjust-group { display: flex; gap: 10px; }
     button {
@@ -624,7 +629,7 @@
     var lastDisplayedText = '';
     var lastLeadIndex = -1;
 
-    var BUILD_VERSION = 'v8';
+    var BUILD_VERSION = 'v9';
 
     function showVersionTag() {
       var tag = document.createElement('div');
