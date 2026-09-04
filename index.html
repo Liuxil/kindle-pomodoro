@@ -133,6 +133,13 @@
     .btn-start:active { background: transparent !important; color: #000000 !important; opacity: 0.4; }
     .btn-start svg { width: 42px; height: 42px; }
 
+    .btn-reset {
+      background: transparent !important; border: none !important; padding: 5px; width: 72px; height: 72px;
+      display: -webkit-box; display: flex; -webkit-box-orient: horizontal; -webkit-box-direction: normal; -webkit-box-pack: center; justify-content: center; -webkit-box-align: center; align-items: center;
+    }
+    .btn-reset:active { background: transparent !important; opacity: 0.4; }
+    .btn-reset svg { width: 41px; height: auto; }
+
     .rest-screen {
       display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #ffffff; z-index: 100; cursor: pointer;
       -webkit-box-orient: horizontal; -webkit-box-direction: normal;
@@ -250,11 +257,14 @@
       </div>
 
       <div class="footer">
-        <div class="btn-adjust-group">
+        <div class="btn-adjust-group" id="adjust-group">
           <button class="btn-adjust" data-adj="5">+5</button>
           <button class="btn-adjust" data-adj="10">+10</button>
           <button class="btn-adjust" data-adj="-5">-5</button>
         </div>
+        <button class="btn-reset" id="btn-reset" style="display:none;">
+          <svg viewBox="0 0 68 62" style="shape-rendering: crispEdges;" fill="#000000"><rect x="7" y="0" width="42" height="3"/><rect x="7" y="3" width="49" height="3"/><rect x="0" y="6" width="56" height="2"/><rect x="0" y="8" width="63" height="2"/><rect x="0" y="10" width="67" height="1"/><rect x="0" y="11" width="12" height="3"/><rect x="47" y="11" width="20" height="3"/><rect x="0" y="14" width="12" height="5"/><rect x="47" y="14" width="16" height="5"/><rect x="0" y="19" width="12" height="4"/><rect x="47" y="19" width="10" height="4"/><rect x="0" y="23" width="12" height="3"/><rect x="47" y="23" width="6" height="3"/><rect x="0" y="26" width="12" height="19"/><rect x="0" y="45" width="12" height="4"/><rect x="48" y="45" width="7" height="4"/><rect x="12" y="49" width="43" height="6"/><rect x="12" y="55" width="36" height="6"/></svg>
+        </button>
         <div>
           <button id="btn-toggle" class="btn-start"></button>
         </div>
@@ -592,6 +602,8 @@
         document.getElementById('digit-m2')
       ],
       btnToggle: document.getElementById('btn-toggle'),
+      adjustGroup: document.getElementById('adjust-group'),
+      btnReset: document.getElementById('btn-reset'),
       restScreen: document.getElementById('rest-screen'),
       sunBox: document.getElementById('sun-box'),
       moonBox: document.getElementById('moon-box'),
@@ -645,6 +657,8 @@
         + '.btn-adjust{font-size:' + (18*s) + 'px;padding:' + (5*s) + 'px ' + (14*s) + 'px;}'
         + '.btn-start{padding:' + (5*s) + 'px;width:' + (72*s) + 'px;height:' + (72*s) + 'px;}'
         + '.btn-start svg{width:' + (42*s) + 'px;height:' + (42*s) + 'px;}'
+        + '.btn-reset{padding:' + (5*s) + 'px;width:' + (72*s) + 'px;height:' + (72*s) + 'px;}'
+        + '.btn-reset svg{width:' + (41*s) + 'px;}'
         + '.pixel-stage{width:' + (280*s) + 'px;height:' + (280*s) + 'px;}'
         + '.pixel-cat-stage{width:' + (280*s) + 'px;height:' + (280*s) + 'px;}';
 
@@ -707,6 +721,12 @@
           e.target.blur();
         });
       }
+
+      els.btnReset.addEventListener('click', function (e) {
+        if (e) e.preventDefault();
+        resetTimer();
+        this.blur();
+      });
 
       els.standbyScreen.addEventListener('click', hideStandbyScreen);
       document.addEventListener('click', resetIdleTimer, true);
@@ -980,6 +1000,7 @@
       }
       hasStarted = true;
       lastLeadIndex = -1;
+      updateFooterState();
       updateDisplay();
     }
 
@@ -990,6 +1011,27 @@
       }
       hasStarted = false;
       lastLeadIndex = -1;
+      updateFooterState();
+    }
+
+    function updateFooterState() {
+      if (hasStarted) {
+        els.adjustGroup.style.display = 'none';
+        els.btnReset.style.display = '-webkit-box';
+        els.btnReset.style.display = 'flex';
+      } else {
+        els.adjustGroup.style.display = '-webkit-box';
+        els.adjustGroup.style.display = 'flex';
+        els.btnReset.style.display = 'none';
+      }
+    }
+
+    function resetTimer() {
+      if (timerId) { clearInterval(timerId); timerId = null; }
+      timeLeft = totalTime; // totalTime在"已开始"期间不会被改动(调整时长按钮已隐藏)，这里就是点击开始前的时长
+      els.btnToggle.innerHTML = ICON_PLAY;
+      clearTracks(); // 内部会把hasStarted设为false、并调用updateFooterState()切回调整时长组
+      updateDisplay();
     }
 
     function showRestScreen() {
