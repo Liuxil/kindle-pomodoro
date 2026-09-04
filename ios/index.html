@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- iOS版本号: v15-diag (横屏下天象图标放大到44px，脚印区域相应压缩补偿，脚印图标本身和交错偏移量也同步缩小避免溢出；总空间占用跟v14持平) -->
+<!-- iOS版本号: v16-diag (脚印区域放大100%，等于恢复原始竖屏规格；测试用，预计会重新溢出约5px，诊断信息保留验证) -->
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
@@ -205,11 +205,11 @@
          看得清动态；脚印区域纯装饰性更强，优先级更低，多压缩一些腾地方给天象图标。
          总占用跟上一版持平，只是重新分配了额度。 */
       .sky-badge { width: 44px; height: 44px; }
-      .tracks-container { height: 10px; margin-top: 2px; }
-      .track-slot { width: 10px; height: 10px; }
-      .track-slot svg { width: 9px; height: 9px; }
-      .track-slot:nth-child(even) svg { margin-top: 2px; }
-      .track-slot:nth-child(odd) svg { margin-top: -2px; }
+      .tracks-container { height: 20px; margin-top: 4px; }
+      .track-slot { width: 20px; height: 20px; }
+      .track-slot svg { width: 18px; height: 18px; }
+      .track-slot:nth-child(even) svg { margin-top: 4px; }
+      .track-slot:nth-child(odd) svg { margin-top: -4px; }
     }
     .btn-adjust-group { display: flex; gap: 10px; }
     button {
@@ -638,7 +638,7 @@
     var lastDisplayedText = '';
     var lastLeadIndex = -1;
 
-    var BUILD_VERSION = 'v15-diag';
+    var BUILD_VERSION = 'v16-diag';
 
     function showVersionTag() {
       var tag = document.createElement('div');
