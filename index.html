@@ -800,6 +800,8 @@
         els.timerText.style.fontSize = (215 * K_SCALE) + 'px';
         els.timerText.style.margin = (-10 * K_SCALE) + 'px 0';
         layoutPixelTimer(215 * K_SCALE, SAFE_SHORT);
+        // 竖屏下重置按钮贴屏幕左边缘太近了，往右(中间方向)挪一点，横屏不受影响
+        els.btnReset.style.marginLeft = (16 * K_SCALE) + 'px';
       } else {
         els.appContainer.style.width = SAFE_LONG + 'px';
         els.appContainer.style.height = SAFE_SHORT + 'px';
@@ -808,6 +810,7 @@
         els.timerText.style.fontSize = (250 * K_SCALE) + 'px';
         els.timerText.style.margin = (-15 * K_SCALE) + 'px 0';
         layoutPixelTimer(250 * K_SCALE, SAFE_LONG);
+        els.btnReset.style.marginLeft = '0px';
       }
       forceLayoutRecalc();
     }
