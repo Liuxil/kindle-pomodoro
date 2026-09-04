@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- iOS版本号: v12 (横屏footer的margin-bottom从20px加大到60px，确保上移幅度肉眼可见) -->
+<!-- iOS版本号: v13-diag (临时诊断版本：显示app-container/sky/main-section/footer的实际高度，验证横屏下"空白被占满"这个假设，验证后需要删掉诊断代码) -->
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
@@ -629,7 +629,7 @@
     var lastDisplayedText = '';
     var lastLeadIndex = -1;
 
-    var BUILD_VERSION = 'v12';
+    var BUILD_VERSION = 'v13-diag';
 
     function showVersionTag() {
       var tag = document.createElement('div');
@@ -650,6 +650,27 @@
       initWakeLock();
       hideLaunchSplash();
       showVersionTag();
+      setTimeout(showLayoutDiagnostic, 300);
+    }
+
+    function showLayoutDiagnostic() {
+      var box = document.createElement('div');
+      box.setAttribute('data-layout-diag', '1');
+      box.style.cssText = 'position:fixed;top:30px;left:2px;z-index:9999;background:#fff;color:#000;font-size:10px;line-height:1.5;padding:4px 6px;border:2px solid #000;font-family:monospace;';
+      var appRect = document.getElementById('app-container').getBoundingClientRect();
+      var skyRect = document.getElementById('btn-display-mode').getBoundingClientRect();
+      var mainRect = document.querySelector('.main-section').getBoundingClientRect();
+      var footerRect = document.querySelector('.footer').getBoundingClientRect();
+      var sumChildren = skyRect.height + mainRect.height + footerRect.height;
+      box.innerHTML =
+        '方向: ' + (window.matchMedia('(orientation: landscape)').matches ? '横屏' : '竖屏') + '<br>' +
+        'app-container高度: ' + appRect.height.toFixed(1) + '<br>' +
+        'sky高度: ' + skyRect.height.toFixed(1) + '<br>' +
+        'main-section高度: ' + mainRect.height.toFixed(1) + '<br>' +
+        'footer高度: ' + footerRect.height.toFixed(1) + '<br>' +
+        '三者高度总和: ' + sumChildren.toFixed(1) + '<br>' +
+        '剩余空白(容器-总和): <b>' + (appRect.height - sumChildren).toFixed(1) + '</b>';
+      document.body.appendChild(box);
     }
 
     function hideLaunchSplash() {
@@ -705,6 +726,11 @@
       mql.addEventListener("change", function(e) {
         isPhysicalPortrait = e.matches;
         applyOrientationLogic();
+        setTimeout(function () {
+          var old = document.querySelectorAll('[data-layout-diag]');
+          for (var i = 0; i < old.length; i++) { old[i].parentNode.removeChild(old[i]); }
+          showLayoutDiagnostic();
+        }, 350);
       });
     }
 
