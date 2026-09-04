@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- iOS版本号: v22-final (正式版，屏幕可见的版本号标签已移除，重置动效：4次/100ms数字闪烁+脚印全程横扫倒退) -->
+<!-- iOS版本号: v23 (重置动效简化为2帧：00:00停留220ms后跳到设定时长，去掉乱码闪烁和脚印倒退动画) -->
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
@@ -1098,67 +1098,25 @@
     }
 
     var isResetting = false;
+    var RESET_FLASH_MS = 220; // 00:00停留多久再跳回设定时间
 
     function resetTimer() {
-      if (isResetting) return; // 动画播放中，避免连续点击触发重叠的动画
+      if (isResetting) return; // 动画播放中，避免连续点击触发重叠
       if (timerId) { clearInterval(timerId); timerId = null; }
       isResetting = true;
 
-      // 乱码闪烁式的重置动效：固定闪烁4次(每次随机数字)，不管设定时长是25分钟
-      // 还是接近2小时，动画节奏都一样快，不会因为目标值大就跳得太快看不清。
-      // 纯视觉层面，闪烁过程中的timeLeft都是假的随机值，最后一帧才落回真实的totalTime。
-      // 脚印倒退动画跟数字闪烁并行播放，呼应"重置=撤销进度"这个含义。
-      animateResetGlitch(function () {
+      // 两帧式的重置动效：先瞬间显示00:00，停留一下之后跳回真实的设定时长，
+      // 纯视觉层面，不影响totalTime真实值
+      timeLeft = 0;
+      updateDisplay();
+
+      setTimeout(function () {
         timeLeft = totalTime;
         els.btnToggle.innerHTML = ICON_PLAY;
         clearTracks(); // 内部会把hasStarted设为false、并调用updateFooterState()切回调整时长组
         updateDisplay();
         isResetting = false;
-      });
-      animateFootprintRetreat();
-    }
-
-    // 脚印倒退动画：固定从最右端(TOTAL_SLOTS-1)横扫到最左端(-1)，
-    // 不管实际走到哪个进度，每次都是横跨全程的完整播片效果，
-    // 跟数字闪烁同样的节奏(4步/100ms)，最后一步精确清空所有格子
-    function animateFootprintRetreat() {
-      if (!hasStarted || !currentAnimal) return;
-      var startIndex = TOTAL_SLOTS - 1;
-
-      var steps = FLICKER_COUNT;
-      var i = 0;
-      function nextStep() {
-        if (i < steps) {
-          var fraction = (i + 1) / steps; // 0.25, 0.5, 0.75, 1.0(steps=4时)
-          var leadIndex = Math.round(startIndex - (startIndex + 1) * fraction);
-          paintTracks(leadIndex); // fraction=1时leadIndex精确等于-1，任何格子都不会被点亮，天然清空
-          i++;
-          setTimeout(nextStep, FLICKER_INTERVAL_MS);
-        }
-      }
-      nextStep();
-    }
-
-    var FLICKER_COUNT = 4;
-    var FLICKER_INTERVAL_MS = 100;
-
-    function animateResetGlitch(onDone) {
-      var i = 0;
-
-      function nextFlicker() {
-        if (i < FLICKER_COUNT) {
-          // 用随机分钟数(0~199，两位小时两位分钟都能覆盖到)伪装出乱码效果，
-          // 复用现有的updateDisplay()渲染管线，不用另外写一套显示逻辑
-          var randomMinutes = Math.floor(Math.random() * 200);
-          timeLeft = randomMinutes * 60;
-          updateDisplay();
-          i++;
-          setTimeout(nextFlicker, FLICKER_INTERVAL_MS);
-        } else {
-          onDone();
-        }
-      }
-      nextFlicker();
+      }, RESET_FLASH_MS);
     }
 
     function resetIdleTimer() {
