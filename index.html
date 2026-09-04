@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- 特别感谢 ZYI 提供 Kindle Paperwhite 11代 的真机测试，帮助定位并修复了像素时钟在高分辨率设备上的显示问题 -->
+<!-- 特别感谢 ZYI 提供 Kindle Paperwhite 11代 的真机测试，帮助定位并修复了像素时钟在高分辨率设备上的显示问题。重置动效简化为2帧：00:00停留350ms后跳到设定时长，去掉乱码闪烁和脚印倒退动画 -->
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
@@ -1034,71 +1034,25 @@
     }
 
     var isResetting = false;
-    var FLICKER_COUNT = 4;
-    var FLICKER_INTERVAL_MS = 350; // 普通黑白墨水屏刷新一次约250-400ms，Kindle 7代这类老硬件更接近区间慢的一侧，太快会来不及显示、糊成一片
+    var RESET_FLASH_MS = 350; // 00:00停留多久再跳回设定时长；普通黑白墨水屏刷新一次约250-400ms，Kindle 7代这类老硬件更接近区间慢的一侧，太快会来不及显示
 
     function resetTimer() {
-      if (isResetting) return; // 动画播放中，避免连续点击触发重叠的动画
+      if (isResetting) return; // 动画播放中，避免连续点击触发重叠
       if (timerId) { clearInterval(timerId); timerId = null; }
       isResetting = true;
 
-      // 乱码闪烁式的重置动效：固定闪烁4次(每次随机数字)，不管设定时长多大
-      // 动画节奏都一样。纯视觉层面，闪烁过程中的timeLeft都是假的随机值，
-      // 最后一帧才落回真实的totalTime。脚印倒退动画跟数字闪烁并行播放。
-      animateResetGlitch(function () {
+      // 两帧式的重置动效：先瞬间显示00:00，停留一下之后跳回真实的设定时长，
+      // 纯视觉层面，不影响totalTime真实值
+      timeLeft = 0;
+      updateDisplay();
+
+      setTimeout(function () {
         timeLeft = totalTime;
         els.btnToggle.innerHTML = ICON_PLAY;
         clearTracks(); // 内部会把hasStarted设为false、并调用updateFooterState()切回调整时长组
         updateDisplay();
         isResetting = false;
-      });
-      animateFootprintRetreat();
-    }
-
-    function animateResetGlitch(onDone) {
-      // 4帧结构：第1帧00:00 -> 中间FLICKER_COUNT-2帧是"介于0和目标值之间的随机数，
-      // 按大小排序"，营造越跳越接近答案的收敛感(不是纯乱跳) -> 最后一帧(onDone里)是真实设定值
-      var targetMinutes = Math.ceil(totalTime / 60);
-      var midCount = Math.max(0, FLICKER_COUNT - 2);
-      var mids = [];
-      for (var j = 0; j < midCount; j++) {
-        mids.push(Math.floor(Math.random() * (targetMinutes + 1)));
-      }
-      mids.sort(function (a, b) { return a - b; });
-      var frames = [0].concat(mids); // 最后一帧交给onDone设真实totalTime，这里不重复
-
-      var i = 0;
-      function nextFrame() {
-        if (i < frames.length) {
-          timeLeft = frames[i] * 60;
-          updateDisplay();
-          i++;
-          setTimeout(nextFrame, FLICKER_INTERVAL_MS);
-        } else {
-          onDone();
-        }
-      }
-      nextFrame();
-    }
-
-    // 脚印倒退动画：固定从最右端(TOTAL_SLOTS-1)横扫到最左端(-1)，
-    // 每次重置都是横跨全程的完整播片效果，跟数字闪烁同样的节奏
-    function animateFootprintRetreat() {
-      if (!hasStarted || !currentAnimal) return;
-      var startIndex = TOTAL_SLOTS - 1;
-
-      var steps = FLICKER_COUNT;
-      var i = 0;
-      function nextStep() {
-        if (i < steps) {
-          var fraction = (i + 1) / steps;
-          var leadIndex = Math.round(startIndex - (startIndex + 1) * fraction);
-          paintTracks(leadIndex); // fraction=1时leadIndex精确等于-1，天然清空所有格子
-          i++;
-          setTimeout(nextStep, FLICKER_INTERVAL_MS);
-        }
-      }
-      nextStep();
+      }, RESET_FLASH_MS);
     }
 
     function showRestScreen() {
