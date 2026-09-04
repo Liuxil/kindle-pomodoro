@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- iOS版本号: v13-diag (临时诊断版本：显示app-container/sky/main-section/footer的实际高度，验证横屏下"空白被占满"这个假设，验证后需要删掉诊断代码) -->
+<!-- iOS版本号: v14-diag (压缩横屏下天象图标和脚印区域高度，腾出约40px空白，footer margin-bottom调整到15px；诊断信息保留，用于验证这次是否真的有空白了) -->
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
@@ -200,7 +200,12 @@
     /* 横屏下Safari自己的UI跟竖屏不一样，84%会让按钮离边缘太远，
        横屏单独放宽到96%，更贴近屏幕左右边缘 */
     @media (orientation: landscape) {
-      .footer { width: 96%; margin-bottom: 60px; }
+      .footer { width: 96%; margin-bottom: 15px; }
+      /* 横屏空间紧张，天象图标和脚印区域先各自压缩一点，腾出真实的空白，
+         margin-bottom才有地方可以发挥作用(之前诊断显示横屏下内容其实是溢出的，
+         不是"刚好占满没有空白"，加margin-bottom完全没用就是这个原因) */
+      .sky-badge { width: 32px; height: 32px; }
+      .tracks-container { height: 20px; margin-top: 4px; }
     }
     .btn-adjust-group { display: flex; gap: 10px; }
     button {
@@ -629,7 +634,7 @@
     var lastDisplayedText = '';
     var lastLeadIndex = -1;
 
-    var BUILD_VERSION = 'v13-diag';
+    var BUILD_VERSION = 'v14-diag';
 
     function showVersionTag() {
       var tag = document.createElement('div');
