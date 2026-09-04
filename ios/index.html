@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- iOS版本号: v5 (重置图标用带网格线的参考图精确对齐采样，18个矩形1:1还原) -->
+<!-- iOS版本号: v6 (重置按钮容器尺寸对齐播放按钮72x72，图标相应放大，跟播放/暂停图标视觉重量一致) -->
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
@@ -201,12 +201,12 @@
     button:active { background: var(--ink); color: var(--bg); }
     .btn-adjust { font-size: 18px; padding: 5px 14px; }
     .btn-reset {
-      width: 44px; height: 44px; padding: 4px;
+      width: 72px; height: 72px; padding: 5px;
       display: flex; justify-content: center; align-items: center;
       background: transparent !important; border: none !important;
     }
     .btn-reset:active { background: transparent !important; opacity: 0.4; }
-    .btn-reset svg { width: 100%; height: 100%; }
+    .btn-reset svg { width: 46px; height: auto; }
     
     .btn-start {
       background: transparent !important; border: none !important; padding: 5px; width: 72px; height: 72px;
@@ -618,7 +618,7 @@
     var lastDisplayedText = '';
     var lastLeadIndex = -1;
 
-    var BUILD_VERSION = 'v5';
+    var BUILD_VERSION = 'v6';
 
     function showVersionTag() {
       var tag = document.createElement('div');
