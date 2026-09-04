@@ -1035,7 +1035,7 @@
 
     var isResetting = false;
     var FLICKER_COUNT = 4;
-    var FLICKER_INTERVAL_MS = 120;
+    var FLICKER_INTERVAL_MS = 350; // 普通黑白墨水屏刷新一次约250-400ms，Kindle 7代这类老硬件更接近区间慢的一侧，太快会来不及显示、糊成一片
 
     function resetTimer() {
       if (isResetting) return; // 动画播放中，避免连续点击触发重叠的动画
