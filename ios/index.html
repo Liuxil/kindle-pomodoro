@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- iOS版本号: v16-diag (脚印区域放大100%，等于恢复原始竖屏规格；测试用，预计会重新溢出约5px，诊断信息保留验证) -->
+<!-- iOS版本号: v19 (删除重置图标转圈动效；重置改成翻页钟式数字滚动累加：从0快速数到设定时长，450ms，纯视觉层面不影响totalTime) -->
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
@@ -638,7 +638,7 @@
     var lastDisplayedText = '';
     var lastLeadIndex = -1;
 
-    var BUILD_VERSION = 'v16-diag';
+    var BUILD_VERSION = 'v19';
 
     function showVersionTag() {
       var tag = document.createElement('div');
@@ -659,27 +659,6 @@
       initWakeLock();
       hideLaunchSplash();
       showVersionTag();
-      setTimeout(showLayoutDiagnostic, 300);
-    }
-
-    function showLayoutDiagnostic() {
-      var box = document.createElement('div');
-      box.setAttribute('data-layout-diag', '1');
-      box.style.cssText = 'position:fixed;top:30px;left:2px;z-index:9999;background:#fff;color:#000;font-size:10px;line-height:1.5;padding:4px 6px;border:2px solid #000;font-family:monospace;';
-      var appRect = document.getElementById('app-container').getBoundingClientRect();
-      var skyRect = document.getElementById('btn-display-mode').getBoundingClientRect();
-      var mainRect = document.querySelector('.main-section').getBoundingClientRect();
-      var footerRect = document.querySelector('.footer').getBoundingClientRect();
-      var sumChildren = skyRect.height + mainRect.height + footerRect.height;
-      box.innerHTML =
-        '方向: ' + (window.matchMedia('(orientation: landscape)').matches ? '横屏' : '竖屏') + '<br>' +
-        'app-container高度: ' + appRect.height.toFixed(1) + '<br>' +
-        'sky高度: ' + skyRect.height.toFixed(1) + '<br>' +
-        'main-section高度: ' + mainRect.height.toFixed(1) + '<br>' +
-        'footer高度: ' + footerRect.height.toFixed(1) + '<br>' +
-        '三者高度总和: ' + sumChildren.toFixed(1) + '<br>' +
-        '剩余空白(容器-总和): <b>' + (appRect.height - sumChildren).toFixed(1) + '</b>';
-      document.body.appendChild(box);
     }
 
     function hideLaunchSplash() {
@@ -735,11 +714,6 @@
       mql.addEventListener("change", function(e) {
         isPhysicalPortrait = e.matches;
         applyOrientationLogic();
-        setTimeout(function () {
-          var old = document.querySelectorAll('[data-layout-diag]');
-          for (var i = 0; i < old.length; i++) { old[i].parentNode.removeChild(old[i]); }
-          showLayoutDiagnostic();
-        }, 350);
       });
     }
 
@@ -1128,12 +1102,44 @@
       }
     }
 
+    var isResetting = false;
+
     function resetTimer() {
+      if (isResetting) return; // 动画播放中，避免连续点击触发重叠的滚动
       if (timerId) { clearInterval(timerId); timerId = null; }
-      timeLeft = totalTime; // totalTime在"已开始"期间不会被改动(调整时长按钮已隐藏)，这里就是点击开始前的时长
-      els.btnToggle.innerHTML = ICON_PLAY;
-      clearTracks(); // 内部会把hasStarted设为false、并调用updateFooterState()切回调整时长组
+      isResetting = true;
+
+      // 翻页钟式的重置动效：数字从0开始快速滚动累加，一直数到真实的设定时长，
+      // 纯视觉层面的滚动过程，不影响totalTime真实值，滚动结束时精确落在目标时长上
+      var targetMinutes = Math.ceil(totalTime / 60);
+      timeLeft = 0;
       updateDisplay();
+      animateResetCountUp(targetMinutes, function () {
+        timeLeft = totalTime;
+        els.btnToggle.innerHTML = ICON_PLAY;
+        clearTracks(); // 内部会把hasStarted设为false、并调用updateFooterState()切回调整时长组
+        updateDisplay();
+        isResetting = false;
+      });
+    }
+
+    function animateResetCountUp(targetMinutes, onDone) {
+      var DURATION_MS = 450;
+      var startTime = null;
+
+      function frame(now) {
+        if (startTime === null) startTime = now;
+        var progress = Math.min(1, (now - startTime) / DURATION_MS);
+        var currentMin = Math.floor(progress * targetMinutes);
+        timeLeft = currentMin * 60;
+        updateDisplay();
+        if (progress < 1) {
+          requestAnimationFrame(frame);
+        } else {
+          onDone();
+        }
+      }
+      requestAnimationFrame(frame);
     }
 
     function resetIdleTimer() {
