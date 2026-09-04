@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- iOS版本号: v22 (脚印倒退动画改成固定从最右端横扫到最左端，不依赖实际进度，每次都是完整播片) -->
+<!-- iOS版本号: v22-final (正式版，屏幕可见的版本号标签已移除，重置动效：4次/100ms数字闪烁+脚印全程横扫倒退) -->
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
@@ -638,15 +638,6 @@
     var lastDisplayedText = '';
     var lastLeadIndex = -1;
 
-    var BUILD_VERSION = 'v22';
-
-    function showVersionTag() {
-      var tag = document.createElement('div');
-      tag.style.cssText = 'position:fixed;top:2px;left:2px;z-index:9999;background:#fff;color:#000;font-size:10px;padding:2px 5px;border:1px solid #000;font-family:monospace;pointer-events:none;';
-      tag.textContent = BUILD_VERSION;
-      document.body.appendChild(tag);
-    }
-
     function init() {
       initOrientation();
       initDOM();
@@ -658,7 +649,6 @@
       resetIdleTimer();
       initWakeLock();
       hideLaunchSplash();
-      showVersionTag();
     }
 
     function hideLaunchSplash() {
