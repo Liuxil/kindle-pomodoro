@@ -1034,7 +1034,7 @@
     }
 
     var isResetting = false;
-    var FLICKER_COUNT = 3;
+    var FLICKER_COUNT = 4;
     var FLICKER_INTERVAL_MS = 350; // 普通黑白墨水屏刷新一次约250-400ms，Kindle 7代这类老硬件更接近区间慢的一侧，太快会来不及显示、糊成一片
 
     function resetTimer() {
@@ -1056,19 +1056,29 @@
     }
 
     function animateResetGlitch(onDone) {
+      // 4帧结构：第1帧00:00 -> 中间FLICKER_COUNT-2帧是"介于0和目标值之间的随机数，
+      // 按大小排序"，营造越跳越接近答案的收敛感(不是纯乱跳) -> 最后一帧(onDone里)是真实设定值
+      var targetMinutes = Math.ceil(totalTime / 60);
+      var midCount = Math.max(0, FLICKER_COUNT - 2);
+      var mids = [];
+      for (var j = 0; j < midCount; j++) {
+        mids.push(Math.floor(Math.random() * (targetMinutes + 1)));
+      }
+      mids.sort(function (a, b) { return a - b; });
+      var frames = [0].concat(mids); // 最后一帧交给onDone设真实totalTime，这里不重复
+
       var i = 0;
-      function nextFlicker() {
-        if (i < FLICKER_COUNT) {
-          var randomMinutes = Math.floor(Math.random() * 200);
-          timeLeft = randomMinutes * 60;
+      function nextFrame() {
+        if (i < frames.length) {
+          timeLeft = frames[i] * 60;
           updateDisplay();
           i++;
-          setTimeout(nextFlicker, FLICKER_INTERVAL_MS);
+          setTimeout(nextFrame, FLICKER_INTERVAL_MS);
         } else {
           onDone();
         }
       }
-      nextFlicker();
+      nextFrame();
     }
 
     // 脚印倒退动画：固定从最右端(TOTAL_SLOTS-1)横扫到最左端(-1)，
