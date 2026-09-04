@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- iOS版本号: v14-diag (压缩横屏下天象图标和脚印区域高度，腾出约40px空白，footer margin-bottom调整到15px；诊断信息保留，用于验证这次是否真的有空白了) -->
+<!-- iOS版本号: v15-diag (横屏下天象图标放大到44px，脚印区域相应压缩补偿，脚印图标本身和交错偏移量也同步缩小避免溢出；总空间占用跟v14持平) -->
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
@@ -201,11 +201,15 @@
        横屏单独放宽到96%，更贴近屏幕左右边缘 */
     @media (orientation: landscape) {
       .footer { width: 96%; margin-bottom: 15px; }
-      /* 横屏空间紧张，天象图标和脚印区域先各自压缩一点，腾出真实的空白，
-         margin-bottom才有地方可以发挥作用(之前诊断显示横屏下内容其实是溢出的，
-         不是"刚好占满没有空白"，加margin-bottom完全没用就是这个原因) */
-      .sky-badge { width: 32px; height: 32px; }
-      .tracks-container { height: 20px; margin-top: 4px; }
+      /* 横屏空间紧张，天象图标是读秒的视觉指示器(会闪烁光芒/星星)，优先保证够大、
+         看得清动态；脚印区域纯装饰性更强，优先级更低，多压缩一些腾地方给天象图标。
+         总占用跟上一版持平，只是重新分配了额度。 */
+      .sky-badge { width: 44px; height: 44px; }
+      .tracks-container { height: 10px; margin-top: 2px; }
+      .track-slot { width: 10px; height: 10px; }
+      .track-slot svg { width: 9px; height: 9px; }
+      .track-slot:nth-child(even) svg { margin-top: 2px; }
+      .track-slot:nth-child(odd) svg { margin-top: -2px; }
     }
     .btn-adjust-group { display: flex; gap: 10px; }
     button {
@@ -634,7 +638,7 @@
     var lastDisplayedText = '';
     var lastLeadIndex = -1;
 
-    var BUILD_VERSION = 'v14-diag';
+    var BUILD_VERSION = 'v15-diag';
 
     function showVersionTag() {
       var tag = document.createElement('div');
