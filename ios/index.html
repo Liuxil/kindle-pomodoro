@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- iOS版本号: v9 (footer宽度横竖屏分开设置：竖屏84%，横屏96%，用媒体查询区分，解决横屏按钮离边缘太远的问题) -->
+<!-- iOS版本号: v10 (横屏footer宽度从96%收回到86%，给贴边点击留容错，兼顾手机壳/曲面屏) -->
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
@@ -200,7 +200,7 @@
     /* 横屏下Safari自己的UI跟竖屏不一样，84%会让按钮离边缘太远，
        横屏单独放宽到96%，更贴近屏幕左右边缘 */
     @media (orientation: landscape) {
-      .footer { width: 96%; }
+      .footer { width: 86%; }
     }
     .btn-adjust-group { display: flex; gap: 10px; }
     button {
@@ -629,7 +629,7 @@
     var lastDisplayedText = '';
     var lastLeadIndex = -1;
 
-    var BUILD_VERSION = 'v9';
+    var BUILD_VERSION = 'v10';
 
     function showVersionTag() {
       var tag = document.createElement('div');
