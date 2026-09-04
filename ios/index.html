@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- iOS版本号: v6 (重置按钮容器尺寸对齐播放按钮72x72，图标相应放大，跟播放/暂停图标视觉重量一致) -->
+<!-- iOS版本号: v8 (黑白切换动画回退到"12根竖条+clip-path阶梯裁剪"版本，其他功能不变) -->
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
@@ -27,9 +27,15 @@
 
     /* 像素格子中心收缩过渡：每个格子朝自己的中心点(transform-origin:center)
        平滑收缩到0后消失，露出下面早已切换好的真实内容——经典像素游戏转场手法 */
-    @keyframes cellShrink {
-      from { transform: scale(1); }
-      to { transform: scale(0); }
+    /* 像素竖条阶梯裁剪过渡：用clip-path配合steps()做出"一格一格露出"的阶梯感，
+       只需要每列一个元素、一个连续动画，比192个独立格子对渲染友好得多 */
+    @keyframes pixelWipeTop {
+      from { clip-path: inset(0 0 0 0); }
+      to { clip-path: inset(100% 0 0 0); }
+    }
+    @keyframes pixelWipeBottom {
+      from { clip-path: inset(0 0 0 0); }
+      to { clip-path: inset(0 0 100% 0); }
     }
 
     * {
@@ -186,7 +192,7 @@
     .track-slot.active svg { display: block; }
 
     .footer {
-      width: 94%; flex-shrink: 0;
+      width: 84%; flex-shrink: 0;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -206,7 +212,7 @@
       background: transparent !important; border: none !important;
     }
     .btn-reset:active { background: transparent !important; opacity: 0.4; }
-    .btn-reset svg { width: 46px; height: auto; }
+    .btn-reset svg { width: 41px; height: auto; }
     
     .btn-start {
       background: transparent !important; border: none !important; padding: 5px; width: 72px; height: 72px;
@@ -618,7 +624,7 @@
     var lastDisplayedText = '';
     var lastLeadIndex = -1;
 
-    var BUILD_VERSION = 'v6';
+    var BUILD_VERSION = 'v8';
 
     function showVersionTag() {
       var tag = document.createElement('div');
@@ -799,15 +805,13 @@
     // 整个动画播完才一次性露出来。黑夜模式从上往下扫黑，白天模式从下往上扫白；
     // 每列的扫动快慢单独错开一点，做出参差不齐的锯齿边缘。
     function playPixelTransition(goingNight) {
-      var COLS = 10, ROWS = 14;
+      var COLS = 12, ROWS = 16;
       var TOTAL_MS = 700;
-      var SPEED = 0.8; // 整体行进速率，1.0=基准速度，小于1就是变慢(行间隔按1/SPEED拉长)
-      var ROW_SLOT = (TOTAL_MS / SPEED) / ROWS; // 每一行触发的时间间隔
-      var GROW_MS = ROW_SLOT * 3.2; // 单个格子长大的时长，行进速度(ROW_SLOT)不变，相邻多行的动画会有更多重叠，过渡更从容
+      var JITTER_MS = Math.round((3 / ROWS) * TOTAL_MS); // 锯齿错落幅度，换算成时间(原来是3行的幅度)
 
       var oldBg = getComputedStyle(document.body).backgroundColor;
 
-      // 先瞬间切主题，内容立刻是新样子了(暂时被下面铺的旧颜色格子盖住看不见)
+      // 先切主题，内容立刻是新样子了(暂时被下面铺的竖条盖住)
       document.body.classList.toggle('night-mode');
       var mode = document.body.classList.contains('night-mode') ? 'night' : 'day';
       try { localStorage.setItem('pomodoro_display_mode', mode); } catch (e) {}
@@ -818,30 +822,30 @@
       overlay.id = 'pixel-transition-overlay';
       overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:99998;pointer-events:none;';
 
-      // 旧颜色格子朝中心缩小消失，露出下面早已切换好的真实内容——视觉上
-      // 等同于"内容可见范围从中心变大"，但content是随扫动逐行立刻显示的，
-      // 不会等到最后一次性冒出来，也就不会有切换瞬间的闪烁。
-      // 黑夜模式从第0行(顶部)往最后一行(底部)依次触发；白天模式反过来，从底部往顶部。
-      var cellW = 100 / COLS, cellH = 100 / ROWS;
+      // 用12根竖条(每根一个连续的clip-path阶梯裁剪动画)代替192个独立格子，
+      // 视觉上还是"一格一格露出来"的阶梯感(靠steps(ROWS)实现)，但DOM元素少了
+      // 16倍，手机端也能流畅跑完，不会因为同时调度太多元素而掉帧花屏。
+      // 黑夜模式：竖条从顶部开始被裁剪掉，露出下面真实内容(自上而下)；
+      // 白天模式反过来，从底部开始裁剪(自下而上)。
+      var animName = goingNight ? 'pixelWipeTop' : 'pixelWipeBottom';
+      var cellW = 100 / COLS;
       var html = '';
-      for (var r = 0; r < ROWS; r++) {
-        var sweepIndex = goingNight ? r : (ROWS - 1 - r);
-        var delay = Math.round(sweepIndex * ROW_SLOT);
-        for (var c = 0; c < COLS; c++) {
-          html += '<div style="position:absolute;left:' + c * cellW + '%;top:' + r * cellH + '%;width:' +
-            (cellW + 0.5) + '%;height:' + (cellH + 0.5) + '%;background:' + oldBg +
-            ';transform-origin:center;animation:cellShrink ' + GROW_MS + 'ms ease-in forwards;animation-delay:' + delay + 'ms;"></div>';
-        }
+      for (var c = 0; c < COLS; c++) {
+        // 每列一个固定的随机延迟(可正可负)，让扫动边缘参差不齐(锯齿感)，
+        // 负延迟表示这根竖条一开始就已经"跑掉一段"，效果等同于提前触发
+        var delay = Math.round((Math.random() * 2 - 1) * JITTER_MS);
+        html += '<div style="position:absolute;left:' + c * cellW + '%;top:0;width:' +
+          (cellW + 0.5) + '%;height:100%;background:' + oldBg +
+          ';animation:' + animName + ' ' + TOTAL_MS + 'ms steps(' + ROWS + ') forwards;animation-delay:' + delay + 'ms;"></div>';
       }
       overlay.innerHTML = html;
       document.body.appendChild(overlay);
 
-      // 最后一行触发的延迟 + 它自己收缩的时长，才是整个动画真正结束的时间点，
-      // 到点之后清掉这个覆盖层，不占用后续任何布局/事件
-      var totalDuration = (ROWS - 1) * ROW_SLOT + GROW_MS;
+      // 动画播完(留一点余量给负延迟的竖条也跑完)之后，清掉这个覆盖层，
+      // 不占用后续任何布局/事件
       setTimeout(function () {
         if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
-      }, totalDuration + 30);
+      }, TOTAL_MS + JITTER_MS + 100);
     }
 
     function switchFont() {
